@@ -21,9 +21,9 @@
         android:id="@+id/text_login_1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="my Diary , your Name"
+        android:text="彼方为谁，无我有问\n九月露湿，待君之前"
         android:textColor="#ffffff"
-        android:textSize="25sp"
+        android:textSize="21sp"
         android:gravity="center"
         android:layout_marginTop="10dp"
         />
