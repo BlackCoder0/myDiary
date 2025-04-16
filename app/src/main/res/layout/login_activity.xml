@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#5ca9e1"
+    tools:context=".Login">
+
+    <ImageView
+        android:id="@+id/img_login"
+        android:layout_width="190dp"
+        android:layout_height="190dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="80dp"
+        android:src="@drawable/main_logo" />
+
+    <TextView
+        android:id="@+id/text_login_1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="my Diary , your Name"
+        android:textColor="#ffffff"
+        android:textSize="25sp"
+        android:gravity="center"
+        android:layout_marginTop="10dp"
+        />
+
+    <EditText
+        android:id="@+id/ed_email"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:background="#ffffff"
+        android:hint="邮箱"
+        android:textSize="16sp"
+        android:textColor="#000000"
+        android:inputType="textEmailAddress"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:padding="8dp" />
+    <EditText
+        android:id="@+id/ed_password"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:background="#ffffff"
+        android:hint="密码"
+        android:textSize="16sp"
+        android:textColor="#000000"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:padding="8dp"
+        android:inputType="textPassword"
+        />
+
+    <Button
+        android:id="@+id/btn_login"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:backgroundTint="#559dcf"
+        android:textColor="#ffffff"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:layout_marginTop="75dp"
+        android:elevation="4dp"
+        android:stateListAnimator="@animator/lift_on_press"
+        android:text="登录" />
+    <Button
+        android:id="@+id/btn_register"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:backgroundTint="#eaf5fb"
+        android:textColor="#5190bc"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:layout_marginTop="10dp"
+        android:elevation="4dp"
+        android:stateListAnimator="@animator/lift_on_press"
+        android:text="注册" />
+
+
+
+
+</LinearLayout>

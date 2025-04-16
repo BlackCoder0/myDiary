@@ -1,0 +1,23 @@
+# Android studio
+.idea/
+*.iml
+
+# Build outputs
+/build/
+app/build/
+
+# Local configuration file(sdk path, etc)
+local.properties
+
+# Gradle files
+.gradle/
+build/
+
+# Logs
+*.log
+
+#User-specific configurations
+*.jks
+*.keystore
+*.orig
+*.swp
