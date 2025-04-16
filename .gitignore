@@ -1,15 +1,57 @@
-*.iml
-.gradle
-/local.properties
-/.idea/caches
-/.idea/libraries
-/.idea/modules.xml
-/.idea/workspace.xml
-/.idea/navEditor.xml
-/.idea/assetWizardSettings.xml
-.DS_Store
-/build
-/captures
-.externalNativeBuild
-.cxx
+# Built application files
+*.apk
+*.ap_
+*.aab
+*.aar
+
+# Generated files
+bin/
+gen/
+build/
+intermediates/
+captures/
+outputs/
+release/
+
+# Local configuration file
 local.properties
+
+# Gradle files
+.gradle/
+gradle-app.setting
+!gradle-wrapper.jar
+
+# IDEA/Android Studio 文件
+.idea/
+*.iml
+*.iws
+*.ipr
+.idea/caches/
+.idea/libraries/
+.idea/modules.xml
+.idea/workspace.xml
+.idea/navEditor.xml
+.idea/assetWizardSettings.xml
+
+# Keystore files（包含敏感信息）
+*.jks
+*.keystore
+
+# Fastlane
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots
+fastlane/test_output
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+
+# 其他通用忽略规则
+*.log
+*.swp
+*.bak
+*.tmp
+*.orig
