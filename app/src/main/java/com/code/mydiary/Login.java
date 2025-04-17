@@ -66,8 +66,8 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
 
         Intent intent = null;
 
-        //正确账号：999@qq.com,密码:123456
-        if(username.equals("999@qq.com")&&password.equals("123456")){
+        //正确账号：999,密码:123456
+        if(username.equals("999")&&password.equals("123456")){
             //Toast.makeText(getApplicationContext(),ok,Toast.LENGTH_SHORT).show();
             ToastUtil.showMsg(Login.this,ok);
 

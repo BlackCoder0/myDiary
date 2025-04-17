@@ -23,6 +23,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".SelectByText" />
+        <activity android:name=".SelectByDay" />
+        <activity android:name=".Setting" />
     </application>
 
 </manifest>

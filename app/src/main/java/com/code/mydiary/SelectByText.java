@@ -1,14 +1,53 @@
 package com.code.mydiary;
 
 import android.os.Bundle;
-
-import androidx.activity.EdgeToEdge;
+import android.view.View;
+import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.viewpager.widget.ViewPager;
+import androidx.appcompat.widget.Toolbar;
+
+import com.code.mydiary.util.TabLayout;
+import com.code.mydiary.util.TabPagerAdapter;
+
+import java.util.Objects;
 
 public class SelectByText extends AppCompatActivity {
+    private static final String TAG = "SelectByText";
+    private TextView tabEntries, tabCalendar, tabDairy;
+    private ViewPager viewPager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.select_by_text_activity);
+
+        // 初始化 Toolbar
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        if (toolbar != null) {
+            setSupportActionBar(toolbar);
+            getSupportActionBar().setDisplayShowTitleEnabled(false);
+        }
+
+        // 初始化标签
+        tabEntries = findViewById(R.id.tab_entries);
+        tabCalendar = findViewById(R.id.tab_calendar);
+        tabDairy = findViewById(R.id.tab_dairy);
+        
+
+
+        // 初始化 ViewPager
+        viewPager = findViewById(R.id.view_pager);
+        if (viewPager != null) {
+            TabPagerAdapter adapter = new TabPagerAdapter(getSupportFragmentManager());
+            viewPager.setAdapter(adapter);
+            viewPager.setOffscreenPageLimit(0); // 禁用缓存
+        }
+
+        // 初始化 TabLayout
+        if (tabEntries != null && tabCalendar != null && tabDairy != null && viewPager != null) {
+            TabLayout tabLayout = new TabLayout(tabEntries, tabCalendar, tabDairy, viewPager);
+            tabLayout.initTabs();
+        }
     }
 }

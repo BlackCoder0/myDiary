@@ -1,0 +1,42 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:gravity="center"
+    android:padding="10dp"
+    android:layout_margin="4dp">
+
+    <TextView
+        android:id="@+id/tab_entries"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:padding="8dp"
+        android:text="Entries"
+        android:textColor="@drawable/tab_text_color"
+        android:background="@drawable/tab_background_left" />
+
+    <TextView
+        android:id="@+id/tab_calendar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:padding="8dp"
+        android:text="Calendar"
+        android:textColor="@drawable/tab_text_color"
+        android:background="@drawable/tab_background_center" />
+
+    <TextView
+        android:id="@+id/tab_dairy"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:padding="8dp"
+        android:text="Dairy"
+        android:textColor="@drawable/tab_text_color"
+        android:background="@drawable/tab_background_right" />
+
+</LinearLayout>
