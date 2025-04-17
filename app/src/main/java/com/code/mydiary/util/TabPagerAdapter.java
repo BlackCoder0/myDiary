@@ -9,19 +9,17 @@ import com.code.mydiary.ContentFragment;
 public class TabPagerAdapter extends FragmentPagerAdapter {
     private static final String TAG = "TabPagerAdapter";
 
-    public TabPagerAdapter(@NonNull FragmentManager fm) {
-        super(fm);
+    public TabPagerAdapter(FragmentManager fm) {
+        super(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
     }
 
-    @NonNull
     @Override
     public Fragment getItem(int position) {
-        // 使用现有的 ContentFragment 类，传入不同的页面类型
         return ContentFragment.newInstance(position);
     }
 
     @Override
     public int getCount() {
-        return 3;
+        return 3; // 三个标签页
     }
 }

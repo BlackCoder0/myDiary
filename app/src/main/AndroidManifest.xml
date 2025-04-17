@@ -25,6 +25,8 @@
         <activity android:name=".SelectByText" />
         <activity android:name=".SelectByDay" />
         <activity android:name=".Setting" />
+        <activity android:name=".EditDiary"/>
+        <activity android:name=".Menu"/>
     </application>
 
 </manifest>

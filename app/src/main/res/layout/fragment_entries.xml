@@ -1,56 +1,96 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/boy"> <!-- 你可以根据需要设置背景色 -->
+    android:background="@drawable/contacts_bg_taki"> <!-- 你可以根据需要设置背景色 -->
 
+    <ScrollView
+        android:id="@+id/entries_scroll_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/bottom_navigation_bar"> <!-- 让 ScrollView 在底部栏上方 -->
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- 这里放入原来 ScrollView 中的内容 -->
+            <ImageView
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_gravity="center_horizontal"
+                android:src="@drawable/main_logo" />
+
+            <ImageView
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_gravity="center_horizontal"
+                android:src="@drawable/main_logo" />
+            <ImageView
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_gravity="center_horizontal"
+                android:src="@drawable/main_logo" />
+            <ImageView
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_gravity="center_horizontal"
+                android:src="@drawable/main_logo" />
+            <ImageView
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_gravity="center_horizontal"
+                android:src="@drawable/main_logo" />
+            <ImageView
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_gravity="center_horizontal"
+                android:src="@drawable/main_logo" />
+            <ImageView
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_gravity="center_horizontal"
+                android:src="@drawable/main_logo" />
+            <ImageView
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_gravity="center_horizontal"
+                android:src="@drawable/main_logo" />
+
+
+
+        </LinearLayout>
+    </ScrollView>
+
+    <!-- 底部导航栏 -->
     <LinearLayout
+        android:id="@+id/bottom_navigation_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal"
+        android:background="@color/boy"
+        android:padding="8dp">
 
-        <!-- 这里放入原来 ScrollView 中的内容 -->
-        <ImageView
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:layout_gravity="center_horizontal"
-            android:src="@drawable/main_logo" />
-
-        <ImageView
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:layout_gravity="center_horizontal"
-            android:src="@drawable/main_logo" />
-        <ImageView
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:layout_gravity="center_horizontal"
-            android:src="@drawable/main_logo" />
-        <ImageView
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:layout_gravity="center_horizontal"
-            android:src="@drawable/main_logo" />
-        <ImageView
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:layout_gravity="center_horizontal"
-            android:src="@drawable/main_logo" />
-        <ImageView
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:layout_gravity="center_horizontal"
-            android:src="@drawable/main_logo" />
-        <ImageView
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:layout_gravity="center_horizontal"
-            android:src="@drawable/main_logo" />
-        <ImageView
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:layout_gravity="center_horizontal"
-            android:src="@drawable/main_logo" />
+        <ImageButton
+            android:id="@+id/imgBt_menu"
+            android:layout_marginLeft="20dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_gravity="center_vertical"
+            android:background="@android:color/transparent"
+            app:srcCompat="@drawable/ic_menu_white_24dp" />
+        <ImageButton
+            android:id="@+id/imgBt_add"
+            android:layout_marginLeft="20dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_gravity="center_vertical"
+            android:background="@android:color/transparent"
+            app:srcCompat="@drawable/ic_mode_edit_white_24dp" />
 
     </LinearLayout>
-</ScrollView>
+
+</RelativeLayout>
