@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- Tab 标签栏 -->
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="320dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/white">
+
+            <include layout="@layout/tab_layout" />
+
+        </androidx.appcompat.widget.Toolbar>
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <!-- 页面内容 -->
+    <FrameLayout
+        android:id="@+id/container_entries"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:visibility="visible">
+
+        <!-- Entries 页面内容 -->
+        <include layout="@layout/select_by_text_activity" />
+    </FrameLayout>
+
+    <FrameLayout
+        android:id="@+id/container_calendar"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:visibility="gone">
+
+        <!-- Calendar 页面内容 -->
+        <include layout="@layout/select_by_day_activity" />
+    </FrameLayout>
+
+    <FrameLayout
+        android:id="@+id/container_diary"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:visibility="gone">
+
+        <!-- Diary 页面内容 -->
+        <include layout="@layout/setting_activity" />
+    </FrameLayout>
+
+</LinearLayout>

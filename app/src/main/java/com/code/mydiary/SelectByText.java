@@ -39,7 +39,7 @@ public class SelectByText extends AppCompatActivity {
         // 初始化标签
         tabEntries = findViewById(R.id.tab_entries);
         tabCalendar = findViewById(R.id.tab_calendar);
-        tabDairy = findViewById(R.id.tab_dairy);
+        tabDairy = findViewById(R.id.tab_diary);
 
         // 初始化 ViewPager
         viewPager = findViewById(R.id.view_pager);
@@ -80,25 +80,23 @@ public class SelectByText extends AppCompatActivity {
     }
 
     private void setButtonListeners() {
-        if (currentFragment != null) {
-            ImageButton imgBtMenu = currentFragment.getImgBtMenu();
-            ImageButton imgBtAdd = currentFragment.getImgBtAdd();
+        myBtnMenu = findViewById(R.id.imgBt_menu);
+        myBtnAdd = findViewById(R.id.imgBt_add);
 
-            if (imgBtMenu != null) {
-                imgBtMenu.setOnClickListener(v -> {
-                    // 跳转到 MenuActivity
-                    Intent menuIntent = new Intent(SelectByText.this, Menu.class);
-                    startActivity(menuIntent);
-                });
-            }
+        if (myBtnMenu != null) {
+            myBtnMenu.setOnClickListener(v -> {
+                // 跳转到 MenuActivity
+                Intent menuIntent = new Intent(SelectByText.this, Menu.class);
+                startActivity(menuIntent);
+            });
+        }
 
-            if (imgBtAdd != null) {
-                imgBtAdd.setOnClickListener(v -> {
-                    // 跳转到 EditDiaryActivity
-                    Intent addIntent = new Intent(SelectByText.this, EditDiary.class);
-                    startActivityForResult(addIntent,0);
-                });
-            }
+        if (myBtnAdd != null) {
+            myBtnAdd.setOnClickListener(v -> {
+                // 跳转到 EditDiaryActivity
+                Intent addIntent = new Intent(SelectByText.this, EditDiary.class);
+                startActivityForResult(addIntent, 0);
+            });
         }
     }
 

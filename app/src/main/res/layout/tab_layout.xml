@@ -29,7 +29,7 @@
         android:background="@drawable/tab_background_center" />
 
     <TextView
-        android:id="@+id/tab_dairy"
+        android:id="@+id/tab_diary"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"

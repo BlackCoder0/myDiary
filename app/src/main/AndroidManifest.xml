@@ -27,6 +27,7 @@
         <activity android:name=".Setting" />
         <activity android:name=".EditDiary"/>
         <activity android:name=".Menu"/>
+        <activity android:name=".MainActivity"/>
     </application>
 
 </manifest>

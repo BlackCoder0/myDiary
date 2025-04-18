@@ -72,7 +72,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
             ToastUtil.showMsg(Login.this,ok);
 
             //正确，跳转
-            intent=new Intent(Login.this,SelectByText.class);
+            intent=new Intent(Login.this,MainActivity.class);
             startActivity(intent);
         }else{
             //不正确,居中弹窗

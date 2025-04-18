@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 
@@ -30,7 +31,7 @@ public class ContentFragment extends Fragment {
 
         switch (pageType) {
             case 0: // Entries 页面
-                view = inflater.inflate(R.layout.fragment_entries, container, false);
+                view = inflater.inflate(R.layout.select_by_text_activity, container, false);
                 imgBtMenu = view.findViewById(R.id.imgBt_menu);
                 imgBtAdd = view.findViewById(R.id.imgBt_add);
 
@@ -38,6 +39,7 @@ public class ContentFragment extends Fragment {
                 if (imgBtMenu != null) {
                     imgBtMenu.setOnClickListener(v -> {
                         // 跳转到 MenuActivity
+                        Toast.makeText(getActivity(), "点击了菜单按钮2", Toast.LENGTH_SHORT).show();
                         Intent menuIntent = new Intent(getActivity(), Menu.class);
                         startActivity(menuIntent);
                     });
@@ -46,19 +48,20 @@ public class ContentFragment extends Fragment {
                 if (imgBtAdd != null) {
                     imgBtAdd.setOnClickListener(v -> {
                         // 跳转到 EditDiaryActivity
+                        Toast.makeText(getActivity(), "点击了日记按钮2", Toast.LENGTH_SHORT).show();
                         Intent addIntent = new Intent(getActivity(), EditDiary.class);
                         startActivity(addIntent);
                     });
                 }
                 break;
             case 1: // Calendar 页面
-                view = inflater.inflate(R.layout.fragment_calendar, container, false);
+                view = inflater.inflate(R.layout.select_by_day_activity, container, false);
                 break;
             case 2: // Dairy 页面
-                view = inflater.inflate(R.layout.fragment_dairy, container, false);
+                view = inflater.inflate(R.layout.setting_activity, container, false);
                 break;
             default:
-                view = inflater.inflate(R.layout.fragment_entries, container, false);
+                view = inflater.inflate(R.layout.select_by_text_activity, container, false);
                 imgBtMenu = view.findViewById(R.id.imgBt_menu);
                 imgBtAdd = view.findViewById(R.id.imgBt_add);
                 break;

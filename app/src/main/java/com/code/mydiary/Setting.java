@@ -28,7 +28,7 @@ public class Setting extends AppCompatActivity {
         // 初始化标签
         tabEntries = findViewById(R.id.tab_entries);
         tabCalendar = findViewById(R.id.tab_calendar);
-        tabDairy = findViewById(R.id.tab_dairy);
+        tabDairy = findViewById(R.id.tab_diary);
 
         // 初始化 ViewPager
         viewPager = findViewById(R.id.view_pager);
