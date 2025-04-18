@@ -15,7 +15,7 @@
             android:background="@color/white"
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
 
-           <include layout="@layout/tab_layout" />
+            <include layout="@layout/tab_layout" />
 
         </androidx.appcompat.widget.Toolbar>
 

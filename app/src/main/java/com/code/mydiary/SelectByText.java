@@ -2,6 +2,7 @@ package com.code.mydiary;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -15,6 +16,7 @@ import com.code.mydiary.util.TabPagerAdapter;
 import java.util.Objects;
 
 public class SelectByText extends AppCompatActivity {
+    final String TAG = "test";
     private TextView tabEntries, tabCalendar, tabDairy;
     private ImageButton myBtnMenu, myBtnAdd;
     private ViewPager viewPager;
@@ -94,9 +96,24 @@ public class SelectByText extends AppCompatActivity {
                 imgBtAdd.setOnClickListener(v -> {
                     // 跳转到 EditDiaryActivity
                     Intent addIntent = new Intent(SelectByText.this, EditDiary.class);
-                    startActivity(addIntent);
+                    startActivityForResult(addIntent,0);
                 });
             }
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode,int resultCode,Intent data){
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK && data != null) {
+            String addDiary = data.getStringExtra("input");
+            if (addDiary != null) {
+                Log.d(TAG, "收到的日记内容: " + addDiary);
+            } else {
+                Log.d(TAG, "收到的日记内容为空");
+            }
+        } else {
+            Log.d(TAG, "未收到有效的返回结果");
         }
     }
 }

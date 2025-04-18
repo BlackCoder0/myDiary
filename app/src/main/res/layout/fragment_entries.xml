@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/contacts_bg_taki"> <!-- 你可以根据需要设置背景色 -->
+    android:background="@drawable/theme_bg_taki"> <!-- 你可以根据需要设置背景色 -->
 
     <ScrollView
         android:id="@+id/entries_scroll_view"
@@ -76,15 +76,15 @@
 
         <ImageButton
             android:id="@+id/imgBt_menu"
-            android:layout_marginLeft="20dp"
-            android:layout_width="40dp"
+            android:layout_marginLeft="10dp"
+            android:layout_width="50dp"
             android:layout_height="40dp"
             android:layout_gravity="center_vertical"
             android:background="@android:color/transparent"
             app:srcCompat="@drawable/ic_menu_white_24dp" />
         <ImageButton
             android:id="@+id/imgBt_add"
-            android:layout_marginLeft="20dp"
+            android:layout_marginLeft="5dp"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_gravity="center_vertical"
