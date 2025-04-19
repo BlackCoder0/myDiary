@@ -3,14 +3,24 @@
     android:layout_width="match_parent"
     android:orientation="vertical"
     android:layout_margin="5dp"
+    android:background="@color/white"
     android:layout_height="match_parent">
+    <EditText
+        android:id="@+id/edit_adddiary_title"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:gravity="center"
+        android:hint="标题"
+        android:background="@android:color/transparent"
+        android:layout_gravity="center" />
 
     <EditText
-        android:id="@+id/edit_adddiary"
+        android:id="@+id/edit_adddiary_body"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="610dp"
         android:gravity="top"
-        >
-
-    </EditText>
+        android:padding="8dp"
+        android:hint="内容"
+        android:background="@android:color/transparent"
+        android:layout_gravity="center" />
 </LinearLayout>

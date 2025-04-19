@@ -47,11 +47,28 @@
                 android:orientation="vertical">
 
                 <!-- 图片内容 -->
-                <ImageView
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
+                <TextView
+                    android:id="@+id/tv_diary_title"
+                    android:layout_width="350dp"
+                    android:layout_height="80dp"
+                    android:layout_margin="10dp"
+                    android:text="Hello World"
+                    android:gravity="center"
+                    android:background="@drawable/diary_background"
+                    android:textColor="@color/boy"
                     android:layout_gravity="center_horizontal"
-                    android:src="@drawable/main_logo" />
+                     />
+                <TextView
+                    android:id="@+id/tv_diary_body"
+                    android:layout_width="350dp"
+                    android:layout_height="80dp"
+                    android:layout_margin="10dp"
+                    android:text="Hello World"
+                    android:gravity="center"
+                    android:background="@drawable/diary_background"
+                    android:textColor="@color/boy"
+                    android:layout_gravity="center_horizontal"
+                    />
                 <ImageView
                     android:layout_width="100dp"
                     android:layout_height="100dp"

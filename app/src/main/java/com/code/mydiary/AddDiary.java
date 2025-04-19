@@ -8,16 +8,18 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.widget.EditText;
 
-public class EditDiary extends AppCompatActivity {
+public class AddDiary extends AppCompatActivity {
 
-    EditText Diary;
+    EditText DiaryTitle;
+    EditText DiaryBody;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.add_diary_activity);
-        Diary=findViewById(R.id.edit_adddiary);
-        Log.d("EditDiary", "onCreate is called");
+        DiaryTitle=findViewById(R.id.edit_adddiary_title);
+        DiaryBody=findViewById(R.id.edit_adddiary_body);
+        Log.d("AddDiary", "onCreate is called");
     }
 
     public boolean onKeyDown(int keyCode, KeyEvent event){
@@ -26,7 +28,8 @@ public class EditDiary extends AppCompatActivity {
         }
         else if (keyCode==KeyEvent.KEYCODE_BACK) {
             Intent intent=new Intent();
-            intent.putExtra("input",Diary.getText().toString());
+            intent.putExtra("addDiary_title",DiaryTitle.getText().toString());
+            intent.putExtra("addDiary_body",DiaryBody.getText().toString());
             setResult(RESULT_OK,intent);
             finish();
             return true;
