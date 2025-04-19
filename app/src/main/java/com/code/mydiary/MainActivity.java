@@ -12,9 +12,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.viewpager.widget.ViewPager;
 
-import com.code.mydiary.util.TabLayout;
-import com.code.mydiary.util.TabPagerAdapter;
-
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivity";
@@ -22,16 +19,12 @@ public class MainActivity extends AppCompatActivity {
     // 顶部工具栏和标签页
     private Toolbar toolbar;
     private TextView tabEntries, tabCalendar, tabDiary;
-    private ViewPager viewPager;
 
-    // 页面容器（仅当使用 FrameLayout 切换页面时启用）
     private FrameLayout containerEntries, containerCalendar, containerDiary;
 
     // 底部按钮
     private ImageButton myBtnMenu, myBtnAdd;
 
-    // 当前页面 Fragment（若使用 Fragment）
-    private ContentFragment currentFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,27 +65,6 @@ public class MainActivity extends AppCompatActivity {
         switchPage(0); // 默认显示 Entries 页
     }
 
-//    /** 初始化 ViewPager 和 TabPagerAdapter（结合 TabLayout 切换页面） */
-//    private void initViewPager() {
-//        viewPager = findViewById(R.id.view_pager);
-//        if (viewPager != null) {
-//            TabPagerAdapter adapter = new TabPagerAdapter(getSupportFragmentManager());
-//            viewPager.setAdapter(adapter);
-//            viewPager.setOffscreenPageLimit(0);
-//
-//            viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-//                @Override public void onPageScrolled(int position, float offset, int pixels) {}
-//                @Override public void onPageSelected(int position) {
-//                    updateCurrentFragment(position);
-//                }
-//                @Override public void onPageScrollStateChanged(int state) {}
-//            });
-//
-//            // 如果你希望点击 tab 同步 ViewPager 页，也可启用这个
-//            TabLayout tabLayout = new TabLayout(tabEntries, tabCalendar, tabDiary, viewPager);
-//            tabLayout.initTabs();
-//        }
-//    }
 
     /** 初始化底部菜单按钮与添加按钮 */
     private void initBottomButtons() {
@@ -135,12 +107,6 @@ public class MainActivity extends AppCompatActivity {
         tabDiary.setSelected(index == 2);
     }
 
-    /** 更新当前 Fragment 引用 */
-    private void updateCurrentFragment(int position) {
-        if (viewPager != null && viewPager.getAdapter() != null) {
-            currentFragment = (ContentFragment) viewPager.getAdapter().instantiateItem(viewPager, position);
-        }
-    }
 
     /** 处理 Add 日记页面返回的数据 */
     @Override
