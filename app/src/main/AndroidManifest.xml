@@ -22,8 +22,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".SelectByDay" />
-        <activity android:name=".Setting" />
         <activity android:name=".EditDiary"/>
         <activity android:name=".Menu"/>
         <activity android:name=".MainActivity"/>
