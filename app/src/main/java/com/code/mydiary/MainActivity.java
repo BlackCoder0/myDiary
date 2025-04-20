@@ -25,7 +25,7 @@ public class MainActivity extends AppCompatActivity {
 
     private DiaryDatabase dbHelper;
     private Toolbar toolbar;
-    private TextView tabEntries, tabCalendar, tabDiary, mytv_diary_title, mytv_diary_body;
+    private TextView tabEntries, tabCalendar, tabDiary,mydiary_count;
     private FrameLayout containerEntries, containerCalendar, containerDiary;
     private ImageButton myBtnMenu, myBtnAdd;
     private ListView lv;
@@ -42,8 +42,9 @@ public class MainActivity extends AppCompatActivity {
         initToolbar();
         initTabs();
         initBottomButtons();
-//        initTextView();
+        initTV();
         initLV();
+        refreshListView();
     }
 
     /**
@@ -111,11 +112,10 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    //日记文本
-//    private void initTextView() {
-//        mytv_diary_title = findViewById(R.id.tv_diary_title);
-//        mytv_diary_body = findViewById(R.id.tv_diary_body);
-//    }
+
+    private void initTV() {
+        mydiary_count = findViewById(R.id.tv_diary_count);
+    }
 
     private void initLV() {
         lv = findViewById(R.id.diary_lv);
@@ -123,6 +123,7 @@ public class MainActivity extends AppCompatActivity {
         refreshListView();
         lv.setAdapter(adopter);
     }
+
 
     /**
      * 切换 FrameLayout 显示的页面
@@ -184,10 +185,11 @@ public class MainActivity extends AppCompatActivity {
         op.open();
         if(diaryList.size()>0)
             diaryList.clear();
-        diaryList.addAll(op.getAllDiary());
-//        List<Diary> allDiaries = op.getAllDiary();
-//        Log.d(TAG, "refreshListView: 查询到日记数量=" + allDiaries.size());
-//        diaryList.addAll(allDiaries);
+//        diaryList.addAll(op.getAllDiary());
+        List<Diary> allDiaries = op.getAllDiary();
+        Log.d(TAG, "refreshListView: 查询到日记数量=" + allDiaries.size());
+        mydiary_count.setText(String.valueOf(allDiaries.size()));
+        diaryList.addAll(allDiaries);
         op.close();
         adopter.notifyDataSetChanged();
 //        adopter.bockList = new ArrayList<>(diaryList);

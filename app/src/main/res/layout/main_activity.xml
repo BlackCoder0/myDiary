@@ -13,6 +13,8 @@
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
+            android:layout_gravity="center_horizontal"
+            android:gravity="center_horizontal"
             android:layout_height="?attr/actionBarSize"
             android:background="@color/white">
 
@@ -25,20 +27,23 @@
     <FrameLayout
         android:id="@+id/container_entries"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
         android:background="@drawable/theme_bg_taki"
         android:layout_weight="1"
+        android:layout_height="0dp"
         android:visibility="visible">
 
         <!-- 直接放置 ListView，移除 ScrollView 和内部 LinearLayout -->
         <ListView
             android:id="@+id/diary_lv"
-            android:layout_width="match_parent"
+            android:layout_gravity="center_horizontal"
+            android:layout_width="380dp"
             android:layout_height="match_parent"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
             android:layout_marginTop="8dp"
             android:paddingBottom="56dp"
+            android:divider="@android:color/transparent"
+            android:dividerHeight="12dp"
             android:clipToPadding="false"/>
 <!--                <TextView-->
 <!--                    android:id="@+id/tv_diary_title"-->
@@ -70,6 +75,25 @@
                 android:layout_marginLeft="20dp"
                 android:background="@android:color/transparent"
                 android:src="@drawable/ic_mode_edit_white_24dp" />
+
+            <TextView
+                android:id="@+id/tv_diary_count"
+                android:layout_width="60dp"
+                android:layout_height="40dp"
+                android:gravity="center"
+                android:layout_marginLeft="155dp"
+                android:text="00"
+                android:textSize="20sp"
+                android:textColor="@color/white" />
+            <TextView
+                android:layout_width="50dp"
+                android:layout_height="40dp"
+                android:gravity="center"
+                android:layout_marginLeft="0dp"
+                android:text="entry"
+                android:textSize="20sp"
+                android:textColor="@color/white" />
+
         </LinearLayout>
 
     </FrameLayout>

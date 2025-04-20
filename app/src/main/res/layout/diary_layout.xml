@@ -11,8 +11,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
@@ -20,15 +20,20 @@
             android:id="@+id/tv_day"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="月"
-            android:textSize="48sp"
+            android:layout_marginTop="5dp"
+            android:layout_marginLeft="6dp"
+            android:text="12"
+            android:textStyle="bold"
+            android:textSize="40sp"
             android:textColor="@color/boy"/>
 
         <TextView
             android:id="@+id/tv_week"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="星期？"
+            android:layout_marginTop="2dp"
+            android:layout_marginLeft="16dp"
+            android:text="Thu."
             android:textSize="16sp"
             android:textColor="@color/boy"/>
     </LinearLayout>
@@ -59,15 +64,15 @@
             android:text="标题"
             android:textSize="25sp"
             android:textColor="@color/boy"
-            android:layout_marginTop="4dp"
-            android:layout_marginLeft="5dp"
+            android:layout_marginTop="0dp"
+            android:layout_marginLeft="2dp"
             />
         <!-- 正文摘要，和星期同一行 -->
         <TextView
             android:id="@+id/tv_body"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="13dp"
+            android:layout_marginTop="3dp"
             android:text="这里是正文摘要，最多20字，多余显示省略号"
             android:textSize="12sp"
             android:textColor="@color/boy"
