@@ -30,95 +30,21 @@
         android:layout_weight="1"
         android:visibility="visible">
 
-        <androidx.viewpager.widget.ViewPager
-            android:id="@+id/view_pager"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-        <!-- 可滚动内容 -->
-        <ScrollView
-            android:id="@+id/entries_scroll_view"
+        <!-- 直接放置 ListView，移除 ScrollView 和内部 LinearLayout -->
+        <ListView
+            android:id="@+id/diary_lv"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginBottom="56dp"> <!-- 留出底部导航栏空间 -->
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                <!-- 图片内容 -->
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="8dp"
+            android:paddingBottom="56dp"
+            android:clipToPadding="false"/>
 <!--                <TextView-->
 <!--                    android:id="@+id/tv_diary_title"-->
 <!--                    android:layout_width="350dp"-->
 <!--                    android:layout_height="80dp"-->
 <!--                    android:layout_margin="10dp"-->
-<!--                    android:text="Hello World"-->
-<!--                    android:gravity="center"-->
-<!--                    android:background="@drawable/diary_background"-->
-<!--                    android:textColor="@color/boy"-->
-<!--                    android:layout_gravity="center_horizontal"-->
-<!--                     />-->
-<!--                <TextView-->
-<!--                    android:id="@+id/tv_diary_body"-->
-<!--                    android:layout_width="350dp"-->
-<!--                    android:layout_height="80dp"-->
-<!--                    android:layout_margin="10dp"-->
-<!--                    android:text="Hello World"-->
-<!--                    android:gravity="center"-->
-<!--                    android:background="@drawable/diary_background"-->
-<!--                    android:textColor="@color/boy"-->
-<!--                    android:layout_gravity="center_horizontal"-->
-<!--                    />-->
-                
-                <ListView
-                    android:id="@+id/diary_lv"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginRight="10dp"
-                    android:layout_marginTop="8dp"/>
-<!--                    android:listSelector="@layout/diary_layout" -->
-                <ImageView
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
-                    android:layout_gravity="center_horizontal"
-                    android:src="@drawable/main_logo" />
-                <ImageView
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
-                    android:layout_gravity="center_horizontal"
-                    android:src="@drawable/main_logo" />
-                <ImageView
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
-                    android:layout_gravity="center_horizontal"
-                    android:src="@drawable/main_logo" />
-                <ImageView
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
-                    android:layout_gravity="center_horizontal"
-                    android:src="@drawable/main_logo" />
-                <ImageView
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
-                    android:layout_gravity="center_horizontal"
-                    android:src="@drawable/main_logo" />
-                <ImageView
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
-                    android:layout_gravity="center_horizontal"
-                    android:src="@drawable/main_logo" />
-                <ImageView
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
-                    android:layout_gravity="center_horizontal"
-                    android:src="@drawable/main_logo" />
-
-                <!-- 其他 ImageView 省略，实际需保留 -->
-
-            </LinearLayout>
-        </ScrollView>
-
         <!-- 底部导航栏 -->
         <LinearLayout
             android:id="@+id/bottom_navigation_bar"

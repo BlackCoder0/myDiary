@@ -14,15 +14,15 @@ public class Diary {
     public Diary() {
     }
 
-    public Diary(String time, String weather, String temperature, String location, String body, int mood, int tag, String title) {
+    public Diary(String time, String weather, String temperature, String location, String title, String body, int mood, int tag) {
         this.time = time;
         this.weather = weather;
         this.temperature = temperature;
         this.location = location;
+        this.title = title;
         this.body = body;
         this.mood = mood;
         this.tag = tag;
-        this.title = title;
     }
 
     public long getId() {

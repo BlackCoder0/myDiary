@@ -1,7 +1,10 @@
 package com.code.mydiary;
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -14,14 +17,15 @@ import java.util.List;
 
 public class DiaryAdopter extends BaseAdapter implements Filterable {
     private Context myContext;
-    private List<Diary> bockList;//备份原始数据
+    public List<Diary> bockList;//备份原始数据
     private List<Diary> diaryList;//会改变的数据
     private MyFilter myFilter;
 
-    public DiaryAdopter(Context myContext,List<Diary> diaryList){
+    public DiaryAdopter(Context myContext, List<Diary> diaryList){
         this.myContext = myContext;
         this.diaryList = diaryList;
         bockList = diaryList;
+//        this.bockList = new ArrayList<>(diaryList); // 深拷贝，避免引用同一个对象
     }
 
     @Override
@@ -41,35 +45,25 @@ public class DiaryAdopter extends BaseAdapter implements Filterable {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent){
-//        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(myContext);
-//        myContext.setTheme((sharedPreferences.getBoolean("girlMode",false)? R.style.GirlTheme:R.style.BoyTheme));
-        View v = View.inflate(myContext,R.layout.diary_layout,null);
-        TextView tv_title = (TextView)v.findViewById(R.id.tv_title);
-        TextView tv_body = (TextView)v.findViewById(R.id.tv_body);
-        TextView tv_time = (TextView)v.findViewById(R.id.tv_time);
-        TextView tv_weather = (TextView)v.findViewById(R.id.tv_weather);
-        TextView tv_mood = (TextView)v.findViewById(R.id.tv_mood);
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(myContext);
+        //myContext.setTheme((SharedPreferences.getBoolean("girlMode",false)?R.style.GirlTheme:R.style.BoyTheme));
+        View v = View.inflate(myContext, R.layout.diary_layout, null);
+        TextView tv_title = v.findViewById(R.id.tv_title);
+        TextView tv_body = v.findViewById(R.id.tv_body);
+        TextView tv_time = v.findViewById(R.id.tv_time);
+        TextView tv_weather = v.findViewById(R.id.tv_weather);
+        TextView tv_mood = v.findViewById(R.id.tv_mood);
 
-        String Text_title = diaryList.get(position).getTitle();
-        String Text_body = diaryList.get(position).getBody();
-        /*
-        if(sharedPreferences.getBoolean("diaryTitle",true))
-            tv_body.setText(tv_body.split("\n")[0]);
-        else tv_body.setText(Text_body);
-         */
-//        if(sharedPreferences.getBoolean("diaryTitle",true))
-//            tv_body.setText(Text_title);
+        Diary diary = diaryList.get(position);
 
-        if(Text_title != null && !Text_title.isEmpty())
-           tv_body.setText(Text_title);
-        tv_body.setText(Text_body);
-//        if(sharedPreferences.getBoolean("diaryWeather",true))
-//            tv_weather.setText(tv_weather);
-//        if(sharedPreferences.getBoolean("diaryMood",true))
-//            tv_mood.setText(tv_mood);
-        tv_time.setText(diaryList.get(position).getTime());
+        tv_title.setText(!TextUtils.isEmpty(diary.getTitle()) ? diary.getTitle() : diary.getTime());
+        tv_body.setText(!TextUtils.isEmpty(diary.getBody()) ? diary.getBody() : "无内容");
+        tv_time.setText(!TextUtils.isEmpty(diary.getTime()) ? diary.getTime() : "");
+        tv_weather.setText(!TextUtils.isEmpty(diary.getWeather()) ? diary.getWeather() : "");
+        tv_mood.setText(String.valueOf(diary.getMood()));
 
-        v.setTag(diaryList.get(position).getId());
+        v.setTag(diary.getId());
+        Log.d("DiaryAdopter", "getView: position=" + position + ", title=" + diary.getTitle());
         return v;
     }
 

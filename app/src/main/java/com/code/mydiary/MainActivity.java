@@ -148,12 +148,18 @@ public class MainActivity extends AppCompatActivity {
             String Title = data.getStringExtra("addDiary_title");
             String Body = data.getStringExtra("addDiary_body");
             String Time = data.getStringExtra("addDiary_time");
-            //String time, String weather, String temperature, String location, String body, int mood, int tag, String title
-            Diary diary = new Diary(Time, "晴", "25", "江门", Body, 1, 1, Title);
+            Log.d(TAG, "onActivityResult: Title=" + Title + ", Body=" + Body + ", Time=" + Time);
+
+            //String time, String weather, String temperature, String location, String title, String body, int mood, int tag
+            Diary diary = new Diary(Time, "晴", "25", "江门", Title, Body, 1, 1);
+            Log.d(TAG, "onActivityResult: 新建Diary=" + diary.toString());
+
             CRUD op = new CRUD(context);
             op.open();
             op.addDiary(diary);
+            Log.d(TAG, "onActivityResult: addDiary已调用");
             op.close();
+            refreshListView();
 
 
 //            if (addDiaryTitle != null && !addDiaryTitle.isEmpty()) {
@@ -179,7 +185,11 @@ public class MainActivity extends AppCompatActivity {
         if(diaryList.size()>0)
             diaryList.clear();
         diaryList.addAll(op.getAllDiary());
+//        List<Diary> allDiaries = op.getAllDiary();
+//        Log.d(TAG, "refreshListView: 查询到日记数量=" + allDiaries.size());
+//        diaryList.addAll(allDiaries);
         op.close();
         adopter.notifyDataSetChanged();
+//        adopter.bockList = new ArrayList<>(diaryList);
     }
 }
