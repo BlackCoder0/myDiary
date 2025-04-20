@@ -47,28 +47,37 @@
                 android:orientation="vertical">
 
                 <!-- 图片内容 -->
-                <TextView
-                    android:id="@+id/tv_diary_title"
-                    android:layout_width="350dp"
-                    android:layout_height="80dp"
-                    android:layout_margin="10dp"
-                    android:text="Hello World"
-                    android:gravity="center"
-                    android:background="@drawable/diary_background"
-                    android:textColor="@color/boy"
-                    android:layout_gravity="center_horizontal"
-                     />
-                <TextView
-                    android:id="@+id/tv_diary_body"
-                    android:layout_width="350dp"
-                    android:layout_height="80dp"
-                    android:layout_margin="10dp"
-                    android:text="Hello World"
-                    android:gravity="center"
-                    android:background="@drawable/diary_background"
-                    android:textColor="@color/boy"
-                    android:layout_gravity="center_horizontal"
-                    />
+<!--                <TextView-->
+<!--                    android:id="@+id/tv_diary_title"-->
+<!--                    android:layout_width="350dp"-->
+<!--                    android:layout_height="80dp"-->
+<!--                    android:layout_margin="10dp"-->
+<!--                    android:text="Hello World"-->
+<!--                    android:gravity="center"-->
+<!--                    android:background="@drawable/diary_background"-->
+<!--                    android:textColor="@color/boy"-->
+<!--                    android:layout_gravity="center_horizontal"-->
+<!--                     />-->
+<!--                <TextView-->
+<!--                    android:id="@+id/tv_diary_body"-->
+<!--                    android:layout_width="350dp"-->
+<!--                    android:layout_height="80dp"-->
+<!--                    android:layout_margin="10dp"-->
+<!--                    android:text="Hello World"-->
+<!--                    android:gravity="center"-->
+<!--                    android:background="@drawable/diary_background"-->
+<!--                    android:textColor="@color/boy"-->
+<!--                    android:layout_gravity="center_horizontal"-->
+<!--                    />-->
+                
+                <ListView
+                    android:id="@+id/diary_lv"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginTop="8dp"/>
+<!--                    android:listSelector="@layout/diary_layout" -->
                 <ImageView
                     android:layout_width="100dp"
                     android:layout_height="100dp"

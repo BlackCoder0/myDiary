@@ -1,5 +1,6 @@
 package com.code.mydiary;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -13,19 +14,24 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivity";
 
-    // 顶部工具栏和标签页
+    private DiaryDatabase dbHelper;
     private Toolbar toolbar;
-    private TextView tabEntries, tabCalendar, tabDiary,mytv_diary_title,mytv_diary_body;
+    private TextView tabEntries, tabCalendar, tabDiary, mytv_diary_title, mytv_diary_body;
     private FrameLayout containerEntries, containerCalendar, containerDiary;
     private ImageButton myBtnMenu, myBtnAdd;
-    ListView lv;
+    private ListView lv;
+    private DiaryAdopter adopter;
+    private List<Diary> diaryList = new ArrayList<>();
+    private Context context = this;
 
 
     @Override
@@ -36,10 +42,13 @@ public class MainActivity extends AppCompatActivity {
         initToolbar();
         initTabs();
         initBottomButtons();
-        initTextView();
+//        initTextView();
+        initLV();
     }
 
-    /** 初始化 Toolbar */
+    /**
+     * 初始化 Toolbar
+     */
     private void initToolbar() {
         toolbar = findViewById(R.id.toolbar);
         if (toolbar != null) {
@@ -50,7 +59,9 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    /** 初始化标签页和 FrameLayout 页面容器（用于页面切换） */
+    /**
+     * 初始化标签页和 FrameLayout 页面容器（用于页面切换）
+     */
     private void initTabs() {
         tabEntries = findViewById(R.id.tab_entries);
         tabCalendar = findViewById(R.id.tab_calendar);
@@ -68,7 +79,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    /** 初始化底部菜单按钮与添加按钮 */
+    /**
+     * 初始化底部菜单按钮与添加按钮
+     */
     private void initBottomButtons() {
         myBtnMenu = findViewById(R.id.imgBt_menu);
         myBtnAdd = findViewById(R.id.imgBt_add);
@@ -99,12 +112,21 @@ public class MainActivity extends AppCompatActivity {
     }
 
     //日记文本
-    private void initTextView(){
-        mytv_diary_title=findViewById(R.id.tv_diary_title);
-        mytv_diary_body=findViewById(R.id.tv_diary_body);
+//    private void initTextView() {
+//        mytv_diary_title = findViewById(R.id.tv_diary_title);
+//        mytv_diary_body = findViewById(R.id.tv_diary_body);
+//    }
+
+    private void initLV() {
+        lv = findViewById(R.id.diary_lv);
+        adopter = new DiaryAdopter(getApplicationContext(), diaryList);
+        refreshListView();
+        lv.setAdapter(adopter);
     }
 
-    /** 切换 FrameLayout 显示的页面 */
+    /**
+     * 切换 FrameLayout 显示的页面
+     */
     private void switchPage(int index) {
         containerEntries.setVisibility(index == 0 ? View.VISIBLE : View.GONE);
         containerCalendar.setVisibility(index == 1 ? View.VISIBLE : View.GONE);
@@ -116,25 +138,48 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    /** 处理 Add日记页面,startActivityForResult返回的数据 */
+    /**
+     * 处理 Add日记页面,startActivityForResult返回的数据
+     */
     @Override
-    protected void onActivityResult(int requestCode,int resultCode,Intent data){
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK && data != null) {
-            String addDiaryTitle = data.getStringExtra("addDiary_title");
-            String addDiaryBody = data.getStringExtra("addDiary_body");
-            if (addDiaryTitle != null && !addDiaryTitle.isEmpty()) {
-                mytv_diary_title.setText(addDiaryTitle);
-            } else {
-                // 获取当前时间并格式化为字符串
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-                String currentTime = sdf.format(new Date());
-                mytv_diary_title.setText(currentTime);
-                Log.d(TAG, "收到的日记标题为空，使用当前时间：" + currentTime);
-            }
-            mytv_diary_body.setText(addDiaryBody);
-        } else {
-            Log.d(TAG, "未收到有效的返回结果");
+            String Title = data.getStringExtra("addDiary_title");
+            String Body = data.getStringExtra("addDiary_body");
+            String Time = data.getStringExtra("addDiary_time");
+            //String time, String weather, String temperature, String location, String body, int mood, int tag, String title
+            Diary diary = new Diary(Time, "晴", "25", "江门", Body, 1, 1, Title);
+            CRUD op = new CRUD(context);
+            op.open();
+            op.addDiary(diary);
+            op.close();
+
+
+//            if (addDiaryTitle != null && !addDiaryTitle.isEmpty()) {
+//                mytv_diary_title.setText(addDiaryTitle);
+//            } else {
+//                // 获取当前时间并格式化为字符串
+//                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+//                String currentTime = sdf.format(new Date());
+//                mytv_diary_title.setText(currentTime);
+//                Log.d(TAG, "收到的日记标题为空，使用当前时间：" + currentTime);
+//            }
+//            mytv_diary_body.setText(addDiaryBody);
+//        } else {
+//            Log.d(TAG, "未收到有效的返回结果");
+//        }
         }
+
+    }
+
+    public void refreshListView(){
+        CRUD op = new CRUD(context);
+        op.open();
+        if(diaryList.size()>0)
+            diaryList.clear();
+        diaryList.addAll(op.getAllDiary());
+        op.close();
+        adopter.notifyDataSetChanged();
     }
 }
