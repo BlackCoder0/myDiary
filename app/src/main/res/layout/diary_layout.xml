@@ -22,8 +22,8 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
             android:layout_marginLeft="6dp"
+            android:layout_marginBottom="0dp"
             android:text="12"
-            android:textStyle="bold"
             android:textSize="40sp"
             android:textColor="@color/boy"/>
 
@@ -31,7 +31,7 @@
             android:id="@+id/tv_week"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="2dp"
+            android:layout_marginTop="1dp"
             android:layout_marginLeft="16dp"
             android:text="Thu."
             android:textSize="16sp"
