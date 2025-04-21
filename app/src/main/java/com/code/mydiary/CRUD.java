@@ -22,7 +22,8 @@ public class CRUD {
             DiaryDatabase.TEMPERATURE,
             DiaryDatabase.LOCATION,
             DiaryDatabase.MOOD,
-            DiaryDatabase.TAG
+            DiaryDatabase.TAG,
+            DiaryDatabase.MODE
     };
 
     public CRUD(Context context){
@@ -47,6 +48,7 @@ public class CRUD {
         contentValues.put(DiaryDatabase.BODY, diary.getBody());
         contentValues.put(DiaryDatabase.MOOD, diary.getMood());
         contentValues.put(DiaryDatabase.TAG, diary.getTag());
+        contentValues.put(DiaryDatabase.MODE, diary.getMode());
         long newId = db.insert(DiaryDatabase.TABLE_NAME,null,contentValues);
         diary.setId(newId);
         return diary;
@@ -57,8 +59,8 @@ public class CRUD {
                 new String[]{String.valueOf(id)}, null, null, null, null);
         if (cursor != null)
             cursor.moveToFirst();
-        //String time, int weather, String temperature, String location, String title, String body, int mood, int tag
-        Diary e = new Diary(cursor.getString(1),cursor.getInt(2),cursor.getString(3),cursor.getString(4),cursor.getString(5),cursor.getString(6),cursor.getInt(7),cursor.getInt(8));
+        //String time, int weather, String temperature, String location, String title, String body, int mood, int tag, int mode
+        Diary e = new Diary(cursor.getString(1),cursor.getInt(2),cursor.getString(3),cursor.getString(4),cursor.getString(5),cursor.getString(6),cursor.getInt(7),cursor.getInt(8),cursor.getInt(9));
         return e;
     }
 
@@ -77,6 +79,7 @@ public class CRUD {
                 diary.setBody(cursor.getString(cursor.getColumnIndex(DiaryDatabase.BODY)));
                 diary.setMood(cursor.getInt(cursor.getColumnIndex(DiaryDatabase.MOOD)));
                 diary.setTag(cursor.getInt(cursor.getColumnIndex(DiaryDatabase.TAG)));
+                diary.setMode(cursor.getInt(cursor.getColumnIndex(DiaryDatabase.MODE)));
                 diaries.add(diary);
             }
         }
@@ -93,6 +96,7 @@ public class CRUD {
         values.put(DiaryDatabase.BODY, diary.getBody());
         values.put(DiaryDatabase.MOOD, diary.getMood());
         values.put(DiaryDatabase.TAG, diary.getTag());
+        values.put(DiaryDatabase.MODE, diary.getMode());
 
         return db.update(DiaryDatabase.TABLE_NAME, values, DiaryDatabase.ID + " = ?",
                 new String[]{String.valueOf(diary.getId())});

@@ -11,10 +11,12 @@ public class Diary {
     private int mood;  // 心情
     private int tag;   // 标签
 
+    private int mode;   // 状态
+
     public Diary() {
     }
 
-    public Diary(String time, int weather, String temperature, String location, String title, String body, int mood, int tag) {
+    public Diary(String time, int weather, String temperature, String location, String title, String body, int mood, int tag,int mode) {
         this.time = time;
         this.weather = weather;
         this.temperature = temperature;
@@ -23,6 +25,7 @@ public class Diary {
         this.body = body;
         this.mood = mood;
         this.tag = tag;
+        this.mode = mode;
     }
 
     public long getId() {
@@ -95,6 +98,15 @@ public class Diary {
 
     public void setTag(int tag) {
         this.tag = tag;
+    }
+
+
+    public int getMode() {
+        return mode;
+    }
+
+    public void setMode(int mode) {
+        this.mode = mode;
     }
 
     @Override

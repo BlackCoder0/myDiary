@@ -40,6 +40,20 @@ public class AddDiary extends AppCompatActivity {
     int weather = -1; // -1 表示未选择
     int mood = -1;
 
+    //String time, int weather, String temperature, String location, String title, String body, int mood, int tag,int mode
+    private String old_time = "";
+    private int old_weather = -1;
+    private String old_temperature = "";
+    private String old_location = "";
+    private String old_title = "";
+    private String old_body = "";
+    private int old_mood = -1;
+    private int old_tag = 1;
+    private int old_mode = 1;
+    private long id = 0;
+    private int openMode = 0;
+    private int tag = 1;
+
     
 
     private static final int[] weatherIcons = {
@@ -66,9 +80,27 @@ public class AddDiary extends AppCompatActivity {
         AMapLocationClient.updatePrivacyShow(this, true, true);
         AMapLocationClient.updatePrivacyAgree(this, true);
         setContentView(R.layout.add_diary_activity);
-
         DiaryTitle = findViewById(R.id.edit_adddiary_title);
         DiaryBody = findViewById(R.id.edit_adddiary_body);
+        Intent intent = getIntent();
+        int openMode = intent.getIntExtra("mode",0);
+
+        if(openMode == 3){//打开已存在的diary
+            id=getIntent().getLongExtra("id",0);
+            //String time, int weather, String temperature, String location, String title, String body, int mood, int tag,int mode
+            old_time = getIntent().getStringExtra("time");
+            old_weather = getIntent().getIntExtra("weather",-1);
+            old_temperature = getIntent().getStringExtra("temperature");
+            old_location = getIntent().getStringExtra("location");
+            old_title = getIntent().getStringExtra("title");
+            old_body = getIntent().getStringExtra("body");
+            old_mood = getIntent().getIntExtra("mood",-1);
+            old_tag = getIntent().getIntExtra("tag",1);
+            DiaryTitle.setText(old_title);
+            DiaryBody.setText(old_body);
+            DiaryBody.setSelection(old_body.length());//光标位置
+        }
+
         weatherBtn = findViewById(R.id.imgBt_weather);
         moodBtn = findViewById(R.id.imgBt_mood);
 

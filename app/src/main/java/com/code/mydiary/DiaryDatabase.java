@@ -17,6 +17,8 @@ public class DiaryDatabase extends SQLiteOpenHelper {
     public static final String MOOD = "mood";
     public static final String TAG = "tag";
 
+    public static final String MODE = "mode";
+
     public DiaryDatabase(Context context) {
         super(context, TABLE_NAME, null, 1);
     }
@@ -33,7 +35,8 @@ public class DiaryDatabase extends SQLiteOpenHelper {
                 + TITLE + " TEXT NOT NULL, "
                 + BODY + " TEXT NOT NULL, "
                 + MOOD + " INTEGER DEFAULT -1, "
-                + TAG + " INTEGER DEFAULT 1)"
+                + TAG + " INTEGER DEFAULT 1,"
+                + MODE + " INTEGER DEFAULT 1)"
         );
     }
 

@@ -5,23 +5,19 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.content.ContextCompat;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
 
     private static final String TAG = "MainActivity";
 
@@ -126,6 +122,7 @@ public class MainActivity extends AppCompatActivity {
         adopter = new DiaryAdopter(getApplicationContext(), diaryList);
         refreshListView();
         lv.setAdapter(adopter);
+        lv.setOnItemClickListener(this);
     }
 
 
@@ -155,10 +152,11 @@ public class MainActivity extends AppCompatActivity {
             String Time = data.getStringExtra("addDiary_time");
             int Weather = data.getIntExtra("addDiary_weather", -1);
             int Mood = data.getIntExtra("addDiary_mood", -1);
+            int Mode = data.getIntExtra("addDiary_mode", 1);
 
             Log.d(TAG, "onActivityResult: Title=" + Title + ", Body=" + Body + ", Time=" + Time + ", Weather=" + Weather + ", Mood=" + Mood);
 
-            Diary diary = new Diary(Time, Weather, "25", "江门", Title, Body, Mood, 1);
+            Diary diary = new Diary(Time, Weather, "25", "江门", Title, Body, Mood, 1, Mode);
 
             CRUD op = new CRUD(context);
             op.open();
@@ -197,5 +195,33 @@ public class MainActivity extends AppCompatActivity {
         op.close();
         adopter.notifyDataSetChanged();
 //        adopter.bockList = new ArrayList<>(diaryList);
+    }
+
+    private static final int ID_DIARY_LV = R.id.diary_lv;  // 提取为常量
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        int parentId = parent.getId();
+        if (parentId == R.id.diary_lv) {
+            Diary curDiary = (Diary) parent.getItemAtPosition(position);
+//                Intent intent = new Intent(MainActivity.this, ImfDiary.class);
+                Intent intent = new Intent(MainActivity.this, AddDiary.class);
+
+                //String time, int weather, String temperature, String location, String title, String body, int mood, int tag, int mode
+                intent.putExtra("id",curDiary.getId());
+                intent.putExtra("time",curDiary.getTime());
+                intent.putExtra("weather",curDiary.getWeather());
+                intent.putExtra("temperature",curDiary.getTemperature());
+                intent.putExtra("location",curDiary.getLocation());
+                intent.putExtra("title",curDiary.getTitle());
+                intent.putExtra("body",curDiary.getBody());
+                intent.putExtra("mood",curDiary.getMood());
+                intent.putExtra("tag",curDiary.getTag());
+                intent.putExtra("mode", 3);
+                startActivityForResult(intent,1);
+                Log.d(TAG,"onItemClick:"+position);
+                //break;
+
+        }
     }
 }
