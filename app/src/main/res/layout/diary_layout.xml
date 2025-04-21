@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:layout_marginStart="10dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="5dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
@@ -20,10 +20,10 @@
             android:id="@+id/tv_day"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:layout_marginLeft="6dp"
-            android:layout_marginBottom="0dp"
+            android:gravity="center_horizontal"
+            android:layout_gravity="center_horizontal"
             android:text="12"
+
             android:textSize="40sp"
             android:textColor="@color/boy"/>
 
@@ -31,8 +31,9 @@
             android:id="@+id/tv_week"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="1dp"
-            android:layout_marginLeft="16dp"
+            android:layout_marginTop="0dp"
+            android:gravity="center_horizontal"
+            android:layout_gravity="center_horizontal"
             android:text="Thu."
             android:textSize="16sp"
             android:textColor="@color/boy"/>
@@ -62,17 +63,17 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="标题"
-            android:textSize="25sp"
+            android:textSize="23sp"
             android:textColor="@color/boy"
-            android:layout_marginTop="0dp"
-            android:layout_marginLeft="2dp"
+            android:layout_gravity="center_vertical"
+            android:gravity="center_vertical"
             />
         <!-- 正文摘要，和星期同一行 -->
         <TextView
             android:id="@+id/tv_body"
-            android:layout_width="wrap_content"
+            android:layout_width="160dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="3dp"
+            android:layout_marginTop="4dp"
             android:text="这里是正文摘要，最多20字，多余显示省略号"
             android:textSize="12sp"
             android:textColor="@color/boy"
@@ -93,21 +94,40 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-        <TextView
-            android:id="@+id/tv_weather"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:text="晴"
-            android:textColor="@color/boy"
-            />
+        <ImageView
+            android:id="@+id/iv_weather"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:scaleType="fitCenter"
+            android:layout_height="20dp"
+            android:visibility="gone"
+            android:contentDescription="天气图标"
+            android:tint="@color/boy" />
 
-        <TextView
-            android:id="@+id/tv_mood"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:text="笑"
-            android:textColor="@color/boy"
-            android:layout_marginStart="8dp"/>
+        <ImageView
+            android:id="@+id/iv_mood"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:scaleType="fitCenter"
+            android:layout_height="18dp"
+            android:layout_marginStart="8dp"
+            android:visibility="gone"
+            android:contentDescription="心情图标"
+            android:tint="@color/boy"/>
+
+        <ImageView
+            android:id="@+id/iv_tag"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:scaleType="fitCenter"
+            android:layout_height="22dp"
+            android:layout_marginStart="8dp"
+            android:src="@drawable/ic_bookmark_border"
+            android:contentDescription="标签图标"
+            android:tint="@color/gray"
+            /> <!-- 默认灰色 -->
+
+
 
 
     </LinearLayout>

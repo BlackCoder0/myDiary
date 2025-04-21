@@ -37,4 +37,7 @@ dependencies {
     testImplementation libs.junit
     androidTestImplementation libs.ext.junit
     androidTestImplementation libs.espresso.core
+
+    implementation 'com.amap.api:location:6.4.0'
+    implementation 'com.amap.api:search:9.7.0'
 }

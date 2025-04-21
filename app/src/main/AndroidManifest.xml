@@ -3,6 +3,20 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.code.mydiary">
 
+    <!-- 声明粗略位置权限 -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <!-- 声明精确位置权限 -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <!-- 高德Key -->
+    <meta-data
+        android:name="com.amap.api.v2.apikey"
+        android:value="a6b51c19f672df49f2cc18662641ac87" />
+
+    <!-- 定位和网络权限 -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -22,7 +36,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".AddDiary"/>
+        <activity
+        android:name=".AddDiary"
+        android:windowSoftInputMode="adjustResize"
+        />
         <activity android:name=".Menu"/>
         <activity android:name=".MainActivity"/>
     </application>

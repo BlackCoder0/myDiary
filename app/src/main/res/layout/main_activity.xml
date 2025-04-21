@@ -36,14 +36,14 @@
         <ListView
             android:id="@+id/diary_lv"
             android:layout_gravity="center_horizontal"
-            android:layout_width="380dp"
+            android:layout_width="340dp"
             android:layout_height="match_parent"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
             android:layout_marginTop="8dp"
             android:paddingBottom="56dp"
             android:divider="@android:color/transparent"
-            android:dividerHeight="12dp"
+            android:dividerHeight="13dp"
             android:clipToPadding="false"/>
 <!--                <TextView-->
 <!--                    android:id="@+id/tv_diary_title"-->
@@ -64,7 +64,7 @@
                 android:id="@+id/imgBt_menu"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
-                android:layout_marginLeft="20dp"
+                android:layout_marginLeft="10dp"
                 android:background="@android:color/transparent"
                 android:src="@drawable/ic_menu_white_24dp" />
 
@@ -72,7 +72,7 @@
                 android:id="@+id/imgBt_add"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
-                android:layout_marginLeft="20dp"
+                android:layout_marginLeft="15dp"
                 android:background="@android:color/transparent"
                 android:src="@drawable/ic_mode_edit_white_24dp" />
 
@@ -81,7 +81,7 @@
                 android:layout_width="60dp"
                 android:layout_height="40dp"
                 android:gravity="center"
-                android:layout_marginLeft="155dp"
+                android:layout_marginLeft="125dp"
                 android:text="00"
                 android:textSize="20sp"
                 android:textColor="@color/white" />

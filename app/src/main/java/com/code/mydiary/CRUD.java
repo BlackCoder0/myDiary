@@ -57,7 +57,8 @@ public class CRUD {
                 new String[]{String.valueOf(id)}, null, null, null, null);
         if (cursor != null)
             cursor.moveToFirst();
-        Diary e = new Diary(cursor.getString(1),cursor.getString(2),cursor.getString(3),cursor.getString(4),cursor.getString(5),cursor.getString(6),cursor.getInt(7),cursor.getInt(8));
+        //String time, int weather, String temperature, String location, String title, String body, int mood, int tag
+        Diary e = new Diary(cursor.getString(1),cursor.getInt(2),cursor.getString(3),cursor.getString(4),cursor.getString(5),cursor.getString(6),cursor.getInt(7),cursor.getInt(8));
         return e;
     }
 
@@ -69,7 +70,7 @@ public class CRUD {
                 Diary diary = new Diary();
                 diary.setId(cursor.getLong(cursor.getColumnIndex(DiaryDatabase.ID)));
                 diary.setTime(cursor.getString(cursor.getColumnIndex(DiaryDatabase.TIME)));
-                diary.setWeather(cursor.getString(cursor.getColumnIndex(DiaryDatabase.WEATHER)));
+                diary.setWeather(cursor.getInt(cursor.getColumnIndex(DiaryDatabase.WEATHER)));
                 diary.setTemperature(cursor.getString(cursor.getColumnIndex(DiaryDatabase.TEMPERATURE)));
                 diary.setLocation(cursor.getString(cursor.getColumnIndex(DiaryDatabase.LOCATION)));
                 diary.setTitle(cursor.getString(cursor.getColumnIndex(DiaryDatabase.TITLE)));

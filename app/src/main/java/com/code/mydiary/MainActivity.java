@@ -7,11 +7,13 @@ import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -24,10 +26,12 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
 
     private DiaryDatabase dbHelper;
+    private Diary diary;
     private Toolbar toolbar;
     private TextView tabEntries, tabCalendar, tabDiary,mydiary_count;
     private FrameLayout containerEntries, containerCalendar, containerDiary;
     private ImageButton myBtnMenu, myBtnAdd;
+
     private ListView lv;
     private DiaryAdopter adopter;
     private List<Diary> diaryList = new ArrayList<>();
@@ -149,16 +153,16 @@ public class MainActivity extends AppCompatActivity {
             String Title = data.getStringExtra("addDiary_title");
             String Body = data.getStringExtra("addDiary_body");
             String Time = data.getStringExtra("addDiary_time");
-            Log.d(TAG, "onActivityResult: Title=" + Title + ", Body=" + Body + ", Time=" + Time);
+            int Weather = data.getIntExtra("addDiary_weather", -1);
+            int Mood = data.getIntExtra("addDiary_mood", -1);
 
-            //String time, String weather, String temperature, String location, String title, String body, int mood, int tag
-            Diary diary = new Diary(Time, "晴", "25", "江门", Title, Body, 1, 1);
-            Log.d(TAG, "onActivityResult: 新建Diary=" + diary.toString());
+            Log.d(TAG, "onActivityResult: Title=" + Title + ", Body=" + Body + ", Time=" + Time + ", Weather=" + Weather + ", Mood=" + Mood);
+
+            Diary diary = new Diary(Time, Weather, "25", "江门", Title, Body, Mood, 1);
 
             CRUD op = new CRUD(context);
             op.open();
             op.addDiary(diary);
-            Log.d(TAG, "onActivityResult: addDiary已调用");
             op.close();
             refreshListView();
 

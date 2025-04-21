@@ -3,7 +3,7 @@ package com.code.mydiary;
 public class Diary {
     private long id;
     private String time;  // 时间：年、月、日;时、分;月份，星期几
-    private String weather;  // 天气
+    private int weather;  // 天气
     private String temperature;  // 温度
     private String location;  // 位置
     private String title;  // 标题
@@ -14,7 +14,7 @@ public class Diary {
     public Diary() {
     }
 
-    public Diary(String time, String weather, String temperature, String location, String title, String body, int mood, int tag) {
+    public Diary(String time, int weather, String temperature, String location, String title, String body, int mood, int tag) {
         this.time = time;
         this.weather = weather;
         this.temperature = temperature;
@@ -41,11 +41,11 @@ public class Diary {
         this.time = time;
     }
 
-    public String getWeather() {
+    public int getWeather() {
         return weather;
     }
 
-    public void setWeather(String weather) {
+    public void setWeather(int weather) {
         this.weather = weather;
     }
 

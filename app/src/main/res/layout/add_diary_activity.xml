@@ -1,26 +1,86 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:orientation="vertical"
-    android:layout_margin="5dp"
-    android:background="@color/white"
-    android:layout_height="match_parent">
-    <EditText
-        android:id="@+id/edit_adddiary_title"
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:gravity="center"
-        android:hint="标题"
-        android:background="@android:color/transparent"
-        android:layout_gravity="center" />
+    android:layout_height="match_parent"
+    android:background="@color/white">
 
-    <EditText
-        android:id="@+id/edit_adddiary_body"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="610dp"
-        android:gravity="top"
-        android:padding="8dp"
-        android:hint="内容"
-        android:background="@android:color/transparent"
-        android:layout_gravity="center" />
-</LinearLayout>
+        android:orientation="vertical"
+        android:layout_margin="5dp"
+        android:layout_height="wrap_content">
+
+        <EditText
+            android:id="@+id/edit_adddiary_title"
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:gravity="center"
+            android:hint="标题"
+            android:background="@android:color/transparent"
+            android:layout_gravity="center" />
+
+        <EditText
+            android:id="@+id/edit_adddiary_body"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:minHeight="350dp"
+            android:gravity="top"
+            android:padding="8dp"
+            android:hint="内容"
+            android:background="@android:color/transparent"
+            android:layout_gravity="center" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:paddingTop="8dp">
+
+            <ImageButton
+                android:id="@+id/btn_insert_location"
+                android:layout_width="0dp"
+                android:layout_height="30dp"
+                android:layout_weight="1"
+                android:scaleType="fitCenter"
+                android:layout_marginLeft="190dp"
+                android:src="@drawable/ic_location_on_white_24dp"
+                android:background="@android:color/transparent"
+                android:tint="@color/black"
+                android:contentDescription="插入位置" />
+
+            <ImageButton
+                android:id="@+id/btn_insert_time"
+                android:layout_width="0dp"
+                android:layout_height="30dp"
+                android:layout_weight="1"
+                android:scaleType="fitCenter"
+                android:layout_marginLeft="20dp"
+                android:src="@drawable/ic_clock"
+                android:background="@android:color/transparent"
+                android:contentDescription="插入时间" />
+
+            <ImageButton
+                android:id="@+id/imgBt_weather"
+                android:layout_width="0dp"
+                android:layout_height="30dp"
+                android:layout_weight="1"
+                android:scaleType="fitCenter"
+                android:layout_marginLeft="20dp"
+                android:src="@drawable/ic_weather_sunny"
+                android:background="@android:color/transparent"
+                android:contentDescription="选择天气" />
+
+            <ImageButton
+                android:id="@+id/imgBt_mood"
+                android:layout_width="0dp"
+                android:layout_height="30dp"
+                android:layout_weight="1"
+                android:layout_marginLeft="20dp"
+                android:src="@drawable/ic_mood_happy"
+                android:background="@android:color/transparent"
+                android:contentDescription="选择心情" />
+        </LinearLayout>
+    </LinearLayout>
+</ScrollView>
