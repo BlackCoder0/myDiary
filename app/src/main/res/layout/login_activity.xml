@@ -21,7 +21,7 @@
         android:id="@+id/text_login_1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="彼方为谁，无我有问\n九月露湿，待君之前"
+        android:text="彼方为谁，无我有问"
         android:textColor="#ffffff"
         android:textSize="21sp"
         android:gravity="center"

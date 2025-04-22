@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_checked="true">
+        <shape android:shape="rectangle">
+            <solid android:color="@color/girl" />
+            <!-- 右上角和右下角设置圆角 -->
+            <corners android:topRightRadius="8dp" android:bottomRightRadius="8dp" />
+        </shape>
+    </item>
+    <item android:state_checked="false">
+        <shape android:shape="rectangle">
+            <solid android:color="@color/white" />
+            <!-- 右上角和右下角设置圆角 -->
+            <corners android:topRightRadius="8dp" android:bottomRightRadius="8dp" />
+        </shape>
+    </item>
+</selector>

@@ -2,6 +2,7 @@ package com.code.mydiary;
 
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -13,6 +14,10 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+
+import com.code.mydiary.util.CRUD;
+import com.code.mydiary.util.DiaryAdopter;
+import com.code.mydiary.util.DiaryDatabase;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -148,7 +153,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data); // 先调用父类方法
 
-        // 检查返回结果是否有效
         if (resultCode == RESULT_OK && data != null && data.getExtras() != null) {
             int returnMode = data.getExtras().getInt("mode", -1);
             long diary_Id = data.getExtras().getLong("id", 0); // 获取 ID
@@ -177,7 +181,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
             } else if (returnMode == 0) {  // create new note
                 Log.d(TAG, "onActivityResult: Creating new diary");
-                // 从返回的 Intent 中获取所有新数据
                 String title = data.getStringExtra("title");
                 String body = data.getStringExtra("body");
                 String time = data.getStringExtra("time");
@@ -191,7 +194,14 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 // 创建新的 Diary 对象
                 Diary newDiary = new Diary(time, weather, temperature, location, title, body, mood, tag, 1); // mode 存 1 或其他默认值
 
-                op.addDiary(newDiary); // 添加到数据库
+                newDiary = op.addDiary(newDiary); // 获取带ID的Diary对象
+
+                // 关键：建立用户-日记关联
+                long userId = getIntent().getLongExtra("user_id", -1);
+                com.code.mydiary.util.UserCRUD userCRUD = new com.code.mydiary.util.UserCRUD(context);
+                userCRUD.open();
+                userCRUD.linkUserDiary(userId, newDiary.getId());
+                userCRUD.close();
             } else {
                  Log.d(TAG, "onActivityResult: No changes detected (mode=" + returnMode + ")");
                  // returnMode 为 -1，表示没有更改或用户未做任何有效输入
@@ -207,35 +217,40 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
 
     public void refreshListView(){
+        long userId = getIntent().getLongExtra("user_id", -1);
         CRUD op = new CRUD(context);
         op.open();
-        // 优化：先清除旧数据，再添加新数据
-        if(diaryList != null) { // 添加空指针检查
-             diaryList.clear();
-             List<Diary> allDiaries = op.getAllDiary();
-             Log.d(TAG, "refreshListView: 查询到日记数量=" + allDiaries.size());
-             // 确保 mydiary_count 不为 null
-             if (mydiary_count != null) {
-                 mydiary_count.setText(String.valueOf(allDiaries.size())); // 更新日记数量显示
-             }
-             diaryList.addAll(allDiaries); // 添加所有从数据库查询到的日记
-        } else {
-            diaryList = new ArrayList<>(); // 如果 diaryList 为 null，则初始化
-            List<Diary> allDiaries = op.getAllDiary();
-            Log.d(TAG, "refreshListView: 初始化 diaryList 并查询到日记数量=" + allDiaries.size());
-             // 确保 mydiary_count 不为 null
-             if (mydiary_count != null) {
-                 mydiary_count.setText(String.valueOf(allDiaries.size())); // 更新日记数量显示
-             }
-            diaryList.addAll(allDiaries);
+    
+        // 新增：只查找属于当前用户的日记
+        List<Long> userDiaryIds = new ArrayList<>();
+        com.code.mydiary.util.UserCRUD userCRUD = new com.code.mydiary.util.UserCRUD(context);
+        userCRUD.open();
+        Cursor cursor = userCRUD.getUserDiaryIds(userId);
+        while (cursor.moveToNext()) {
+            userDiaryIds.add(cursor.getLong(cursor.getColumnIndex(com.code.mydiary.util.UserDatabase.DIARY_ID)));
+        }
+        cursor.close();
+        userCRUD.close();
+    
+        diaryList.clear();
+        List<Diary> allDiaries = op.getAllDiary(); // 只定义一次
+        for (Diary diary : allDiaries) {
+            if (userDiaryIds.contains(diary.getId())) {
+                diaryList.add(diary);
+            }
+        }
+        Log.d(TAG, "refreshListView: 查询到日记数量=" + diaryList.size());
+        // 确保 mydiary_count 不为 null
+        if (mydiary_count != null) {
+            mydiary_count.setText(String.valueOf(diaryList.size())); // 更新日记数量显示
         }
         op.close();
         if (adopter != null) { // 添加空指针检查
             adopter.notifyDataSetChanged(); // 通知适配器数据已更改
         } else {
             // 如果 adopter 为 null，可能需要重新初始化
-             Log.e(TAG, "refreshListView: DiaryAdopter is null!");
-             initLV(); // 尝试重新初始化 ListView 和 Adopter
+            Log.e(TAG, "refreshListView: DiaryAdopter is null!");
+            initLV(); // 尝试重新初始化 ListView 和 Adopter
         }
     }
 

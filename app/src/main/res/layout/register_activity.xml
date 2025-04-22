@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#5ca9e1"
+    tools:context=".Login">
+
+    <ImageView
+        android:id="@+id/img_login"
+        android:layout_width="190dp"
+        android:layout_height="190dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="80dp"
+        android:src="@drawable/main_logo" />
+
+    <TextView
+        android:id="@+id/text_login_1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="九月露湿，待君之前"
+        android:textColor="#ffffff"
+        android:textSize="21sp"
+        android:gravity="center"
+        android:layout_marginTop="10dp"
+        />
+
+    <EditText
+        android:id="@+id/ed_email"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:background="#ffffff"
+        android:hint="邮箱"
+        android:textSize="16sp"
+        android:textColor="#000000"
+        android:inputType="textEmailAddress"
+        android:layout_gravity="center"
+        android:gravity="left"
+        android:padding="8dp" />
+    <!-- 性别选择改为RadioGroup和RadioButton -->
+    <RadioGroup
+        android:id="@+id/rg_sex"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="15dp"
+        android:background="@drawable/diary_background"
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:id="@+id/rb_male"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:text="男"
+            android:textSize="16sp"
+            android:textColor="@color/text_radio_male"
+            android:gravity="center"
+            android:background="@drawable/bg_radio_male"
+            android:button="@null" />
+
+        <RadioButton
+            android:id="@+id/rb_female"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:text="女"
+            android:textSize="16sp"
+            android:textColor="@color/text_radio_female"
+            android:gravity="center"
+            android:background="@drawable/bg_radio_female"
+            android:button="@null" />
+    </RadioGroup>
+    <EditText
+        android:id="@+id/ed_password"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:background="#ffffff"
+        android:hint="密码"
+        android:textSize="16sp"
+        android:textColor="#000000"
+        android:layout_gravity="center"
+        android:gravity="left"
+        android:padding="8dp"
+        android:inputType="textPassword"
+        />
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="70dp"
+    android:layout_marginTop="15dp"
+    >
+    <EditText
+        android:id="@+id/ed_Qcode"
+        android:layout_width="160dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:background="#ffffff"
+        android:hint="验证码"
+        android:textSize="16sp"
+        android:textColor="#000000"
+        android:layout_gravity="left"
+        android:layout_marginLeft="55dp"
+        android:gravity="left"
+        android:padding="8dp"
+        android:inputType="text"
+        />
+    <com.code.mydiary.util.CaptchaView
+        android:id="@+id/captcha_view"
+        android:layout_width="100dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="15dp"
+        android:layout_gravity="left"
+        android:layout_marginLeft="40dp"
+        android:gravity="right"
+        android:padding="8dp"
+        />
+</LinearLayout>
+
+    <Button
+        android:id="@+id/btn_tologin"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/white"
+        android:textColor="@color/boy"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:layout_marginTop="15dp"
+        android:elevation="4dp"
+        android:stateListAnimator="@animator/lift_on_press"
+        android:text="注册" />
+
+
+
+
+
+</LinearLayout>

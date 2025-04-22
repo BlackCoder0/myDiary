@@ -1,4 +1,4 @@
-package com.code.mydiary;
+package com.code.mydiary.util;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -12,6 +12,9 @@ import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.code.mydiary.Diary;
+import com.code.mydiary.R;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

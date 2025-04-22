@@ -1,4 +1,4 @@
-package com.code.mydiary;
+package com.code.mydiary.util;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
