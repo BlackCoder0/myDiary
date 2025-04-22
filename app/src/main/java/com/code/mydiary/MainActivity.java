@@ -98,6 +98,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             myBtnAdd.setOnClickListener(v -> {
                 Log.d("ClickDebug", "Add按钮被点击");
                 Intent addIntent = new Intent(MainActivity.this, AddDiary.class);
+                addIntent.putExtra("mode",4);//4为创建笔记
                 startActivityForResult(addIntent, 0);
             });
         }
@@ -145,56 +146,91 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
      */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK && data != null) {
-            String Title = data.getStringExtra("addDiary_title");
-            String Body = data.getStringExtra("addDiary_body");
-            String Time = data.getStringExtra("addDiary_time");
-            int Weather = data.getIntExtra("addDiary_weather", -1);
-            int Mood = data.getIntExtra("addDiary_mood", -1);
-            int Mode = data.getIntExtra("addDiary_mode", 1);
+        super.onActivityResult(requestCode, resultCode, data); // 先调用父类方法
 
-            Log.d(TAG, "onActivityResult: Title=" + Title + ", Body=" + Body + ", Time=" + Time + ", Weather=" + Weather + ", Mood=" + Mood);
-
-            Diary diary = new Diary(Time, Weather, "25", "江门", Title, Body, Mood, 1, Mode);
+        // 检查返回结果是否有效
+        if (resultCode == RESULT_OK && data != null && data.getExtras() != null) {
+            int returnMode = data.getExtras().getInt("mode", -1);
+            long diary_Id = data.getExtras().getLong("id", 0); // 获取 ID
 
             CRUD op = new CRUD(context);
             op.open();
-            op.addDiary(diary);
+
+            if (returnMode == 1) {  // update current note
+                Log.d(TAG, "onActivityResult: Updating diary ID: " + diary_Id);
+                // 从返回的 Intent 中获取所有更新后的数据
+                String title = data.getStringExtra("title");
+                String body = data.getStringExtra("body");
+                String time = data.getStringExtra("time");
+                String temperature = data.getStringExtra("temperature");
+                String location = data.getStringExtra("location");
+                int weather = data.getIntExtra("weather", -1);
+                int mood = data.getIntExtra("mood", -1);
+                int tag = data.getIntExtra("tag", 1);
+                // 注意：mode 本身不需要存入 Diary 对象，它是操作类型
+
+                // 创建包含所有更新信息的 Diary 对象
+                Diary updatedDiary = new Diary(time, weather, temperature, location, title, body, mood, tag, 1); // mode 存 1 或其他默认值
+                updatedDiary.setId(diary_Id); // 设置要更新的日记的 ID
+
+                op.updataDiary(updatedDiary); // 更新数据库
+
+            } else if (returnMode == 0) {  // create new note
+                Log.d(TAG, "onActivityResult: Creating new diary");
+                // 从返回的 Intent 中获取所有新数据
+                String title = data.getStringExtra("title");
+                String body = data.getStringExtra("body");
+                String time = data.getStringExtra("time");
+                String temperature = data.getStringExtra("temperature");
+                String location = data.getStringExtra("location");
+                int weather = data.getIntExtra("weather", -1);
+                int mood = data.getIntExtra("mood", -1);
+                int tag = data.getIntExtra("tag", 1);
+                 // 注意：mode 本身不需要存入 Diary 对象
+
+                // 创建新的 Diary 对象
+                Diary newDiary = new Diary(time, weather, temperature, location, title, body, mood, tag, 1); // mode 存 1 或其他默认值
+
+                op.addDiary(newDiary); // 添加到数据库
+            } else {
+                 Log.d(TAG, "onActivityResult: No changes detected (mode=" + returnMode + ")");
+                 // returnMode 为 -1，表示没有更改或用户未做任何有效输入
+            }
+
             op.close();
-            refreshListView();
+            refreshListView(); // 刷新列表以显示更改
 
-
-//            if (addDiaryTitle != null && !addDiaryTitle.isEmpty()) {
-//                mytv_diary_title.setText(addDiaryTitle);
-//            } else {
-//                // 获取当前时间并格式化为字符串
-//                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-//                String currentTime = sdf.format(new Date());
-//                mytv_diary_title.setText(currentTime);
-//                Log.d(TAG, "收到的日记标题为空，使用当前时间：" + currentTime);
-//            }
-//            mytv_diary_body.setText(addDiaryBody);
-//        } else {
-//            Log.d(TAG, "未收到有效的返回结果");
-//        }
+        } else {
+            Log.d(TAG, "onActivityResult: Invalid result or no data returned (resultCode=" + resultCode + ")");
         }
-
     }
+
 
     public void refreshListView(){
         CRUD op = new CRUD(context);
         op.open();
-        if(diaryList.size()>0)
-            diaryList.clear();
-//        diaryList.addAll(op.getAllDiary());
-        List<Diary> allDiaries = op.getAllDiary();
-        Log.d(TAG, "refreshListView: 查询到日记数量=" + allDiaries.size());
-        mydiary_count.setText(String.valueOf(allDiaries.size()));
-        diaryList.addAll(allDiaries);
+        // 优化：先清除旧数据，再添加新数据
+        if(diaryList != null) { // 添加空指针检查
+             diaryList.clear();
+             List<Diary> allDiaries = op.getAllDiary();
+             Log.d(TAG, "refreshListView: 查询到日记数量=" + allDiaries.size());
+             mydiary_count.setText(String.valueOf(allDiaries.size())); // 更新日记数量显示
+             diaryList.addAll(allDiaries); // 添加所有从数据库查询到的日记
+        } else {
+            diaryList = new ArrayList<>(); // 如果 diaryList 为 null，则初始化
+            List<Diary> allDiaries = op.getAllDiary();
+            Log.d(TAG, "refreshListView: 初始化 diaryList 并查询到日记数量=" + allDiaries.size());
+            mydiary_count.setText(String.valueOf(allDiaries.size())); // 更新日记数量显示
+            diaryList.addAll(allDiaries);
+        }
         op.close();
-        adopter.notifyDataSetChanged();
-//        adopter.bockList = new ArrayList<>(diaryList);
+        if (adopter != null) { // 添加空指针检查
+            adopter.notifyDataSetChanged(); // 通知适配器数据已更改
+        } else {
+            // 如果 adopter 为 null，可能需要重新初始化
+             Log.e(TAG, "refreshListView: DiaryAdopter is null!");
+             initLV(); // 尝试重新初始化 ListView 和 Adopter
+        }
     }
 
     private static final int ID_DIARY_LV = R.id.diary_lv;  // 提取为常量
@@ -204,24 +240,21 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         int parentId = parent.getId();
         if (parentId == R.id.diary_lv) {
             Diary curDiary = (Diary) parent.getItemAtPosition(position);
-//                Intent intent = new Intent(MainActivity.this, ImfDiary.class);
-                Intent intent = new Intent(MainActivity.this, AddDiary.class);
+            Intent intent = new Intent(MainActivity.this, AddDiary.class);
 
-                //String time, int weather, String temperature, String location, String title, String body, int mood, int tag, int mode
-                intent.putExtra("id",curDiary.getId());
-                intent.putExtra("time",curDiary.getTime());
-                intent.putExtra("weather",curDiary.getWeather());
-                intent.putExtra("temperature",curDiary.getTemperature());
-                intent.putExtra("location",curDiary.getLocation());
-                intent.putExtra("title",curDiary.getTitle());
-                intent.putExtra("body",curDiary.getBody());
-                intent.putExtra("mood",curDiary.getMood());
-                intent.putExtra("tag",curDiary.getTag());
-                intent.putExtra("mode", 3);
-                startActivityForResult(intent,1);
-                Log.d(TAG,"onItemClick:"+position);
-                //break;
-
+            // 传递所有日记字段到 AddDiary
+            intent.putExtra("id",curDiary.getId());
+            intent.putExtra("time",curDiary.getTime());
+            intent.putExtra("weather",curDiary.getWeather());
+            intent.putExtra("temperature",curDiary.getTemperature());
+            intent.putExtra("location",curDiary.getLocation());
+            intent.putExtra("title",curDiary.getTitle());
+            intent.putExtra("body",curDiary.getBody());
+            intent.putExtra("mood",curDiary.getMood());
+            intent.putExtra("tag",curDiary.getTag());
+            intent.putExtra("mode", 3); // 3 为修改模式
+            startActivityForResult(intent,1); // 使用请求码 1
+            Log.d(TAG,"onItemClick: Starting AddDiary for editing diary ID: " + curDiary.getId());
         }
     }
 }

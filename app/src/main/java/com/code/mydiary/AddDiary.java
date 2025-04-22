@@ -39,6 +39,10 @@ public class AddDiary extends AppCompatActivity {
     ImageButton weatherBtn, moodBtn;
     int weather = -1; // -1 表示未选择
     int mood = -1;
+    int tag = 1; // 默认 tag 为 1
+    String temperature ="25";
+    String location="江门";
+
 
     //String time, int weather, String temperature, String location, String title, String body, int mood, int tag,int mode
     private String old_time = "";
@@ -49,10 +53,12 @@ public class AddDiary extends AppCompatActivity {
     private String old_body = "";
     private int old_mood = -1;
     private int old_tag = 1;
-    private int old_mode = 1;
     private long id = 0;
     private int openMode = 0;
-    private int tag = 1;
+//    private int tag = 1;
+
+    public Intent intent = new Intent();//发送
+    private boolean tagChange = false;
 
     
 
@@ -82,31 +88,60 @@ public class AddDiary extends AppCompatActivity {
         setContentView(R.layout.add_diary_activity);
         DiaryTitle = findViewById(R.id.edit_adddiary_title);
         DiaryBody = findViewById(R.id.edit_adddiary_body);
-        Intent intent = getIntent();
-        int openMode = intent.getIntExtra("mode",0);
+        Intent receivedIntent = getIntent();
+        openMode = receivedIntent.getIntExtra("mode", 4);
 
         if(openMode == 3){//打开已存在的diary
-            id=getIntent().getLongExtra("id",0);
-            //String time, int weather, String temperature, String location, String title, String body, int mood, int tag,int mode
-            old_time = getIntent().getStringExtra("time");
-            old_weather = getIntent().getIntExtra("weather",-1);
-            old_temperature = getIntent().getStringExtra("temperature");
-            old_location = getIntent().getStringExtra("location");
-            old_title = getIntent().getStringExtra("title");
-            old_body = getIntent().getStringExtra("body");
-            old_mood = getIntent().getIntExtra("mood",-1);
-            old_tag = getIntent().getIntExtra("tag",1);
+            id = receivedIntent.getLongExtra("id",0);
+            old_time = receivedIntent.getStringExtra("time");
+            old_weather = receivedIntent.getIntExtra("weather",-1);
+            old_temperature = receivedIntent.getStringExtra("temperature");
+            old_location = receivedIntent.getStringExtra("location");
+            old_title = receivedIntent.getStringExtra("title");
+            old_body = receivedIntent.getStringExtra("body");
+            old_mood = receivedIntent.getIntExtra("mood",-1);
+            old_tag = receivedIntent.getIntExtra("tag",1); // 获取旧的 tag
+
             DiaryTitle.setText(old_title);
             DiaryBody.setText(old_body);
-            DiaryBody.setSelection(old_body.length());//光标位置
+            DiaryBody.setSelection(old_body.length());
+
+            // 初始化当前状态为旧状态
+            weather = old_weather;
+            mood = old_mood;
+            tag = old_tag; // 使用旧的 tag 初始化当前 tag
+            temperature = old_temperature;
+            location = old_location;
+            lastLocation = old_location;
+
+        } else {
+            // 新建模式
+            old_title = "";
+            old_body = "";
+            // 新建时，确保 old_time 为空或默认值，以便后续判断是否需要更新时间
+            old_time = ""; // 或者设置为一个不可能的默认值
         }
 
         weatherBtn = findViewById(R.id.imgBt_weather);
         moodBtn = findViewById(R.id.imgBt_mood);
 
-        // 初始为淡灰色
-        weatherBtn.setColorFilter(getResources().getColor(R.color.gray_light));
-        moodBtn.setColorFilter(getResources().getColor(R.color.gray_light));
+        // 根据当前 weather 和 mood 设置按钮状态 (包括编辑模式加载旧值)
+        if (weather != -1 && weather < weatherIcons.length) {
+            weatherBtn.setImageResource(weatherIcons[weather]);
+            weatherBtn.setColorFilter(getResources().getColor(R.color.boy));
+        } else {
+            // 如果是新建或者旧数据无效，则显示默认灰色
+            weatherBtn.setImageResource(R.drawable.ic_weather_sunny); // 可以设置一个默认图标
+            weatherBtn.setColorFilter(getResources().getColor(R.color.gray_light));
+        }
+        if (mood != -1 && mood < moodIcons.length) {
+            moodBtn.setImageResource(moodIcons[mood]);
+            moodBtn.setColorFilter(getResources().getColor(R.color.boy));
+        } else {
+            // 如果是新建或者旧数据无效，则显示默认灰色
+            moodBtn.setImageResource(R.drawable.ic_mood_happy); // 可以设置一个默认图标
+            moodBtn.setColorFilter(getResources().getColor(R.color.gray_light));
+        }
 
         weatherBtn.setOnClickListener(v -> showWeatherDialog());
         moodBtn.setOnClickListener(v -> showMoodDialog());
@@ -149,19 +184,66 @@ public class AddDiary extends AppCompatActivity {
         if (keyCode == KeyEvent.KEYCODE_HOME) {
             return true;
         } else if (keyCode == KeyEvent.KEYCODE_BACK) {
-            Intent intent = new Intent();
-            intent.putExtra("addDiary_title", DiaryTitle.getText().toString());
-            intent.putExtra("addDiary_body", DiaryBody.getText().toString());
-            intent.putExtra("addDiary_time", dataToStr());
-            intent.putExtra("addDiary_weather", weather);
-            intent.putExtra("addDiary_mood", mood);
-            intent.putExtra("addDiary_location", lastLocation); // 新增
-            setResult(RESULT_OK, intent);
+            Intent resultIntent = new Intent();
+            int currentMode = autoSetMessageMode();
+
+            resultIntent.putExtra("mode", currentMode);
+
+            if (currentMode != -1) {
+                resultIntent.putExtra("title", DiaryTitle.getText().toString());
+                resultIntent.putExtra("body", DiaryBody.getText().toString());
+                resultIntent.putExtra("weather", weather);
+                resultIntent.putExtra("mood", mood);
+                resultIntent.putExtra("tag", tag); // 传递当前的 tag 值
+                resultIntent.putExtra("temperature", temperature);
+                resultIntent.putExtra("location", lastLocation != null && !lastLocation.isEmpty() ? lastLocation : old_location);
+
+                if (currentMode == 1) { // 编辑模式
+                    resultIntent.putExtra("id", id);
+                    resultIntent.putExtra("time", old_time); // 编辑模式使用旧时间
+                } else { // 新建模式 (currentMode == 0)
+                    resultIntent.putExtra("time", dataToStr()); // 新建模式使用当前时间
+                }
+            }
+
+            setResult(RESULT_OK, resultIntent);
             finish();
             return true;
         }
         return super.onKeyDown(keyCode, event);
     }
+
+    // 建议在 autoSetMessageMode 中也加入 tag 的比较，虽然当前 tag 不能在 AddDiary 修改
+    public int autoSetMessageMode(){
+        String currentTitle = DiaryTitle.getText().toString();
+        String currentBody = DiaryBody.getText().toString();
+
+        if(openMode == 4){//新建模式
+            if(currentBody.isEmpty() && currentTitle.isEmpty()){
+                return -1;
+            }
+            else{
+                return 0;
+            }
+        }
+        else { // openMode == 3 (编辑模式)
+            // 检查是否有任何更改 (添加 tag 的比较)
+            boolean changed = !currentTitle.equals(old_title) ||
+                              !currentBody.equals(old_body) ||
+                              weather != old_weather ||
+                              mood != old_mood ||
+                              tag != old_tag || // 比较 tag 是否变化
+                              !temperature.equals(old_temperature) ||
+                              !(lastLocation != null && !lastLocation.isEmpty() ? lastLocation : old_location).equals(old_location);
+
+            if (!changed) {
+                return -1;
+            } else {
+                return 1;
+            }
+        }
+    }
+
     public String dataToStr(){
         Date date = new Date();
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
