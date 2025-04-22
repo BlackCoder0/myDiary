@@ -1,14 +1,189 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@drawable/diary_background">
 
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="我是详情"
-        tools:layout_editor_absoluteX="129dp"
-        tools:layout_editor_absoluteY="138dp" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/topLayout"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:background="@color/boy">
+
+        <!-- 关闭按钮 -->
+        <ImageButton
+            android:id="@+id/imf_imgBtn_close"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="16dp"
+            android:background="@android:color/transparent"
+            app:srcCompat="@drawable/ic_clear_white_36dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <!-- 月份 -->
+        <TextView
+            android:id="@+id/imf_tv_moon"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="September"
+            android:textColor="@color/white"
+            android:gravity="center"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="10dp"/>
+
+        <!-- 日期 -->
+        <TextView
+            android:id="@+id/imf_tv_day"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="12"
+            android:textColor="@color/white"
+            android:textSize="50sp"
+            android:gravity="center"
+            app:layout_constraintTop_toBottomOf="@+id/imf_tv_moon"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+        <!-- 星期 -->
+        <TextView
+            android:id="@+id/imf_tv_week"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Thursday."
+            android:textColor="@color/white"
+            android:textSize="12sp"
+            android:gravity="right"
+            android:paddingRight="3dp"
+            app:layout_constraintTop_toBottomOf="@+id/imf_tv_day"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/imf_tv_time"
+            app:layout_constraintHorizontal_weight="53"/>
+
+        <!-- 时间 -->
+        <TextView
+            android:id="@+id/imf_tv_time"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="22:49"
+            android:textColor="@color/white"
+            android:textSize="12sp"
+            android:gravity="left"
+            android:paddingLeft="3dp"
+            app:layout_constraintTop_toBottomOf="@+id/imf_tv_day"
+            app:layout_constraintStart_toEndOf="@+id/imf_tv_week"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_weight="47"/>
+
+        <!-- 天气图标 -->
+        <ImageView
+            android:id="@+id/iv_weather_image"
+            android:layout_width="wrap_content"
+            android:gravity="right"
+            app:srcCompat="@drawable/ic_weather_sunny"
+            android:tint="@color/white"
+            android:layout_marginLeft="80dp"
+            app:layout_constraintTop_toBottomOf="@+id/imf_tv_week"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginTop="5dp"
+            android:layout_height="18sp"
+            android:scaleType="fitCenter"/>
+
+        <!-- 天气文字 -->
+        <TextView
+            android:id="@+id/imf_tv_weather_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="SUNNY"
+            android:textColor="@color/white"
+            android:textSize="12sp"
+            android:gravity="right"
+            android:paddingRight="40dp"
+            android:paddingTop="2dp"
+            android:layout_marginStart="8dp"
+            app:layout_constraintTop_toBottomOf="@+id/imf_tv_week"
+            app:layout_constraintStart_toEndOf="@+id/iv_weather_image"
+            android:layout_marginTop="5dp"
+            />
+
+        <!-- 位置图标 -->
+        <ImageView
+            android:id="@+id/iv_location_image"
+            android:layout_width="wrap_content"
+            android:gravity="right"
+            app:srcCompat="@drawable/ic_location_on_white_24dp"
+            android:layout_marginLeft="10dp"
+            app:layout_constraintTop_toBottomOf="@+id/imf_tv_time"
+            app:layout_constraintStart_toEndOf="@+id/imf_tv_weather_text"
+            android:layout_marginTop="5dp"
+            android:layout_height="18sp"
+            android:scaleType="fitCenter"/>
+
+        <!-- 位置文字 -->
+        <TextView
+            android:id="@+id/imf_tv_location_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="takayama-shi,Gifu,JAPAN"
+            android:textColor="@color/white"
+            android:textSize="12sp"
+            android:gravity="left"
+            android:paddingTop="2dp"
+            android:layout_marginStart="8dp"
+            app:layout_constraintTop_toBottomOf="@+id/imf_tv_time"
+            app:layout_constraintStart_toEndOf="@+id/iv_location_image"
+            android:layout_marginTop="5dp"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+    <ScrollView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toBottomOf="@+id/topLayout"
+        app:layout_constraintBottom_toTopOf="@+id/bottomLayout"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <TextView
+            android:id="@+id/imf_tv_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="这里是可滚动的文本展示区域。当内容超出区域时可以滚动查看。"
+            android:textColor="@color/black"
+            android:padding="16dp"/>
+    </ScrollView>
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/bottomLayout"
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:background="@color/boy">
+
+        <ImageButton
+            android:id="@+id/imf_imgBtn_more"
+            android:layout_width="40dp"
+            android:layout_height="match_parent"
+            android:adjustViewBounds="true"
+            android:scaleType="fitCenter"
+            android:background="@android:color/transparent"
+            app:srcCompat="@drawable/ic_more_horiz_white_24dp"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginLeft="40dp"
+            />
+        <ImageButton
+            android:id="@+id/imf_imgBtn_delte"
+            android:layout_width="40dp"
+            android:layout_height="match_parent"
+            android:adjustViewBounds="true"
+            android:scaleType="fitCenter"
+            android:background="@android:color/transparent"
+            app:srcCompat="@drawable/ic_delete_white_24dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginRight="40dp"
+            />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>

@@ -214,13 +214,19 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
              diaryList.clear();
              List<Diary> allDiaries = op.getAllDiary();
              Log.d(TAG, "refreshListView: 查询到日记数量=" + allDiaries.size());
-             mydiary_count.setText(String.valueOf(allDiaries.size())); // 更新日记数量显示
+             // 确保 mydiary_count 不为 null
+             if (mydiary_count != null) {
+                 mydiary_count.setText(String.valueOf(allDiaries.size())); // 更新日记数量显示
+             }
              diaryList.addAll(allDiaries); // 添加所有从数据库查询到的日记
         } else {
             diaryList = new ArrayList<>(); // 如果 diaryList 为 null，则初始化
             List<Diary> allDiaries = op.getAllDiary();
             Log.d(TAG, "refreshListView: 初始化 diaryList 并查询到日记数量=" + allDiaries.size());
-            mydiary_count.setText(String.valueOf(allDiaries.size())); // 更新日记数量显示
+             // 确保 mydiary_count 不为 null
+             if (mydiary_count != null) {
+                 mydiary_count.setText(String.valueOf(allDiaries.size())); // 更新日记数量显示
+             }
             diaryList.addAll(allDiaries);
         }
         op.close();
@@ -240,21 +246,60 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         int parentId = parent.getId();
         if (parentId == R.id.diary_lv) {
             Diary curDiary = (Diary) parent.getItemAtPosition(position);
-            Intent intent = new Intent(MainActivity.this, AddDiary.class);
+            // --- 修改开始 ---
+            // 不再直接启动 AddDiary，而是显示预览对话框
+            ImfDiary imfDiary = new ImfDiary();
+            imfDiary.showDiaryDialog(this, curDiary, new ImfDiary.DialogActionListener() {
+                @Override
+                public void onEditClicked(Diary diaryToEdit) {
+                    // 从预览页面点击编辑按钮后，启动 AddDiary
+                    Intent intent = new Intent(MainActivity.this, AddDiary.class);
+                    intent.putExtra("id", diaryToEdit.getId());
+                    intent.putExtra("time", diaryToEdit.getTime());
+                    intent.putExtra("weather", diaryToEdit.getWeather());
+                    intent.putExtra("temperature", diaryToEdit.getTemperature());
+                    intent.putExtra("location", diaryToEdit.getLocation());
+                    intent.putExtra("title", diaryToEdit.getTitle());
+                    intent.putExtra("body", diaryToEdit.getBody());
+                    intent.putExtra("mood", diaryToEdit.getMood());
+                    intent.putExtra("tag", diaryToEdit.getTag());
+                    intent.putExtra("mode", 3); // 3 为修改模式
+                    startActivityForResult(intent, 1); // 使用请求码 1
+                    Log.d(TAG, "onItemClick: Starting AddDiary from ImfDiary for editing diary ID: " + diaryToEdit.getId());
+                }
 
-            // 传递所有日记字段到 AddDiary
-            intent.putExtra("id",curDiary.getId());
-            intent.putExtra("time",curDiary.getTime());
-            intent.putExtra("weather",curDiary.getWeather());
-            intent.putExtra("temperature",curDiary.getTemperature());
-            intent.putExtra("location",curDiary.getLocation());
-            intent.putExtra("title",curDiary.getTitle());
-            intent.putExtra("body",curDiary.getBody());
-            intent.putExtra("mood",curDiary.getMood());
-            intent.putExtra("tag",curDiary.getTag());
+                @Override
+                public void onDeleteClicked(Diary diaryToDelete) {
+                    // 从预览页面点击删除按钮后，执行删除操作并刷新列表
+                    showDeleteConfirmationDialog(diaryToDelete);
+                }
+            });
+            // --- 修改结束 ---
+            // 下面的旧代码被注释或删除
+            /*
+            Intent intent = new Intent(MainActivity.this, AddDiary.class);
+            // ... (传递 extras 的旧代码) ...
             intent.putExtra("mode", 3); // 3 为修改模式
             startActivityForResult(intent,1); // 使用请求码 1
             Log.d(TAG,"onItemClick: Starting AddDiary for editing diary ID: " + curDiary.getId());
+            */
         }
+    }
+
+    // 新增：显示删除确认对话框的方法
+    private void showDeleteConfirmationDialog(final Diary diaryToDelete) {
+        new androidx.appcompat.app.AlertDialog.Builder(this)
+                .setTitle("确认删除")
+                .setMessage("确定要删除这份回忆吗？")
+                .setPositiveButton("删除", (dialog, which) -> {
+                    CRUD op = new CRUD(context);
+                    op.open();
+                    op.deleteDiary(diaryToDelete);
+                    op.close();
+                    refreshListView(); // 删除后刷新列表
+                    Log.d(TAG, "Diary deleted: ID " + diaryToDelete.getId());
+                })
+                .setNegativeButton("取消", null)
+                .show();
     }
 }
