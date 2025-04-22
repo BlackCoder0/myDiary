@@ -6,30 +6,66 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:orientation="vertical"
+        android:layout_height="wrap_content"
         android:layout_margin="5dp"
-        android:layout_height="wrap_content">
+        android:orientation="vertical">
 
-        <EditText
-            android:id="@+id/edit_adddiary_title"
+        <!-- 标题行：按钮 + 标题 + 按钮 -->
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="45dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+        <!-- 左侧取消按钮 -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_cancel"
+                style="@style/Widget.App.Button.Gray"
+                android:layout_width="80dp"
+                android:layout_height="wrap_content"
+                android:text="取消"
+                android:layout_marginLeft="8dp"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"/>
+
+        <!-- 标题EditText居中 -->
+        <EditText
+            android:id="@+id/edit_adddiary_title"
+            android:layout_width="0dp"
+            android:layout_height="45dp"
+            android:layout_weight="1"
             android:gravity="center"
             android:hint="标题"
-            android:background="@android:color/transparent"
-            android:layout_gravity="center" />
+            android:background="@android:color/transparent"/>
 
-        <EditText
-            android:id="@+id/edit_adddiary_body"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:minHeight="350dp"
-            android:gravity="top"
-            android:padding="8dp"
-            android:hint="内容"
-            android:background="@android:color/transparent"
-            android:layout_gravity="center" />
+        <!-- 右侧保存按钮 -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_save"
+                style="@style/Widget.App.Button.Black"
+                android:layout_width="wrap_content"
+                android:minWidth="80dp"
+                android:layout_height="wrap_content"
+                android:text="保存"
+                android:textSize="14sp"
+                android:gravity="center"
+                android:layout_marginRight="8dp"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"/>
+    </LinearLayout>
+
+    <!-- 其他原有布局保持不变 -->
+    <EditText
+        android:id="@+id/edit_adddiary_body"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:minHeight="350dp"
+        android:gravity="top"
+        android:padding="8dp"
+        android:hint="内容"
+        android:background="@android:color/transparent"
+        android:layout_gravity="center" />
+
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -82,5 +118,7 @@
                 android:background="@android:color/transparent"
                 android:contentDescription="选择心情" />
         </LinearLayout>
+
+
     </LinearLayout>
 </ScrollView>

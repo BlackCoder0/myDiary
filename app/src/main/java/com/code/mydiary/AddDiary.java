@@ -3,12 +3,14 @@ package com.code.mydiary;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 
@@ -37,6 +39,8 @@ public class AddDiary extends AppCompatActivity {
     EditText DiaryTitle;
     EditText DiaryBody;
     ImageButton weatherBtn, moodBtn;
+
+    Button btnCancel,btnSave;
     int weather = -1; // -1 表示未选择
     int mood = -1;
     int tag = 1; // 默认 tag 为 1
@@ -88,6 +92,10 @@ public class AddDiary extends AppCompatActivity {
         setContentView(R.layout.add_diary_activity);
         DiaryTitle = findViewById(R.id.edit_adddiary_title);
         DiaryBody = findViewById(R.id.edit_adddiary_body);
+        // 新增：获取按钮实例
+        btnCancel = findViewById(R.id.btn_cancel);
+        btnSave = findViewById(R.id.btn_save);
+
         Intent receivedIntent = getIntent();
         openMode = receivedIntent.getIntExtra("mode", 4);
 
@@ -162,6 +170,10 @@ public class AddDiary extends AppCompatActivity {
             Log.d("AddDiary", "btnInsertLocation clicked");
             insertLocation();
         });
+        // 新增：为取消和保存按钮设置监听器
+        btnCancel.setOnClickListener(v -> performCancel());
+        btnSave.setOnClickListener(v -> performSave());
+
         Log.d("AddDiary", "onCreate is called");
 
 //        weatherBtn.setOnClickListener(v -> {
@@ -183,35 +195,53 @@ public class AddDiary extends AppCompatActivity {
     public boolean onKeyDown(int keyCode, KeyEvent event){
         if (keyCode == KeyEvent.KEYCODE_HOME) {
             return true;
+        // --- 修改开始: 返回键行为修改为显示确认对话框 ---
         } else if (keyCode == KeyEvent.KEYCODE_BACK) {
-            Intent resultIntent = new Intent();
-            int currentMode = autoSetMessageMode();
-
-            resultIntent.putExtra("mode", currentMode);
-
-            if (currentMode != -1) {
-                resultIntent.putExtra("title", DiaryTitle.getText().toString());
-                resultIntent.putExtra("body", DiaryBody.getText().toString());
-                resultIntent.putExtra("weather", weather);
-                resultIntent.putExtra("mood", mood);
-                resultIntent.putExtra("tag", tag); // 传递当前的 tag 值
-                resultIntent.putExtra("temperature", temperature);
-                resultIntent.putExtra("location", lastLocation != null && !lastLocation.isEmpty() ? lastLocation : old_location);
-
-                if (currentMode == 1) { // 编辑模式
-                    resultIntent.putExtra("id", id);
-                    resultIntent.putExtra("time", old_time); // 编辑模式使用旧时间
-                } else { // 新建模式 (currentMode == 0)
-                    resultIntent.putExtra("time", dataToStr()); // 新建模式使用当前时间
-                }
-            }
-
-            setResult(RESULT_OK, resultIntent);
-            finish();
-            return true;
+            showExitConfirmationDialog(); // 调用显示确认对话框的方法
+            return true; // 事件已处理
+        // --- 修改结束 ---
         }
         return super.onKeyDown(keyCode, event);
     }
+
+    // 新增：执行保存操作的方法
+    private void performSave() {
+        Intent resultIntent = new Intent();
+        int currentMode = autoSetMessageMode();
+
+        resultIntent.putExtra("mode", currentMode);
+
+        // 只有在新建(0)或修改(1)模式下才需要传递详细数据
+        if (currentMode == 0 || currentMode == 1) {
+            resultIntent.putExtra("title", DiaryTitle.getText().toString());
+            resultIntent.putExtra("body", DiaryBody.getText().toString());
+            resultIntent.putExtra("weather", weather);
+            resultIntent.putExtra("mood", mood);
+            resultIntent.putExtra("tag", tag);
+            resultIntent.putExtra("temperature", temperature);
+            // 使用 lastLocation 如果它有效，否则回退到 old_location (主要用于编辑模式下未重新获取位置的情况)
+            String finalLocation = (lastLocation != null && !lastLocation.isEmpty()) ? lastLocation : old_location;
+            resultIntent.putExtra("location", finalLocation);
+
+            if (currentMode == 1) { // 编辑模式
+                resultIntent.putExtra("id", id);
+                resultIntent.putExtra("time", old_time); // 编辑模式使用旧时间
+            } else { // 新建模式 (currentMode == 0)
+                resultIntent.putExtra("time", dataToStr()); // 新建模式使用当前时间
+            }
+        }
+        // 即使 mode 是 -1 (编辑模式无更改)，也返回 RESULT_OK，让 MainActivity 判断 mode
+        setResult(RESULT_OK, resultIntent);
+        finish(); // 关闭当前 Activity
+    }
+
+    // 新增：执行取消操作的方法
+    private void performCancel() {
+        // 设置结果为 CANCELED，表示用户取消了操作
+        setResult(RESULT_CANCELED);
+        finish(); // 关闭当前 Activity
+    }
+
 
     // 建议在 autoSetMessageMode 中也加入 tag 的比较，虽然当前 tag 不能在 AddDiary 修改
     public int autoSetMessageMode(){
@@ -219,27 +249,29 @@ public class AddDiary extends AppCompatActivity {
         String currentBody = DiaryBody.getText().toString();
 
         if(openMode == 4){//新建模式
-            if(currentBody.isEmpty() && currentTitle.isEmpty()){
-                return -1;
+            // 检查是否有输入内容，或者是否选择了天气/心情
+            if(currentBody.isEmpty() && currentTitle.isEmpty() && weather == -1 && mood == -1){
+                return -1; // 认为是无意义的输入
             }
             else{
-                return 0;
+                return 0; // 认为是新建
             }
         }
         else { // openMode == 3 (编辑模式)
-            // 检查是否有任何更改 (添加 tag 的比较)
+            // 检查是否有任何更改
             boolean changed = !currentTitle.equals(old_title) ||
                               !currentBody.equals(old_body) ||
                               weather != old_weather ||
                               mood != old_mood ||
-                              tag != old_tag || // 比较 tag 是否变化
+                              tag != old_tag ||
                               !temperature.equals(old_temperature) ||
-                              !(lastLocation != null && !lastLocation.isEmpty() ? lastLocation : old_location).equals(old_location);
+                              // 比较最终位置和旧位置
+                              !((lastLocation != null && !lastLocation.isEmpty()) ? lastLocation : old_location).equals(old_location);
 
             if (!changed) {
-                return -1;
+                return -1; // 无更改
             } else {
-                return 1;
+                return 1; // 有更改
             }
         }
     }
@@ -381,5 +413,21 @@ public class AddDiary extends AppCompatActivity {
             Log.e("AddDiary", "Exception in insertLocation", e);
             android.widget.Toast.makeText(this, "获取位置失败", android.widget.Toast.LENGTH_SHORT).show();
         }
+    }
+
+    // 新增：显示退出确认对话框的方法
+    private void showExitConfirmationDialog() {
+        new AlertDialog.Builder(this)
+                .setTitle("确认退出") // 设置对话框标题
+                .setMessage("您确定要退出编辑吗？未保存的更改将会丢失。") // 设置对话框消息
+                .setPositiveButton("确认退出", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // 用户点击确认退出，调用取消操作
+                        performCancel();
+                    }
+                })
+                .setNegativeButton("取消", null) // 用户点击取消，对话框消失，不做任何操作
+                .show(); // 显示对话框
     }
 }

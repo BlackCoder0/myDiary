@@ -13,10 +13,4 @@ public class Menu extends AppCompatActivity {
         setContentView(R.layout.menu_activity);
         Log.d("ClickDebug", "Menu Activity 启动");
     }
-
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        Log.d("ClickDebug", "返回键被按下");
-    }
 }

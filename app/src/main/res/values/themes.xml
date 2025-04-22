@@ -6,4 +6,16 @@
     </style>
 
     <style name="Theme.myDiary" parent="Base.Theme.myDiary" />
+    <style name="Widget.App.Button.Gray" parent="Widget.Material3.Button">
+        <item name="backgroundTint">@color/gray</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="cornerRadius">0dp</item>
+    </style>
+
+    <style name="Widget.App.Button.Black" parent="Widget.Material3.Button">
+        <item name="backgroundTint">@color/black</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="cornerRadius">0dp</item>
+    </style>
+
 </resources>

@@ -22,7 +22,6 @@
 
         </androidx.appcompat.widget.Toolbar>
     </com.google.android.material.appbar.AppBarLayout>
-
     <!-- 页面内容 -->
     <FrameLayout
         android:id="@+id/container_entries"
@@ -32,7 +31,8 @@
         android:layout_height="0dp"
         android:visibility="visible">
 
-        <!-- 直接放置 ListView，移除 ScrollView 和内部 LinearLayout -->
+        <!-- {{ edit_1: 移除 LinearLayout 和独立的 diary_moon TextView }} -->
+        <!-- 直接放置 ListView -->
         <ListView
             android:id="@+id/diary_lv"
             android:layout_gravity="center_horizontal"
@@ -45,12 +45,9 @@
             android:divider="@android:color/transparent"
             android:dividerHeight="13dp"
             android:clipToPadding="false"/>
-<!--                <TextView-->
-<!--                    android:id="@+id/tv_diary_title"-->
-<!--                    android:layout_width="350dp"-->
-<!--                    android:layout_height="80dp"-->
-<!--                    android:layout_margin="10dp"-->
-        <!-- 底部导航栏 -->
+        <!-- {{ edit_3: LinearLayout 结束标签也移除 }} -->
+
+        <!-- 底部导航栏 (保持不变) -->
         <LinearLayout
             android:id="@+id/bottom_navigation_bar"
             android:layout_width="match_parent"

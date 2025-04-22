@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:background="@drawable/diary_background"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content">
 
     <!-- 日期和星期 垂直排列 -->
     <LinearLayout
@@ -23,7 +23,6 @@
             android:gravity="center_horizontal"
             android:layout_gravity="center_horizontal"
             android:text="12"
-
             android:textSize="40sp"
             android:textColor="@color/boy"/>
 
@@ -39,15 +38,16 @@
             android:textColor="@color/boy"/>
     </LinearLayout>
 
-
     <!-- 时间和标题 垂直排列，位于日期右侧 -->
     <LinearLayout
         android:id="@+id/ll_info"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:layout_marginStart="12dp"
+        android:layout_marginEnd="8dp"
         app:layout_constraintStart_toEndOf="@id/ll_date"
+        app:layout_constraintEnd_toStartOf="@id/ll_icons"
         app:layout_constraintTop_toTopOf="@id/ll_date">
 
         <TextView
@@ -68,10 +68,9 @@
             android:layout_gravity="center_vertical"
             android:gravity="center_vertical"
             />
-        <!-- 正文摘要，和星期同一行 -->
         <TextView
             android:id="@+id/tv_body"
-            android:layout_width="160dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
             android:text="这里是正文摘要，最多20字，多余显示省略号"
@@ -79,7 +78,6 @@
             android:textColor="@color/boy"
             android:maxLines="1"
             android:ellipsize="end"
-            android:layout_marginEnd="16dp"
             />
     </LinearLayout>
 
@@ -96,8 +94,7 @@
 
         <ImageView
             android:id="@+id/iv_weather"
-            android:layout_width="0dp"
-            android:layout_weight="1"
+            android:layout_width="20dp"
             android:scaleType="fitCenter"
             android:layout_height="20dp"
             android:visibility="gone"
@@ -106,8 +103,7 @@
 
         <ImageView
             android:id="@+id/iv_mood"
-            android:layout_width="0dp"
-            android:layout_weight="1"
+            android:layout_width="18dp"
             android:scaleType="fitCenter"
             android:layout_height="18dp"
             android:layout_marginStart="8dp"
@@ -117,19 +113,13 @@
 
         <ImageView
             android:id="@+id/iv_tag"
-            android:layout_width="0dp"
-            android:layout_weight="1"
+            android:layout_width="22dp"
             android:scaleType="fitCenter"
             android:layout_height="22dp"
             android:layout_marginStart="8dp"
             android:src="@drawable/ic_bookmark_border"
             android:contentDescription="标签图标"
             android:tint="@color/gray"
-            /> <!-- 默认灰色 -->
-
-
-
-
+            />
     </LinearLayout>
-
 </androidx.constraintlayout.widget.ConstraintLayout>
