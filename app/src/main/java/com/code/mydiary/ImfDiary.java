@@ -155,7 +155,7 @@ public class ImfDiary {
             // 设置对话框大小 (可以根据需要调整)
             window.setLayout(
                     (int)(context.getResources().getDisplayMetrics().widthPixels * 0.9),
-                    (int)(context.getResources().getDisplayMetrics().heightPixels * 0.9)
+                    (int)(context.getResources().getDisplayMetrics().heightPixels * 0.7)
             );
              // 可选：移除背景，如果你在 XML 中设置了背景
              // window.setBackgroundDrawableResource(android.R.color.transparent);

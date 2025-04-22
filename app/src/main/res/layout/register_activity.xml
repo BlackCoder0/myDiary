@@ -89,38 +89,35 @@
         android:padding="8dp"
         android:inputType="textPassword"
         />
-<LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="70dp"
-    android:layout_marginTop="15dp"
-    >
+    <!-- 修改包裹验证码的LinearLayout -->
+    <LinearLayout
+        android:layout_width="300dp"
+        android:layout_height="70dp"
+        android:layout_marginTop="15dp"
+        android:layout_gravity="center"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
     <EditText
         android:id="@+id/ed_Qcode"
-        android:layout_width="160dp"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
+        android:layout_weight="1"
         android:background="#ffffff"
         android:hint="验证码"
         android:textSize="16sp"
         android:textColor="#000000"
-        android:layout_gravity="left"
-        android:layout_marginLeft="55dp"
         android:gravity="left"
         android:padding="8dp"
-        android:inputType="text"
-        />
+        android:inputType="text"/>
+
     <com.code.mydiary.util.CaptchaView
         android:id="@+id/captcha_view"
         android:layout_width="100dp"
         android:layout_height="40dp"
-        android:layout_marginTop="15dp"
-        android:layout_gravity="left"
-        android:layout_marginLeft="40dp"
-        android:gravity="right"
-        android:padding="8dp"
-        />
+        android:layout_marginLeft="10dp"
+        android:padding="8dp"/>
 </LinearLayout>
-
     <Button
         android:id="@+id/btn_tologin"
         android:layout_width="300dp"
