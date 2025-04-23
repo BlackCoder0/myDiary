@@ -5,6 +5,8 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import java.util.ArrayList;
+
 public class UserCRUD {
     private UserDatabase dbHelper;
     private SQLiteDatabase db;
@@ -61,5 +63,85 @@ public class UserCRUD {
     // 查询用户自己的日记ID列表
     public Cursor getUserDiaryIds(long userId) {
         return db.query(UserDatabase.USER_DIARY_TABLE, new String[]{UserDatabase.DIARY_ID}, UserDatabase.USER_ID + "=?", new String[]{String.valueOf(userId)}, null, null, null);
+    }
+
+    // 添加禁止事项
+    public void addNoItem(long userId, String content) {
+        ContentValues values = new ContentValues();
+        values.put(UserDatabase.USER_ID, userId);
+        values.put(UserDatabase.NO_CONTENT, content);
+        db.insert(UserDatabase.NO_LIST_TABLE, null, values);
+    }
+
+    // 查询禁止事项
+    public ArrayList<String> getNoList(long userId) {
+        ArrayList<String> list = new ArrayList<>();
+        Cursor cursor = db.query(UserDatabase.NO_LIST_TABLE, new String[]{UserDatabase.NO_CONTENT},
+                UserDatabase.USER_ID + "=?", new String[]{String.valueOf(userId)},
+                null, null, null);
+        while (cursor.moveToNext()) {
+            list.add(cursor.getString(cursor.getColumnIndex(UserDatabase.NO_CONTENT)));
+        }
+        cursor.close();
+        return list;
+    }
+
+    // 更新禁止事项
+    public void updateNoItem(long userId, int index, String content) {
+        Cursor cursor = db.query(UserDatabase.NO_LIST_TABLE, new String[]{UserDatabase.NO_ID},
+                UserDatabase.USER_ID + "=?", new String[]{String.valueOf(userId)},
+                null, null, null);
+        if (cursor.moveToPosition(index)) {
+            int noId = cursor.getInt(cursor.getColumnIndex(UserDatabase.NO_ID));
+            ContentValues values = new ContentValues();
+            values.put(UserDatabase.NO_CONTENT, content);
+            db.update(UserDatabase.NO_LIST_TABLE, values, UserDatabase.NO_ID + "=?", new String[]{String.valueOf(noId)});
+        }
+        cursor.close();
+    }
+
+    // 清空并重新插入（用于保存全部）
+    public void saveNoList(long userId, ArrayList<String> list) {
+        db.delete(UserDatabase.NO_LIST_TABLE, UserDatabase.USER_ID + "=?", new String[]{String.valueOf(userId)});
+        for (String content : list) {
+            if (!content.trim().isEmpty()) {
+                addNoItem(userId, content);
+            }
+        }
+    }
+
+    // 添加紧急联系人
+    public void addContact(long userId, String name, String phone) {
+        ContentValues values = new ContentValues();
+        values.put(UserDatabase.USER_ID, userId);
+        values.put(UserDatabase.CONTACT_NAME, name);
+        values.put(UserDatabase.CONTACT_PHONE, phone);
+        db.insert(UserDatabase.CONTACT_TABLE, null, values);
+    }
+
+    // 查询紧急联系人
+    public ArrayList<String[]> getContactList(long userId) {
+        ArrayList<String[]> list = new ArrayList<>();
+        Cursor cursor = db.query(UserDatabase.CONTACT_TABLE,
+                new String[]{UserDatabase.CONTACT_NAME, UserDatabase.CONTACT_PHONE},
+                UserDatabase.USER_ID + "=?",
+                new String[]{String.valueOf(userId)},
+                null, null, null);
+        while (cursor.moveToNext()) {
+            String name = cursor.getString(cursor.getColumnIndex(UserDatabase.CONTACT_NAME));
+            String phone = cursor.getString(cursor.getColumnIndex(UserDatabase.CONTACT_PHONE));
+            list.add(new String[]{name, phone});
+        }
+        cursor.close();
+        return list;
+    }
+
+    // 删除紧急联系人
+    public void deleteContact(long userId, String name, String phone) {
+        db.delete(UserDatabase.CONTACT_TABLE,
+                UserDatabase.USER_ID + "=? AND " +
+                UserDatabase.CONTACT_NAME + "=? AND " +
+                UserDatabase.CONTACT_PHONE + "=?",
+                new String[]{String.valueOf(userId), name, phone});
     }
 }

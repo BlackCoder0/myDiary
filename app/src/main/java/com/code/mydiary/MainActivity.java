@@ -21,6 +21,7 @@ import com.code.mydiary.util.CRUD;
 import com.code.mydiary.util.DiaryAdopter;
 import com.code.mydiary.util.DiaryDatabase;
 import com.code.mydiary.util.DiaryListItem;
+import com.code.mydiary.util.ToastUtil;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -34,6 +35,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     private DiaryDatabase dbHelper;
     private Diary diary;
+
+    private ToastUtil toastUtil;
     private Toolbar toolbar;
     private TextView tabEntries, tabCalendar, tabDiary, mydiary_count; // {{ edit_1: 移除 diary_moon }}
     private FrameLayout containerEntries, containerCalendar, containerDiary;
@@ -51,12 +54,23 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private boolean isSearching = false;
     private List<DiaryListItem> originalDiaryListItems = new ArrayList<>(); // 保存原始数据
 
+    private long currentUserId; // 成员变量
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_activity);
-        
+
+        currentUserId = getIntent().getLongExtra("user_id", -1);
+        if (currentUserId == -1) {
+            toastUtil = new ToastUtil();
+            toastUtil.showMsg(MainActivity.this, "用户ID无效，请重新登录");
+            // finish();
+            // return;
+        }
+
+
         initToolbar();
         initTabs();
         initBottomButtons();
@@ -110,7 +124,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         if (myBtnMenu != null) {
             myBtnMenu.setOnClickListener(v -> {
                 Log.d("ClickDebug", "Menu按钮被点击");
-                startActivity(new Intent(MainActivity.this, Menu.class));
+                Intent menuIntent = new Intent(this, Menu.class);
+                menuIntent.putExtra("user_id", currentUserId);
+                startActivity(menuIntent);
             });
         }
 
@@ -118,7 +134,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             myBtnAdd.setOnClickListener(v -> {
                 Log.d("ClickDebug", "Add按钮被点击");
                 // === 新增逻辑：一天只能写一篇日记 ===
-                long userId = getIntent().getLongExtra("user_id", -1);
                 String today = new java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.getDefault()).format(new java.util.Date());
 
                 CRUD op = new CRUD(context);
@@ -130,7 +145,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 com.code.mydiary.util.UserCRUD userCRUD = new com.code.mydiary.util.UserCRUD(context);
                 userCRUD.open();
                 java.util.List<Long> userDiaryIds = new java.util.ArrayList<>();
-                android.database.Cursor cursor = userCRUD.getUserDiaryIds(userId);
+                android.database.Cursor cursor = userCRUD.getUserDiaryIds(currentUserId);
                 while (cursor.moveToNext()) {
                     int columnIndex = cursor.getColumnIndex(com.code.mydiary.util.UserDatabase.DIARY_ID);
                     if (columnIndex != -1) {
@@ -185,14 +200,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             });
         }
 
-        // 额外设置按钮（原 Setting 中跳转按钮）
-        View btnSet1 = findViewById(R.id.btn_set1);
-        if (btnSet1 != null) {
-            btnSet1.setOnClickListener(v -> {
-                Log.d("ClickDebug", "btu_set1按钮被点击");
-                startActivity(new Intent(MainActivity.this, Menu.class));
-            });
-        }
     }
 
 
@@ -311,7 +318,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     public void refreshListView(){
         Log.d(TAG, "refreshListView: 开始刷新列表");
-        long userId = getIntent().getLongExtra("user_id", -1);
+        long userId = currentUserId; // 只用成员变量
         CRUD op = new CRUD(context);
         op.open();
     

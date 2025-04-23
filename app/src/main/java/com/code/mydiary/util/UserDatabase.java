@@ -15,6 +15,13 @@ public class UserDatabase extends SQLiteOpenHelper {
     public static final String SEX = "sex";
     public static final String LOVER = "lover";
     public static final String DIARY_ID = "diary_id";
+    public static final String NO_LIST_TABLE = "no_list";
+    public static final String NO_ID = "no_id";
+    public static final String NO_CONTENT = "no_content";
+    public static final String CONTACT_TABLE = "sos";
+    public static final String CONTACT_ID = "contact_id";
+    public static final String CONTACT_NAME = "contact_name";
+    public static final String CONTACT_PHONE = "contact_phone";
 
     public UserDatabase(Context context) {
         super(context, DB_NAME, null, 1);
@@ -35,6 +42,17 @@ public class UserDatabase extends SQLiteOpenHelper {
                 USER_ID + " INTEGER NOT NULL, " +
                 DIARY_ID + " INTEGER NOT NULL, " +
                 "PRIMARY KEY (" + USER_ID + ", " + DIARY_ID + "))");
+
+        db.execSQL("CREATE TABLE " + NO_LIST_TABLE + " (" +
+                NO_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                USER_ID + " INTEGER NOT NULL, " +
+                NO_CONTENT + " TEXT)");
+
+        db.execSQL("CREATE TABLE " + CONTACT_TABLE + " (" +
+                CONTACT_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                USER_ID + " INTEGER NOT NULL, " +
+                CONTACT_NAME + " TEXT, " +
+                CONTACT_PHONE + " TEXT)");
     }
 
     @Override
