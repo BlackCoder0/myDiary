@@ -86,21 +86,20 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <!-- 天气图标 (右上角，iv_tag 左侧) -->
+    <!-- 天气图标 (最左) -->
     <ImageView
         android:id="@+id/iv_weather"
         android:layout_width="16dp"
         android:layout_height="16dp"
-        android:layout_marginEnd="7dp"
+        android:layout_marginEnd="8dp"
         android:layout_marginTop="11dp"
         android:contentDescription="天气图标"
         android:scaleType="fitCenter"
         android:tint="@color/boy"
-        android:visibility="gone"
-        app:layout_constraintEnd_toStartOf="@id/iv_tag"
+        app:layout_constraintEnd_toStartOf="@id/iv_mood"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <!-- 心情图标 (右上角，iv_weather 左侧) -->
+    <!-- 心情图标 (中间) -->
     <ImageView
         android:id="@+id/iv_mood"
         android:layout_width="13dp"
@@ -110,8 +109,8 @@
         android:contentDescription="心情图标"
         android:scaleType="fitCenter"
         android:tint="@color/boy"
-        android:visibility="gone"
-        app:layout_constraintEnd_toStartOf="@id/iv_weather"
+        app:layout_constraintEnd_toStartOf="@id/iv_tag"
         app:layout_constraintTop_toTopOf="parent" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

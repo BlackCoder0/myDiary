@@ -101,48 +101,57 @@ public class DiaryAdopter extends BaseAdapter {
             // 标签图标
             if (diary.getTag() == 2) {
                 holder.ivTag.setColorFilter(myContext.getResources().getColor(R.color.boy));
+                holder.ivTag.setAlpha(1.0f);
             } else {
                 holder.ivTag.setColorFilter(myContext.getResources().getColor(R.color.gray));
+                holder.ivTag.setAlpha(0.5f); // 灰色且半透明
             }
             holder.ivTag.setOnClickListener(v -> {
+                Log.d("DiaryAdopter", "Tag clicked, old tag=" +diary.getTag());
                 if (diary.getTag() == 2) {
                     holder.ivTag.setColorFilter(myContext.getResources().getColor(R.color.gray));
+                    holder.ivTag.setAlpha(1.0f);
                     diary.setTag(1);
                 } else {
                     holder.ivTag.setColorFilter(myContext.getResources().getColor(R.color.boy));
+                    holder.ivTag.setAlpha(0.5f);
                     diary.setTag(2);
                 }
+                Log.d("DiaryAdopter", "Tag after click=" + diary.getTag());
                 CRUD op = new CRUD(myContext);
                 op.open();
                 op.updataDiary(diary);
                 op.close();
+                notifyDataSetChanged();
             });
 
             // 天气图标
             int weather = diary.getWeather();
             if (weather == -1) {
-                holder.ivWeather.setVisibility(View.GONE);
+                holder.ivWeather.setColorFilter(myContext.getResources().getColor(R.color.gray));
+                holder.ivWeather.setAlpha(0.5f);
+                holder.ivWeather.setImageResource(R.drawable.ic_weather_sunny); // 可选：默认图标
             } else {
                 int weatherResId = getWeatherIconResId(weather);
                 if (weatherResId != 0) {
                     holder.ivWeather.setImageResource(weatherResId);
-                    holder.ivWeather.setVisibility(View.VISIBLE);
-                } else {
-                    holder.ivWeather.setVisibility(View.GONE);
-                }
+                    holder.ivWeather.setColorFilter(myContext.getResources().getColor(R.color.boy));
+                    holder.ivWeather.setAlpha(1.0f);
+                } 
             }
 
             // 心情图标
             int mood = diary.getMood();
             if (mood == -1) {
-                holder.ivMood.setVisibility(View.GONE);
+                holder.ivMood.setColorFilter(myContext.getResources().getColor(R.color.gray));
+                holder.ivMood.setAlpha(0.5f);
+                holder.ivMood.setImageResource(R.drawable.ic_mood_happy); // 可选：默认图标
             } else {
                 int moodResId = getMoodIconResId(mood);
                 if (moodResId != 0) {
                     holder.ivMood.setImageResource(moodResId);
-                    holder.ivMood.setVisibility(View.VISIBLE);
-                } else {
-                    holder.ivMood.setVisibility(View.GONE);
+                    holder.ivMood.setColorFilter(myContext.getResources().getColor(R.color.boy));
+                    holder.ivMood.setAlpha(1.0f);
                 }
             }
 
