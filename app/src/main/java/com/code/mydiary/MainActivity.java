@@ -7,8 +7,10 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -43,6 +45,12 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private Context context = this;
     private List<DiaryListItem> diaryListItems = new ArrayList<>(); // 新数据源
 
+    private LinearLayout searchBar;
+    private EditText etSearch;
+    private ImageButton btnSearchClose;
+    private boolean isSearching = false;
+    private List<DiaryListItem> originalDiaryListItems = new ArrayList<>(); // 保存原始数据
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +60,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         initToolbar();
         initTabs();
         initBottomButtons();
+        initSearchBar(); // 新增
         initTV(); // {{ edit_2: initTV 不再需要初始化 diary_moon }}
         initLV();
         refreshListView(); // {{ edit_3: refreshListView 不再需要更新 diary_moon }}
@@ -96,6 +105,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private void initBottomButtons() {
         myBtnMenu = findViewById(R.id.imgBt_menu);
         myBtnAdd = findViewById(R.id.imgBt_add);
+        ImageButton myBtnSearch = findViewById(R.id.imgBt_search); // 新增
 
         if (myBtnMenu != null) {
             myBtnMenu.setOnClickListener(v -> {
@@ -165,7 +175,15 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 }
             });
 
-    }
+        }
+
+        if (myBtnSearch != null) {
+            myBtnSearch.setOnClickListener(v -> {
+                if (!isSearching) {
+                    enterSearchMode();
+                }
+            });
+        }
 
         // 额外设置按钮（原 Setting 中跳转按钮）
         View btnSet1 = findViewById(R.id.btn_set1);
@@ -370,6 +388,106 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         }
         Log.d(TAG, "refreshListView: 组装后的数据源大小=" + diaryListItems.size());
     }
+
+    //搜索相关
+    private void initSearchBar() {
+        searchBar = findViewById(R.id.search_bar);
+        etSearch = findViewById(R.id.et_search);
+        btnSearchClose = findViewById(R.id.btn_search_close);
+
+        btnSearchClose.setOnClickListener(v -> exitSearchMode());
+
+        // 实时搜索：监听文本变化
+        etSearch.addTextChangedListener(new android.text.TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                // 只有输入不为空时才搜索，否则恢复原始数据
+                String keyword = s.toString().trim();
+                if (keyword.isEmpty()) {
+                    diaryListItems.clear();
+                    diaryListItems.addAll(originalDiaryListItems);
+                    if (adopter != null) adopter.notifyDataSetChanged();
+                } else {
+                    performSearch(keyword);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(android.text.Editable s) {}
+        });
+
+        etSearch.setOnEditorActionListener((v, actionId, event) -> {
+            if (actionId == android.view.inputmethod.EditorInfo.IME_ACTION_SEARCH) {
+                performSearch(etSearch.getText().toString().trim());
+                return true;
+            }
+            return false;
+        });
+    }
+    private void enterSearchMode() {
+        isSearching = true;
+        searchBar.setVisibility(View.VISIBLE);
+        // 只请求焦点，不清空内容，避免触发TextWatcher导致列表被清空
+        etSearch.requestFocus();
+        // 保存原始数据（只保存一次，避免多次进入搜索模式时被覆盖）
+        if (originalDiaryListItems.isEmpty()) {
+            originalDiaryListItems.clear();
+            originalDiaryListItems.addAll(diaryListItems);
+        }
+        // 弹出软键盘
+        android.os.Handler handler = new android.os.Handler();
+        handler.postDelayed(() -> {
+            android.view.inputmethod.InputMethodManager imm = (android.view.inputmethod.InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            if (imm != null) {
+                imm.showSoftInput(etSearch, android.view.inputmethod.InputMethodManager.SHOW_IMPLICIT);
+            }
+        }, 100);
+    }
+
+    private void exitSearchMode() {
+        isSearching = false;
+        searchBar.setVisibility(View.GONE);
+        // 恢复原始数据
+        diaryListItems.clear();
+        diaryListItems.addAll(originalDiaryListItems);
+        if (adopter != null) adopter.notifyDataSetChanged();
+        // 清空搜索框内容
+        etSearch.setText("");
+        // 清空原始数据缓存，避免下次进入搜索模式时数据不对
+        originalDiaryListItems.clear();
+        // 收起软键盘
+        android.view.inputmethod.InputMethodManager imm = (android.view.inputmethod.InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        if (imm != null) {
+            imm.hideSoftInputFromWindow(etSearch.getWindowToken(), 0);
+        }
+    }
+    private void performSearch(String keyword) {
+        if (keyword.isEmpty()) {
+            // 若输入为空，显示全部
+            diaryListItems.clear();
+            diaryListItems.addAll(originalDiaryListItems);
+            if (adopter != null) adopter.notifyDataSetChanged();
+            return;
+        }
+        List<DiaryListItem> result = new ArrayList<>();
+        String lowerKeyword = keyword.toLowerCase();
+        for (DiaryListItem item : originalDiaryListItems) {
+            if (item.type == DiaryListItem.TYPE_DIARY && item.diary != null) {
+                String title = item.diary.getTitle() == null ? "" : item.diary.getTitle();
+                String body = item.diary.getBody() == null ? "" : item.diary.getBody();
+                if (title.toLowerCase().contains(lowerKeyword) || body.toLowerCase().contains(lowerKeyword)) {
+                    result.add(item);
+                }
+            }
+        }
+        diaryListItems.clear();
+        diaryListItems.addAll(result);
+        if (adopter != null) adopter.notifyDataSetChanged();
+    }
+
 
     private static final int ID_DIARY_LV = R.id.diary_lv;  // 提取为常量
 
