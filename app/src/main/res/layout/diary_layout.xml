@@ -1,125 +1,117 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
+    android:layout_height="wrap_content"
     android:background="@drawable/diary_background"
-    android:layout_height="wrap_content">
+    android:paddingBottom="8dp">
 
-    <!-- 日期和星期 垂直排列 -->
-    <LinearLayout
-        android:id="@+id/ll_date"
+    <!-- 日期 (日) -->
+    <TextView
+        android:id="@+id/tv_day"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="5dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:text="12"
+        android:textColor="@color/boy"
+        android:textSize="40sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:id="@+id/tv_day"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
-            android:layout_gravity="center_horizontal"
-            android:text="12"
-            android:textSize="40sp"
-            android:textColor="@color/boy"/>
+    <!-- 星期 -->
+    <TextView
+        android:id="@+id/tv_week"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Thu."
+        android:textColor="@color/boy"
+        android:textSize="16sp"
+        android:layout_marginLeft="6dp"
+        app:layout_constraintStart_toStartOf="@id/tv_day"
+        app:layout_constraintTop_toBottomOf="@id/tv_day" />
 
-        <TextView
-            android:id="@+id/tv_week"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="0dp"
-            android:gravity="center_horizontal"
-            android:layout_gravity="center_horizontal"
-            android:text="Thu."
-            android:textSize="16sp"
-            android:textColor="@color/boy"/>
-    </LinearLayout>
+    <!-- 时间 -->
+    <TextView
+        android:id="@+id/tv_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:text="时间（时：分）"
+        android:textColor="@color/boy"
+        android:textSize="14sp"
+        app:layout_constraintStart_toEndOf="@id/tv_day"
+        app:layout_constraintTop_toTopOf="@id/tv_day" />
 
-    <!-- 时间和标题 垂直排列，位于日期右侧 -->
-    <LinearLayout
-        android:id="@+id/ll_info"
+    <!-- 标题 -->
+    <TextView
+        android:id="@+id/tv_title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_marginStart="12dp"
-        android:layout_marginEnd="8dp"
-        app:layout_constraintStart_toEndOf="@id/ll_date"
-        app:layout_constraintEnd_toStartOf="@id/ll_icons"
-        app:layout_constraintTop_toTopOf="@id/ll_date">
+        android:layout_marginTop="4dp"
+        android:text="标题"
+        android:textColor="@color/boy"
+        android:textSize="23sp"
+        app:layout_constraintEnd_toStartOf="@id/iv_tag"
+        app:layout_constraintStart_toStartOf="@id/tv_time"
+        app:layout_constraintTop_toBottomOf="@id/tv_time" />
 
-        <TextView
-            android:id="@+id/tv_time"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="时间（时：分）"
-            android:textSize="14sp"
-            android:textColor="@color/boy"/>
-
-        <TextView
-            android:id="@+id/tv_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="标题"
-            android:textSize="23sp"
-            android:textColor="@color/boy"
-            android:layout_gravity="center_vertical"
-            android:gravity="center_vertical"
-            />
-        <TextView
-            android:id="@+id/tv_body"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:text="这里是正文摘要，最多20字，多余显示省略号"
-            android:textSize="12sp"
-            android:textColor="@color/boy"
-            android:maxLines="1"
-            android:ellipsize="end"
-            />
-    </LinearLayout>
-
-    <!-- 右上角图标 水平排列 -->
-    <LinearLayout
-        android:id="@+id/ll_icons"
-        android:layout_width="wrap_content"
+    <!-- 正文摘要 -->
+    <TextView
+        android:id="@+id/tv_body"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="4dp"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:text="这里是正文摘要，最多20字，多余显示省略号"
+        android:textColor="@color/boy"
+        android:textSize="12sp"
+        app:layout_constraintEnd_toStartOf="@id/iv_tag"
+        app:layout_constraintStart_toStartOf="@id/tv_title"
+        app:layout_constraintTop_toBottomOf="@id/tv_title" />
+
+    <!-- 标签图标 (右上角) -->
+    <ImageView
+        android:id="@+id/iv_tag"
+        android:layout_width="22dp"
+        android:layout_height="22dp"
         android:layout_marginEnd="16dp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        android:layout_marginTop="8dp"
+        android:contentDescription="标签图标"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_bookmark_border"
+        android:tint="@color/gray"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <ImageView
-            android:id="@+id/iv_weather"
-            android:layout_width="20dp"
-            android:scaleType="fitCenter"
-            android:layout_height="20dp"
-            android:visibility="gone"
-            android:contentDescription="天气图标"
-            android:tint="@color/boy" />
+    <!-- 天气图标 (右上角，iv_tag 左侧) -->
+    <ImageView
+        android:id="@+id/iv_weather"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:layout_marginEnd="7dp"
+        android:layout_marginTop="11dp"
+        android:contentDescription="天气图标"
+        android:scaleType="fitCenter"
+        android:tint="@color/boy"
+        android:visibility="gone"
+        app:layout_constraintEnd_toStartOf="@id/iv_tag"
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <ImageView
-            android:id="@+id/iv_mood"
-            android:layout_width="18dp"
-            android:scaleType="fitCenter"
-            android:layout_height="18dp"
-            android:layout_marginStart="8dp"
-            android:visibility="gone"
-            android:contentDescription="心情图标"
-            android:tint="@color/boy"/>
+    <!-- 心情图标 (右上角，iv_weather 左侧) -->
+    <ImageView
+        android:id="@+id/iv_mood"
+        android:layout_width="13dp"
+        android:layout_height="13dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginTop="12dp"
+        android:contentDescription="心情图标"
+        android:scaleType="fitCenter"
+        android:tint="@color/boy"
+        android:visibility="gone"
+        app:layout_constraintEnd_toStartOf="@id/iv_weather"
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <ImageView
-            android:id="@+id/iv_tag"
-            android:layout_width="22dp"
-            android:scaleType="fitCenter"
-            android:layout_height="22dp"
-            android:layout_marginStart="8dp"
-            android:src="@drawable/ic_bookmark_border"
-            android:contentDescription="标签图标"
-            android:tint="@color/gray"
-            />
-    </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

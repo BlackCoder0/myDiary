@@ -9,9 +9,9 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:textColor="@android:color/white"
-        android:textSize="23sp"
+        android:textSize="28sp"
         android:textStyle="bold"
-        android:paddingTop="10dp"
-        android:paddingBottom="5dp"
+        android:paddingTop="4dp"
+        android:paddingBottom="2dp"
         android:background="@android:color/transparent"/>
 </FrameLayout>

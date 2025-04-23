@@ -84,7 +84,18 @@ public class DiaryAdopter extends BaseAdapter {
                 holder = (DiaryHolder) convertView.getTag();
             }
             Diary diary = data.get(position).diary;
-            holder.tvTitle.setText(!TextUtils.isEmpty(diary.getTitle()) ? diary.getTitle() : diary.getTime());
+            // holder.tvTitle.setText(!TextUtils.isEmpty(diary.getTitle()) ? diary.getTitle() : diary.getTime());
+            if (!TextUtils.isEmpty(diary.getTitle())) {
+                holder.tvTitle.setText(diary.getTitle());
+            } else {
+                // 只显示年月日
+                String timeStr = diary.getTime();
+                String dateOnly = timeStr;
+                if (timeStr != null && timeStr.length() >= 10) {
+                    dateOnly = timeStr.substring(0, 10); // yyyy-MM-dd
+                }
+                holder.tvTitle.setText(dateOnly);
+            }
             holder.tvBody.setText(!TextUtils.isEmpty(diary.getBody()) ? diary.getBody() : "无内容");
 
             // 标签图标
@@ -176,11 +187,24 @@ public class DiaryAdopter extends BaseAdapter {
 
     // 你原有的 getWeatherIconResId/getMoodIconResId 方法保留
     private int getWeatherIconResId(int weather) {
-        // ... 根据你的项目资源返回对应的图标ID ...
-        return 0;
+        switch (weather) {
+            case 0: return R.drawable.ic_weather_cloud;
+            case 1: return R.drawable.ic_weather_foggy;
+            case 2: return R.drawable.ic_weather_rainy;
+            case 3: return R.drawable.ic_weather_snowy;
+            case 4: return R.drawable.ic_weather_sunny;
+            case 5: return R.drawable.ic_weather_windy;
+            // 添加更多 weather 类型映射
+            default: return 0;
+        }
     }
     private int getMoodIconResId(int mood) {
-        // ... 根据你的项目资源返回对应的图标ID ...
-        return 0;
+        switch (mood) {
+            case 0: return R.drawable.ic_mood_happy;
+            case 1: return R.drawable.ic_mood_soso;
+            case 2: return R.drawable.ic_mood_unhappy;
+            // 可继续拓展更多心情等级
+            default: return 0;
+        }
     }
 }
