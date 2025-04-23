@@ -107,11 +107,65 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         if (myBtnAdd != null) {
             myBtnAdd.setOnClickListener(v -> {
                 Log.d("ClickDebug", "Add按钮被点击");
-                Intent addIntent = new Intent(MainActivity.this, AddDiary.class);
-                addIntent.putExtra("mode",4);//4为创建笔记
-                startActivityForResult(addIntent, 0);
+                // === 新增逻辑：一天只能写一篇日记 ===
+                long userId = getIntent().getLongExtra("user_id", -1);
+                String today = new java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.getDefault()).format(new java.util.Date());
+
+                CRUD op = new CRUD(context);
+                op.open();
+                List<Diary> allDiaries = op.getAllDiary();
+                op.close();
+
+                // 只查找属于当前用户的日记
+                com.code.mydiary.util.UserCRUD userCRUD = new com.code.mydiary.util.UserCRUD(context);
+                userCRUD.open();
+                java.util.List<Long> userDiaryIds = new java.util.ArrayList<>();
+                android.database.Cursor cursor = userCRUD.getUserDiaryIds(userId);
+                while (cursor.moveToNext()) {
+                    int columnIndex = cursor.getColumnIndex(com.code.mydiary.util.UserDatabase.DIARY_ID);
+                    if (columnIndex != -1) {
+                        userDiaryIds.add(cursor.getLong(columnIndex));
+                    }
+                }
+                cursor.close();
+                userCRUD.close();
+
+                Diary todayDiary = null;
+                for (Diary diary : allDiaries) {
+                    if (userDiaryIds.contains(diary.getId())) {
+                        String diaryDate = diary.getTime();
+                        if (diaryDate != null && diaryDate.length() >= 10 && diaryDate.substring(0, 10).equals(today)) {
+                            todayDiary = diary;
+                            break;
+                        }
+                    }
+                }
+
+                if (todayDiary != null) {
+                    // 已有今日日记，进入编辑页面
+                    Intent editIntent = new Intent(MainActivity.this, AddDiary.class);
+                    editIntent.putExtra("id", todayDiary.getId());
+                    editIntent.putExtra("time", todayDiary.getTime());
+                    editIntent.putExtra("weather", todayDiary.getWeather());
+                    editIntent.putExtra("temperature", todayDiary.getTemperature());
+                    editIntent.putExtra("location", todayDiary.getLocation());
+                    editIntent.putExtra("title", todayDiary.getTitle());
+                    editIntent.putExtra("body", todayDiary.getBody());
+                    editIntent.putExtra("mood", todayDiary.getMood());
+                    editIntent.putExtra("tag", todayDiary.getTag());
+                    editIntent.putExtra("mode", 3); // 编辑模式
+                    startActivityForResult(editIntent, 1);
+                    Log.d(TAG, "Add按钮：今日已有日记，进入编辑模式");
+                } else {
+                    // 没有今日日记，进入新建页面
+                    Intent addIntent = new Intent(MainActivity.this, AddDiary.class);
+                    addIntent.putExtra("mode", 4); // 4为创建笔记
+                    startActivityForResult(addIntent, 0);
+                    Log.d(TAG, "Add按钮：今日无日记，进入新建模式");
+                }
             });
-        }
+
+    }
 
         // 额外设置按钮（原 Setting 中跳转按钮）
         View btnSet1 = findViewById(R.id.btn_set1);
