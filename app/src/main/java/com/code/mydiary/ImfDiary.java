@@ -14,6 +14,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.os.Handler;
 
 import androidx.appcompat.app.AlertDialog;
 
@@ -23,6 +24,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+
 
 public class ImfDiary {
 
@@ -36,7 +38,13 @@ public class ImfDiary {
 
 
     // 修改方法签名，接收 Diary 对象和监听器
-    public void showDiaryDialog(Context context, final Diary diary, final DialogActionListener listener) {
+// ... 其他 import ...
+ // 新增 import
+
+// ... 其他代码 ...
+
+    // 新增重载方法
+    public void showDiaryDialog(Context context, final Diary diary, final DialogActionListener listener, boolean isTimeReverse, Runnable onDeleteAnimFinish) {
         if (diary == null) {
             Log.e("ImfDiary", "Diary object is null, cannot show dialog.");
             Toast.makeText(context, "无法加载日记信息", Toast.LENGTH_SHORT).show();
@@ -44,12 +52,12 @@ public class ImfDiary {
         }
 
         Dialog dialog = new Dialog(context);
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE); // 去掉标题栏
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
 
         View view = LayoutInflater.from(context).inflate(R.layout.imf_diary, null);
         dialog.setContentView(view);
 
-        // --- 获取视图控件 ---
+        // 获取视图控件
         ImageButton btnClose = view.findViewById(R.id.imf_imgBtn_close);
         TextView tvMoon = view.findViewById(R.id.imf_tv_moon);
         TextView tvDay = view.findViewById(R.id.imf_tv_day);
@@ -60,11 +68,10 @@ public class ImfDiary {
         ImageView ivLocation = view.findViewById(R.id.iv_location_image);
         TextView tvLocationText = view.findViewById(R.id.imf_tv_location_text);
         TextView tvContent = view.findViewById(R.id.imf_tv_content);
-        ImageButton btnMore = view.findViewById(R.id.imf_imgBtn_more); // 编辑按钮
-        ImageButton btnDelete = view.findViewById(R.id.imf_imgBtn_delte); // 删除按钮
+        ImageButton btnMore = view.findViewById(R.id.imf_imgBtn_more);
+        ImageButton btnDelete = view.findViewById(R.id.imf_imgBtn_delte);
 
-        // --- 填充数据 ---
-
+        // 填充数据
         // 1. 处理时间
         String timeStr = diary.getTime();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
@@ -78,7 +85,6 @@ public class ImfDiary {
             }
         } catch (ParseException e) {
             Log.e("ImfDiary", "Error parsing date: " + timeStr, e);
-            // 可以设置默认值或错误提示
             tvMoon.setText("Error");
             tvDay.setText("");
             tvWeek.setText("");
@@ -94,7 +100,7 @@ public class ImfDiary {
                 ivWeather.setImageResource(weatherIconResId);
                 ivWeather.setVisibility(View.VISIBLE);
             } else {
-                ivWeather.setVisibility(View.GONE); // 或者设置一个默认图标
+                ivWeather.setVisibility(View.GONE);
             }
             if (!TextUtils.isEmpty(weatherText)) {
                 tvWeatherText.setText(weatherText);
@@ -103,7 +109,6 @@ public class ImfDiary {
                 tvWeatherText.setVisibility(View.GONE);
             }
         } else {
-            // 天气未设置，隐藏图标和文字
             ivWeather.setVisibility(View.GONE);
             tvWeatherText.setVisibility(View.GONE);
         }
@@ -115,7 +120,6 @@ public class ImfDiary {
             tvLocationText.setVisibility(View.VISIBLE);
             ivLocation.setVisibility(View.VISIBLE);
         } else {
-            // 位置未设置，隐藏图标和文字
             tvLocationText.setVisibility(View.GONE);
             ivLocation.setVisibility(View.GONE);
         }
@@ -123,47 +127,87 @@ public class ImfDiary {
         // 4. 处理正文内容
         tvContent.setText(!TextUtils.isEmpty(diary.getBody()) ? diary.getBody() : "无内容");
 
-        // --- 设置按钮监听器 ---
-
-        // 关闭按钮
+        // 设置按钮监听器
         btnClose.setOnClickListener(v -> dialog.dismiss());
-
-        // 更多/编辑按钮
         btnMore.setOnClickListener(v -> {
-            dialog.dismiss(); // 关闭预览对话框
+            dialog.dismiss();
             if (listener != null) {
-                listener.onEditClicked(diary); // 通知 MainActivity 去启动编辑页面
+                listener.onEditClicked(diary);
             }
         });
-
-        // 删除按钮
         btnDelete.setOnClickListener(v -> {
-            dialog.dismiss(); // 关闭预览对话框
+            dialog.dismiss();
             if (listener != null) {
-                listener.onDeleteClicked(diary); // 通知 MainActivity 去处理删除逻辑
+                listener.onDeleteClicked(diary);
             }
         });
 
+        // 如果是时光倒流模式，执行动画
+        if (isTimeReverse) {
+            btnClose.setEnabled(false);
+            btnMore.setEnabled(false);
+            btnDelete.setEnabled(false);
+            startDeleteAnim(tvMoon, tvDay, tvWeek, tvTime, tvWeatherText, tvLocationText, tvContent, onDeleteAnimFinish, dialog);
+        }
 
-        // --- 显示对话框 ---
+        // 显示对话框
         Window window = dialog.getWindow();
         if (window != null) {
-            // --- 添加这行代码 ---
-            window.setBackgroundDrawableResource(android.R.color.transparent); // 设置窗口背景为透明
-            // --- 添加结束 ---
-
-            // 设置对话框大小 (可以根据需要调整)
+            window.setBackgroundDrawableResource(android.R.color.transparent);
             window.setLayout(
                     (int)(context.getResources().getDisplayMetrics().widthPixels * 0.9),
                     (int)(context.getResources().getDisplayMetrics().heightPixels * 0.7)
             );
-             // 可选：移除背景，如果你在 XML 中设置了背景
-             // window.setBackgroundDrawableResource(android.R.color.transparent);
         }
-        dialog.setCanceledOnTouchOutside(true); // 点击外部也可关闭
+        dialog.setCanceledOnTouchOutside(true);
         dialog.show();
     }
 
+    // 新增：动画逐步乱码并删除
+    private void startDeleteAnim(TextView tvMoon, TextView tvDay, TextView tvWeek, TextView tvTime, TextView tvWeatherText, TextView tvLocationText, TextView tvContent, Runnable onFinish, Dialog dialog) {
+        Handler handler = new Handler();
+        Runnable[] steps = new Runnable[2];
+        steps[0] = () -> {
+            tvMoon.setText(randomGarble(tvMoon.getText().toString()));
+            tvDay.setText(randomGarble(tvDay.getText().toString()));
+            tvWeek.setText(randomGarble(tvWeek.getText().toString()));
+            tvTime.setText(randomGarble(tvTime.getText().toString()));
+            tvWeatherText.setText(randomGarble(tvWeatherText.getText().toString()));
+            tvLocationText.setText(randomGarble(tvLocationText.getText().toString()));
+            tvContent.setText(randomGarble(tvContent.getText().toString()));
+            handler.postDelayed(steps[1], 400);
+        };
+        steps[1] = () -> {
+            deleteTextAnim(tvMoon, tvDay, tvWeek, tvTime, tvWeatherText, tvLocationText, tvContent, onFinish, dialog);
+        };
+        handler.post(steps[0]);
+    }
+
+    // 新增：逐字删除动画
+    private void deleteTextAnim(TextView tvMoon, TextView tvDay, TextView tvWeek, TextView tvTime, TextView tvWeatherText, TextView tvLocationText, TextView tvContent, Runnable onFinish, Dialog dialog) {
+        if (tvMoon.getText().length() > 0 || tvDay.getText().length() > 0 || tvWeek.getText().length() > 0 || tvTime.getText().length() > 0 || tvWeatherText.getText().length() > 0 || tvLocationText.getText().length() > 0 || tvContent.getText().length() > 0) {
+            if (tvMoon.getText().length() > 0) tvMoon.setText(tvMoon.getText().subSequence(0, tvMoon.getText().length() - 1));
+            if (tvDay.getText().length() > 0) tvDay.setText(tvDay.getText().subSequence(0, tvDay.getText().length() - 1));
+            if (tvWeek.getText().length() > 0) tvWeek.setText(tvWeek.getText().subSequence(0, tvWeek.getText().length() - 1));
+            if (tvTime.getText().length() > 0) tvTime.setText(tvTime.getText().subSequence(0, tvTime.getText().length() - 1));
+            if (tvWeatherText.getText().length() > 0) tvWeatherText.setText(tvWeatherText.getText().subSequence(0, tvWeatherText.getText().length() - 1));
+            if (tvLocationText.getText().length()> 0) tvLocationText.setText(tvLocationText.getText().subSequence(0, tvLocationText.getText().length() - 1));
+            if (tvContent.getText().length() > 0) tvContent.setText(tvContent.getText().subSequence(0, tvContent.getText().length() - 1));
+            tvContent.postDelayed(() -> deleteTextAnim(tvMoon, tvDay, tvWeek, tvTime, tvWeatherText, tvLocationText, tvContent, onFinish, dialog), 30);
+        } else {
+            dialog.dismiss();
+            if (onFinish != null) onFinish.run();
+        }
+    }
+    // 新增：生成随机乱码
+    private String randomGarble(String s) {
+        StringBuilder sb = new StringBuilder();
+        java.util.Random r = new java.util.Random();
+        for (int i = 0; i < s.length(); i++) {
+            sb.append((char) (0x4e00 + r.nextInt(0x9fa5 - 0x4e00)));
+        }
+        return sb.toString();
+    }
     // --- Helper 方法 ---
 
     // (从 DiaryAdopter 移动或复制过来)
@@ -190,4 +234,8 @@ public class ImfDiary {
             default: return ""; // 返回空字符串表示没有对应文字
         }
     }
+
+
+
+
 }

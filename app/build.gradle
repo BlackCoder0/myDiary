@@ -40,4 +40,5 @@ dependencies {
 
     implementation 'com.amap.api:location:6.4.0'
     implementation 'com.amap.api:search:9.7.0'
+    implementation 'com.google.code.gson:gson:2.10.1'
 }

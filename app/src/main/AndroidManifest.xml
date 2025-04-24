@@ -47,6 +47,7 @@
         <activity
             android:name=".NoListActivity"
             android:windowSoftInputMode="adjustResize"/>
+        <activity android:name=".TimeReverseEndActivity"/>
     </application>
 
 </manifest>

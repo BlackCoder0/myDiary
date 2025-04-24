@@ -8,6 +8,7 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -32,6 +33,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
 
@@ -62,6 +65,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private LinearLayout setChangePwd, setAway; // 已有
     private long lastBackPressedTime = 0;
 
+    private static final String BACKUP_FILE = "backup_diaries.json";//时光倒流时候的存储
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,7 +92,15 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             // return;
         }
 
-
+        if (getIntent().getBooleanExtra("restoreDiaries", false)) {
+            restoreDiaries();
+            // 切换回Entries页面
+            switchPage(0);
+        }
+        if (hasBackupFile() && !getIntent().getBooleanExtra("restoreDiaries", false)) {
+            restoreDiaries();
+            switchPage(0);
+        }
         initToolbar();
         initTabs();
         initBottomButtons();
@@ -257,25 +270,25 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data); // 先调用父类方法
-    
+
         // --- 修改开始: 检查 resultCode ---
         // 如果用户取消了操作 (点击取消按钮或返回键)，则不执行任何操作
         if (resultCode != RESULT_OK) {
-             Log.d(TAG, "onActivityResult: Operation canceled or no result (resultCode=" + resultCode + ")");
-             return; // 直接返回，不刷新列表或处理数据
+            Log.d(TAG, "onActivityResult: Operation canceled or no result (resultCode=" + resultCode + ")");
+            return; // 直接返回，不刷新列表或处理数据
         }
         // --- 修改结束 ---
-    
+
         // 只有在 resultCode 是 RESULT_OK 时才继续处理
         if (data != null && data.getExtras() != null) {
             int returnMode = data.getExtras().getInt("mode", -1);
             long diary_Id = data.getExtras().getLong("id", 0); // 获取 ID
-    
+
             // --- 修改开始: 仅在 mode 为 0 或 1 时执行数据库操作和刷新 ---
             if (returnMode == 0 || returnMode == 1) {
                 CRUD op = new CRUD(context);
                 op.open();
-    
+
                 if (returnMode == 1) {  // update current note
                     Log.d(TAG, "onActivityResult: Updating diary ID: " + diary_Id);
                     // 从返回的 Intent 中获取所有更新后的数据
@@ -288,13 +301,13 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     int mood = data.getIntExtra("mood", -1);
                     int tag = data.getIntExtra("tag", 1);
                     // 注意：mode 本身不需要存入 Diary 对象，它是操作类型
-    
+
                     // 创建包含所有更新信息的 Diary 对象
                     Diary updatedDiary = new Diary(time, weather, temperature, location, title, body, mood, tag, 1); // mode 存 1 或其他默认值
                     updatedDiary.setId(diary_Id); // 设置要更新的日记的 ID
-    
+
                     op.updataDiary(updatedDiary); // 更新数据库
-    
+
                 } else if (returnMode == 0) {  // create new note
                     Log.d(TAG, "onActivityResult: Creating new diary");
                     String title = data.getStringExtra("title");
@@ -305,13 +318,13 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     int weather = data.getIntExtra("weather", -1);
                     int mood = data.getIntExtra("mood", -1);
                     int tag = data.getIntExtra("tag", 1);
-                     // 注意：mode 本身不需要存入 Diary 对象
-    
+                    // 注意：mode 本身不需要存入 Diary 对象
+
                     // 创建新的 Diary 对象
                     Diary newDiary = new Diary(time, weather, temperature, location, title, body, mood, tag, 1); // mode 存 1 或其他默认值
-    
+
                     newDiary = op.addDiary(newDiary); // 获取带ID的Diary对象
-    
+
                     // 关键：建立用户-日记关联
                     long userId = getIntent().getLongExtra("user_id", -1);
                     com.code.mydiary.util.UserCRUD userCRUD = new com.code.mydiary.util.UserCRUD(context);
@@ -320,15 +333,15 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     userCRUD.close();
                 }
                 // else { // returnMode 为 -1 的情况不再需要在这里处理数据库 }
-    
+
                 op.close();
                 refreshListView(); // 只有在实际创建或更新后才刷新列表
             } else {
-                 Log.d(TAG, "onActivityResult: No changes detected or required (mode=" + returnMode + ")");
-                 // returnMode 为 -1，表示没有更改或用户未做任何有效输入，不需要刷新列表
+                Log.d(TAG, "onActivityResult: No changes detected or required (mode=" + returnMode + ")");
+                // returnMode 为 -1，表示没有更改或用户未做任何有效输入，不需要刷新列表
             }
             // --- 修改结束 ---
-    
+
         } else {
             // 虽然我们已经检查了 resultCode，但以防万一 data 为 null
             Log.d(TAG, "onActivityResult: RESULT_OK but data is null or has no extras.");
@@ -336,12 +349,12 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     }
 
 
-    public void refreshListView(){
+    public void refreshListView() {
         Log.d(TAG, "refreshListView: 开始刷新列表");
         long userId = currentUserId; // 只用成员变量
         CRUD op = new CRUD(context);
         op.open();
-    
+
         // 新增：只查找属于当前用户的日记
         List<Long> userDiaryIds = new ArrayList<>();
         com.code.mydiary.util.UserCRUD userCRUD = new com.code.mydiary.util.UserCRUD(context);
@@ -351,15 +364,15 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             // 注意：需要确保 UserDatabase.DIARY_ID 是正确的列名
             int columnIndex = cursor.getColumnIndex(com.code.mydiary.util.UserDatabase.DIARY_ID);
             if (columnIndex != -1) { // 检查列是否存在
-                 userDiaryIds.add(cursor.getLong(columnIndex));
+                userDiaryIds.add(cursor.getLong(columnIndex));
             } else {
-                 Log.e(TAG, "Column UserDatabase.DIARY_ID not found in cursor.");
-                 // 可以选择抛出异常或进行其他错误处理
+                Log.e(TAG, "Column UserDatabase.DIARY_ID not found in cursor.");
+                // 可以选择抛出异常或进行其他错误处理
             }
         }
         cursor.close();
         userCRUD.close();
-    
+
         diaryList.clear();
         List<Diary> allDiaries = op.getAllDiary();
         for (Diary diary : allDiaries) {
@@ -367,7 +380,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 diaryList.add(diary);
             }
         }
-    
+
         // --- 按时间降序排序 (保持不变) ---
         Collections.sort(diaryList, new Comparator<Diary>() {
             @Override
@@ -376,14 +389,14 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             }
         });
         // --- 排序结束 ---
-    
+
         Log.d(TAG, "refreshListView: 查询并排序后日记数量=" + diaryList.size());
-    
+
         // 更新日记数量显示
         if (mydiary_count != null) {
             mydiary_count.setText(String.valueOf(diaryList.size()));
         }
-    
+
         // === 关键补充：组装 diaryListItems ===
         diaryListItems.clear();
         String lastMonth = "";
@@ -404,7 +417,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             diaryListItems.add(new com.code.mydiary.util.DiaryListItem(com.code.mydiary.util.DiaryListItem.TYPE_DIARY, null, diary));
         }
         // === 补充结束 ===
-    
+
         op.close();
         if (adopter != null) {
             adopter.notifyDataSetChanged();
@@ -427,7 +440,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         // 实时搜索：监听文本变化
         etSearch.addTextChangedListener(new android.text.TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
@@ -443,7 +457,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             }
 
             @Override
-            public void afterTextChanged(android.text.Editable s) {}
+            public void afterTextChanged(android.text.Editable s) {
+            }
         });
 
         etSearch.setOnEditorActionListener((v, actionId, event) -> {
@@ -454,6 +469,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             return false;
         });
     }
+
     private void enterSearchMode() {
         isSearching = true;
         searchBar.setVisibility(View.VISIBLE);
@@ -491,6 +507,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             imm.hideSoftInputFromWindow(etSearch.getWindowToken(), 0);
         }
     }
+
     private void performSearch(String keyword) {
         if (keyword.isEmpty()) {
             // 若输入为空，显示全部
@@ -549,7 +566,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     public void onDeleteClicked(Diary diaryToDelete) {
                         showDeleteConfirmationDialog(diaryToDelete);
                     }
-                });
+                }, false, null);
             }
             // 如果是月份头部，什么都不做
         }
@@ -573,17 +590,19 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     }
 
 
-
     private void initSettingPage() {
         // 只在设置页（container_diary）可见时初始化
         setChangePwd = findViewById(R.id.set_changePwd);
         setAway = findViewById(R.id.set_away);
-
+        LinearLayout setTime = findViewById(R.id.set_time); // 新增
         if (setChangePwd != null) {
             setChangePwd.setOnClickListener(v -> showChangePwdDialog());
         }
         if (setAway != null) {
             setAway.setOnClickListener(v -> logout());
+        }
+        if (setTime != null) {
+            setTime.setOnClickListener(v -> startTimeReverse());
         }
     }
 
@@ -631,29 +650,203 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 .setNegativeButton("取消", null)
                 .show();
     }
-private void logout() {
-    // 清除自动登录信息
-    getSharedPreferences("login", MODE_PRIVATE).edit().clear().apply();
-    // 跳转到登录界面并清空输入框
-    Intent intent = new Intent(this, Login.class);
-    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-    startActivity(intent);
-    finish();
-}
+
+    private void logout() {
+        // 清除自动登录信息
+        getSharedPreferences("login", MODE_PRIVATE).edit().clear().apply();
+        // 跳转到登录界面并清空输入框
+        Intent intent = new Intent(this, Login.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        finish();
+    }
 
 
-@Override
-public void onBackPressed() {
-    if (System.currentTimeMillis() - lastBackPressedTime > 2000) {
-        com.code.mydiary.util.ToastUtil.showMsg(this, "再按一次返回退出");
-        lastBackPressedTime = System.currentTimeMillis();
-    } else {
-        super.onBackPressed();
-        // 退出到桌面
-        Intent intent = new Intent(Intent.ACTION_MAIN);
-        intent.addCategory(Intent.CATEGORY_HOME);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+    @Override
+    public void onBackPressed() {
+        if (isTimeReversing) {
+            // 彻底禁止返回
+            com.code.mydiary.util.ToastUtil.showMsg(this, "时光倒流中，请稍候...");
+            return;
+        }
+        if (System.currentTimeMillis() - lastBackPressedTime > 2000) {
+            com.code.mydiary.util.ToastUtil.showMsg(this, "再按一次返回退出");
+            lastBackPressedTime = System.currentTimeMillis();
+        } else {
+            super.onBackPressed();
+            Intent intent = new Intent(Intent.ACTION_MAIN);
+            intent.addCategory(Intent.CATEGORY_HOME);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+        }
+    }
+
+    private boolean isTimeReversing = false;
+    private List<Diary> backupDiaries = new ArrayList<>();
+    private List<DiaryListItem> backupDiaryListItems = new ArrayList<>();
+    private View overlayView; // 用于遮罩
+
+
+    private void startTimeReverse() {
+        if (isTimeReversing) return;
+        isTimeReversing = true;
+        showOverlay();
+        switchPage(0);
+        backupDiaries.clear();
+        backupDiaries.addAll(diaryList);
+        backupDiaryListItems.clear();
+        backupDiaryListItems.addAll(diaryListItems);
+
+        // 新增：保存备份到本地文件
+        saveBackupDiariesToFile();
+
+        if (diaryList.size() == 0) {
+            finishTimeReverse();
+            return;
+        }
+        Diary latestDiary = diaryList.get(0);
+        new ImfDiary().showDiaryDialog(this, latestDiary, new ImfDiary.DialogActionListener() {
+            @Override
+            public void onEditClicked(Diary diaryToEdit) {}
+            @Override
+            public void onDeleteClicked(Diary diaryToDelete) {}
+        }, true, () -> {
+            deleteDiaryWithAnimation(latestDiary, () -> {
+                deleteAllDiariesWithAnimation();
+            });
+        });
+    }
+
+    // 保存备份到本地文件
+    private void saveBackupDiariesToFile() {
+        try {
+            Gson gson = new Gson();
+            String json = gson.toJson(backupDiaries);
+            java.io.FileOutputStream fos = openFileOutput(BACKUP_FILE, MODE_PRIVATE);
+            fos.write(json.getBytes());
+            fos.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void showOverlay() {
+        if (overlayView == null) {
+            overlayView = new View(this);
+            overlayView.setLayoutParams(new LinearLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+            overlayView.setBackgroundColor(0x00000000); // 透明遮罩
+            overlayView.setClickable(true); // 拦截点击
+            overlayView.setFocusable(true);
+            overlayView.setFocusableInTouchMode(true);
+            overlayView.setOnTouchListener((v, event) -> true); // 拦截所有触摸事件
+            ((ViewGroup) findViewById(android.R.id.content)).addView(overlayView);
+        }
+        overlayView.setVisibility(View.VISIBLE);
+    }
+
+
+    private void hideOverlay() {
+        if (overlayView != null) overlayView.setVisibility(View.GONE);
+    }
+
+    private void deleteDiaryWithAnimation(Diary diary, Runnable onFinish) {
+        // 删除前先刷新列表
+        new android.os.Handler().postDelayed(() -> {
+            CRUD op = new CRUD(this);
+            op.open();
+            op.deleteDiary(diary);
+            op.close();
+            refreshListView();
+            new android.os.Handler().postDelayed(onFinish, 100);//控制删除日记后的等待时间。
+        }, 100); //控制删除日记前的等待时间。
+    }
+
+    private void deleteAllDiariesWithAnimation() {
+        if (diaryList.size() == 0) {
+            finishTimeReverse();
+            return;
+        }
+        Diary diary = diaryList.get(0);
+        deleteDiaryWithAnimation(diary, this::deleteAllDiariesWithAnimation);
+    }
+
+    private void finishTimeReverse() {
+        hideOverlay(); // <<--- 新增：时光倒流结束，移除遮罩
+        Intent intent = new Intent(this, TimeReverseEndActivity.class);
         startActivity(intent);
     }
-}
+
+
+    private void restoreDiaries() {
+        // 优先从本地文件恢复
+        List<Diary> restoreList = readBackupDiariesFromFile();
+        if (restoreList != null && !restoreList.isEmpty()) {
+            backupDiaries.clear();
+            backupDiaries.addAll(restoreList);
+        }
+        // 先清空当前用户所有日记
+        CRUD op = new CRUD(this);
+        op.open();
+        List<Long> userDiaryIds = new ArrayList<>();
+        com.code.mydiary.util.UserCRUD userCRUD = new com.code.mydiary.util.UserCRUD(this);
+        userCRUD.open();
+        Cursor cursor = userCRUD.getUserDiaryIds(currentUserId);
+        while (cursor.moveToNext()) {
+            int columnIndex = cursor.getColumnIndex(com.code.mydiary.util.UserDatabase.DIARY_ID);
+            if (columnIndex != -1) {
+                userDiaryIds.add(cursor.getLong(columnIndex));
+            }
+        }
+        cursor.close();
+        userCRUD.close();
+        for (Long id : userDiaryIds) {
+            op.deleteDiaryById(id);
+        }
+        // 恢复所有备份日记
+        for (Diary d : backupDiaries) {
+            Diary newDiary = op.addDiary(d);
+            // 重新建立用户-日记关联
+            com.code.mydiary.util.UserCRUD crud = new com.code.mydiary.util.UserCRUD(this);
+            crud.open();
+            crud.linkUserDiary(currentUserId, newDiary.getId());
+            crud.close();
+        }
+        op.close();
+        refreshListView();
+        com.code.mydiary.util.ToastUtil.showMsg(this, "已恢复全部日记");
+        // 恢复后删除本地备份文件
+        deleteBackupFile();
+    }
+    // 从本地文件读取备份
+    private List<Diary> readBackupDiariesFromFile() {
+        try {
+            java.io.FileInputStream fis = openFileInput(BACKUP_FILE);
+            java.io.ByteArrayOutputStream baos = new java.io.ByteArrayOutputStream();
+            byte[] buffer = new byte[1024];
+            int len;
+            while ((len = fis.read(buffer)) != -1) {
+                baos.write(buffer, 0, len);
+            }
+            fis.close();
+            String json = baos.toString();
+            Gson gson = new Gson();
+            return gson.fromJson(json, new TypeToken<List<Diary>>(){}.getType());
+        } catch (Exception e) {
+            // 文件不存在或解析失败
+            return null;
+        }
+    }
+
+    // 删除备份文件
+    private void deleteBackupFile() {
+        java.io.File file = new java.io.File(getFilesDir(), BACKUP_FILE);
+        if (file.exists()) file.delete();
+    }
+
+    // 检查备份文件是否存在
+    private boolean hasBackupFile() {
+        java.io.File file = new java.io.File(getFilesDir(), BACKUP_FILE);
+        return file.exists();
+    }
 }

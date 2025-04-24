@@ -20,8 +20,8 @@
         android:focusable="true"
         android:focusableInTouchMode="true"
         android:clickable="true"
-        android:orientation="vertical"
-        >
+        android:orientation="vertical">
+
         <LinearLayout
             android:id="@+id/set_changePwd"
             android:layout_width="match_parent"
@@ -43,42 +43,52 @@
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="@color/boy"
-            />
+            android:background="@color/boy" />
 
         <LinearLayout
+            android:id="@+id/set_time"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:focusable="true"
-            android:focusableInTouchMode="true"
-            android:clickable="true"
-            android:orientation="vertical"
-            >
-            <LinearLayout
-                android:id="@+id/set_away"
-                android:layout_width="match_parent"
-                android:layout_height="30dp"
-                android:layout_margin="10dp"
-                android:orientation="horizontal"
-                android:background="?attr/selectableItemBackground">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:text="退出登录"
-                    android:textColor="@color/boy"
-                    android:layout_marginLeft="10dp"
-                    android:layout_weight="1"
-                    android:layout_gravity="center"
-                    android:gravity="center_vertical"
-                    android:textSize="20dp"/>
-            </LinearLayout>
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@color/boy"
-                />
+            android:layout_height="30dp"
+            android:layout_margin="10dp"
+            android:orientation="horizontal"
+            android:background="?attr/selectableItemBackground">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="时光倒流"
+                android:textColor="@color/boy"
+                android:layout_marginLeft="10dp"
+                android:layout_weight="1"
+                android:layout_gravity="center"
+                android:gravity="center_vertical"
+                android:textSize="20dp"/>
+        </LinearLayout>
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/boy" />
 
-
-</LinearLayout>
+        <LinearLayout
+            android:id="@+id/set_away"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:layout_margin="10dp"
+            android:orientation="horizontal"
+            android:background="?attr/selectableItemBackground">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="退出登录"
+                android:textColor="@color/boy"
+                android:layout_marginLeft="10dp"
+                android:layout_weight="1"
+                android:layout_gravity="center"
+                android:gravity="center_vertical"
+                android:textSize="20dp"/>
+        </LinearLayout>
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/boy" />
     </LinearLayout>
 </LinearLayout>

@@ -109,5 +109,9 @@ public class CRUD {
         db.delete(DiaryDatabase.TABLE_NAME, DiaryDatabase.ID + "=" + diary.getId(), null);
     }
 
+    public void deleteDiaryById(long id) {
+        db.delete(DiaryDatabase.TABLE_NAME, DiaryDatabase.ID + "=?", new String[]{String.valueOf(id)});
+    }
+
 
 }
