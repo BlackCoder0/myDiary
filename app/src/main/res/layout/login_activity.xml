@@ -66,7 +66,7 @@
         android:gravity="center"
         android:layout_marginTop="75dp"
         android:elevation="4dp"
-        android:stateListAnimator="@animator/lift_on_press"
+        android:stateListAnimator="@anim/lift_on_press"
         android:text="登录" />
     <Button
         android:id="@+id/btn_register"
@@ -78,7 +78,7 @@
         android:gravity="center"
         android:layout_marginTop="10dp"
         android:elevation="4dp"
-        android:stateListAnimator="@animator/lift_on_press"
+        android:stateListAnimator="@anim/lift_on_press"
         android:text="注册" />
 
 

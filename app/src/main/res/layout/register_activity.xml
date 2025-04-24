@@ -128,7 +128,7 @@
         android:gravity="center"
         android:layout_marginTop="15dp"
         android:elevation="4dp"
-        android:stateListAnimator="@animator/lift_on_press"
+        android:stateListAnimator="@anim/lift_on_press"
         android:text="注册" />
 
 

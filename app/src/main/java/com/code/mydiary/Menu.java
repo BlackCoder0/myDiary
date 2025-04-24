@@ -45,7 +45,13 @@ public class Menu extends AppCompatActivity {
 
         layoutDiary.setOnClickListener(v -> {
             setSelected(layoutDiary);
-            finish(); // 只finish，不要startActivity新的MainActivity
+            // 回到 MainActivity
+            Intent intent = new Intent(this, MainActivity.class);
+            intent.putExtra("user_id", userId);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            startActivity(intent);
+            overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+            finish();
         });
 
         layoutNo.setOnClickListener(v -> {

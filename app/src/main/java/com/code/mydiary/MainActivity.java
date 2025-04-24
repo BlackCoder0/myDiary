@@ -127,6 +127,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 Intent menuIntent = new Intent(this, Menu.class);
                 menuIntent.putExtra("user_id", currentUserId);
                 startActivity(menuIntent);
+                // 新增：添加向右平移动画
+                overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
             });
         }
 

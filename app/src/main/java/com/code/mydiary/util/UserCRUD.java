@@ -144,4 +144,40 @@ public class UserCRUD {
                 UserDatabase.SOS_PHONE + "=?",
                 new String[]{String.valueOf(userId), name, phone});
     }
+
+    public String getNoListTitle(long userId) {
+        String title = "禁止事项 Ver.1";
+        Cursor cursor = db.rawQuery(
+            "SELECT " + UserDatabase.NO_TITLE + " FROM " + UserDatabase.NO_LIST_TABLE +
+            " WHERE " + UserDatabase.USER_ID + "=? AND " + UserDatabase.NO_TITLE + " IS NOT NULL LIMIT 1",
+            new String[]{String.valueOf(userId)});
+        if (cursor.moveToFirst()) {
+            String t = cursor.getString(0);
+            if (t != null && !t.trim().isEmpty()) title = t;
+        }
+        cursor.close();
+        return title;
+    }
+
+    public void saveNoListTitle(long userId, String title) {
+        // 检查是否已存在该用户的标题行
+        Cursor cursor = db.rawQuery(
+            "SELECT " + UserDatabase.NO_ID + " FROM " + UserDatabase.NO_LIST_TABLE +
+            " WHERE " + UserDatabase.USER_ID + "=? AND " + UserDatabase.NO_TITLE + " IS NOT NULL LIMIT 1",
+            new String[]{String.valueOf(userId)});
+        boolean exists = cursor.moveToFirst();
+        long id = exists ? cursor.getLong(0) : -1;
+        cursor.close();
+    
+        ContentValues values = new ContentValues();
+        values.put(UserDatabase.USER_ID, userId);
+        values.put(UserDatabase.NO_TITLE, title);
+    
+        if (exists) {
+            db.update(UserDatabase.NO_LIST_TABLE, values, UserDatabase.NO_ID + "=?", new String[]{String.valueOf(id)});
+        } else {
+            // 插入一条仅有标题的记录
+            db.insert(UserDatabase.NO_LIST_TABLE, null, values);
+        }
+    }
 }

@@ -1,21 +1,16 @@
 package com.code.mydiary;
 
-import android.app.AlertDialog;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.SharedPreferences;
+import android.content.Intent;
 import android.os.Bundle;
-import android.text.InputType;
 import android.widget.*;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import org.json.JSONArray;
-import org.json.JSONException;
+
 import java.util.ArrayList;
 
+import com.code.mydiary.util.NoListAdapter;
 import com.code.mydiary.util.UserCRUD;
 
 public class NoListActivity extends AppCompatActivity {
@@ -25,11 +20,21 @@ public class NoListActivity extends AppCompatActivity {
     private ArrayList<String> noList = new ArrayList<>();
     private long userId;
     private UserCRUD userCRUD;
+    private EditText titleEditText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.no_list_activity);
+
+        // 新增：返回按钮逻辑
+        ImageButton btnBack = findViewById(R.id.btn_back);
+        btnBack.setOnClickListener(v -> {
+            Intent intent = new Intent(NoListActivity.this, Menu.class);
+            intent.putExtra("user_id", userId);
+            startActivity(intent);
+            finish();
+        });
 
         userId = getIntent().getLongExtra("user_id", -1);
         if (userId == -1) {
@@ -48,6 +53,11 @@ public class NoListActivity extends AppCompatActivity {
 
         adapter = new NoListAdapter(noList, this::onItemContentChanged);
         recyclerView.setAdapter(adapter);
+        titleEditText = findViewById(R.id.title_no);
+
+        // 加载标题
+        String title = userCRUD.getNoListTitle(userId);
+        titleEditText.setText(title);
     }
 
     private void onItemContentChanged(int position, String content) {
@@ -67,6 +77,10 @@ public class NoListActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         saveNoList();
+        // 保存标题
+        String title = titleEditText.getText().toString().trim();
+        if (title.isEmpty()) title = "禁止事项 Ver.1";
+        userCRUD.saveNoListTitle(userId, title);
     }
 
     private void loadNoList() {

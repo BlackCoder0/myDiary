@@ -1,6 +1,7 @@
 package com.code.mydiary;
 
 import android.app.AlertDialog;
+import android.widget.ImageButton;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -23,6 +24,15 @@ public class SOSActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.sos_activity);
+
+        // 新增：返回按钮逻辑
+        ImageButton btnBack = findViewById(R.id.btn_back);
+        btnBack.setOnClickListener(v -> {
+            Intent intent = new Intent(SOSActivity.this, Menu.class);
+            intent.putExtra("user_id", userId);
+            startActivity(intent);
+            finish();
+        });
 
         userId = getIntent().getLongExtra("user_id", -1);
 

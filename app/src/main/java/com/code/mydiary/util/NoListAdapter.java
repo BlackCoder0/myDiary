@@ -1,4 +1,4 @@
-package com.code.mydiary;
+package com.code.mydiary.util;
 
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -9,6 +9,9 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.code.mydiary.R;
+
 import java.util.ArrayList;
 
 public class NoListAdapter extends RecyclerView.Adapter<NoListAdapter.ViewHolder> {
