@@ -51,16 +51,15 @@ public class NoListActivity extends AppCompatActivity {
     }
 
     private void onItemContentChanged(int position, String content) {
-        // 修复：防止越界
         if (position < noList.size()) {
             noList.set(position, content);
         } else {
-            // 如果越界，直接添加
             noList.add(content);
         }
         if (position == noList.size() - 1 && !content.trim().isEmpty()) {
             noList.add("");
-            adapter.notifyItemInserted(noList.size() - 1);
+            // 用post延迟刷新，避免RecyclerView布局期间崩溃
+            recyclerView.post(() -> adapter.notifyItemInserted(noList.size() - 1));
         }
     }
 

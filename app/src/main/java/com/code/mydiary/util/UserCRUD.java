@@ -114,22 +114,22 @@ public class UserCRUD {
     public void addContact(long userId, String name, String phone) {
         ContentValues values = new ContentValues();
         values.put(UserDatabase.USER_ID, userId);
-        values.put(UserDatabase.CONTACT_NAME, name);
-        values.put(UserDatabase.CONTACT_PHONE, phone);
-        db.insert(UserDatabase.CONTACT_TABLE, null, values);
+        values.put(UserDatabase.SOS_NAME, name);
+        values.put(UserDatabase.SOS_PHONE, phone);
+        db.insert(UserDatabase.SOS_TABLE, null, values);
     }
 
     // 查询紧急联系人
     public ArrayList<String[]> getContactList(long userId) {
         ArrayList<String[]> list = new ArrayList<>();
-        Cursor cursor = db.query(UserDatabase.CONTACT_TABLE,
-                new String[]{UserDatabase.CONTACT_NAME, UserDatabase.CONTACT_PHONE},
+        Cursor cursor = db.query(UserDatabase.SOS_TABLE,
+                new String[]{UserDatabase.SOS_NAME, UserDatabase.SOS_PHONE},
                 UserDatabase.USER_ID + "=?",
                 new String[]{String.valueOf(userId)},
                 null, null, null);
         while (cursor.moveToNext()) {
-            String name = cursor.getString(cursor.getColumnIndex(UserDatabase.CONTACT_NAME));
-            String phone = cursor.getString(cursor.getColumnIndex(UserDatabase.CONTACT_PHONE));
+            String name = cursor.getString(cursor.getColumnIndex(UserDatabase.SOS_NAME));
+            String phone = cursor.getString(cursor.getColumnIndex(UserDatabase.SOS_PHONE));
             list.add(new String[]{name, phone});
         }
         cursor.close();
@@ -138,10 +138,10 @@ public class UserCRUD {
 
     // 删除紧急联系人
     public void deleteContact(long userId, String name, String phone) {
-        db.delete(UserDatabase.CONTACT_TABLE,
+        db.delete(UserDatabase.SOS_TABLE,
                 UserDatabase.USER_ID + "=? AND " +
-                UserDatabase.CONTACT_NAME + "=? AND " +
-                UserDatabase.CONTACT_PHONE + "=?",
+                UserDatabase.SOS_NAME + "=? AND " +
+                UserDatabase.SOS_PHONE + "=?",
                 new String[]{String.valueOf(userId), name, phone});
     }
 }
