@@ -1,79 +1,84 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
+    android:orientation="vertical"
     android:layout_height="match_parent">
 
-    <!-- 顶部应用栏 -->
-    <com.google.android.material.appbar.AppBarLayout
-        android:layout_width="320dp"
-        android:layout_gravity="center_horizontal"
-        android:layout_height="wrap_content">
-
-<!--        <androidx.appcompat.widget.Toolbar-->
-<!--            android:id="@+id/toolbar"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="?attr/actionBarSize"-->
-<!--            android:background="@color/white"-->
-<!--            app:popupTheme="@style/ThemeOverlay.AppCompat.Light">-->
-
-<!--&lt;!&ndash;            <include layout="@layout/tab_layout" />&ndash;&gt;-->
-
-<!--        </androidx.appcompat.widget.Toolbar>-->
-
-    </com.google.android.material.appbar.AppBarLayout>
-
-    <!-- 主内容区域（使用 FrameLayout 替代 RelativeLayout） -->
-    <FrameLayout
+    <ImageView
+        android:id="@+id/imageView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@drawable/theme_bg_taki"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
-        <androidx.viewpager.widget.ViewPager
-            android:id="@+id/view_pager"
+        android:layout_height="150dp"
+        android:scaleType="centerCrop"
+        android:adjustViewBounds="true"
+        app:srcCompat="@drawable/your_name" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:clickable="true"
+        android:orientation="vertical"
+        >
+        <LinearLayout
+            android:id="@+id/set_changePwd"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="30dp"
+            android:layout_margin="10dp"
+            android:orientation="horizontal"
+            android:background="?attr/selectableItemBackground">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="修改密码"
+                android:textColor="@color/boy"
+                android:layout_marginLeft="10dp"
+                android:layout_weight="1"
+                android:layout_gravity="center"
+                android:gravity="center_vertical"
+                android:textSize="20dp"/>
+        </LinearLayout>
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/boy"
+            />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:clickable="true"
             android:orientation="vertical"
-            android:padding="16dp">
-
-            <TextView
+            >
+            <LinearLayout
+                android:id="@+id/set_away"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Dairy 页面内容"
-                android:textSize="30sp"
-                android:textColor="@android:color/white"
-                android:gravity="center"
-                android:padding="16dp" />
-
-            <Button
-                android:id="@+id/btn_set1"
-                android:layout_width="200dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="16dp"
-                android:text="设置选项 1" />
-
-            <Button
-                android:layout_width="200dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="8dp"
-                android:text="设置选项 2" />
-
-            <Button
-                android:layout_width="200dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="8dp"
-                android:text="设置选项 3" />
+                android:layout_height="30dp"
+                android:layout_margin="10dp"
+                android:orientation="horizontal"
+                android:background="?attr/selectableItemBackground">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="退出登录"
+                    android:textColor="@color/boy"
+                    android:layout_marginLeft="10dp"
+                    android:layout_weight="1"
+                    android:layout_gravity="center"
+                    android:gravity="center_vertical"
+                    android:textSize="20dp"/>
+            </LinearLayout>
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/boy"
+                />
 
 
-        </LinearLayout>
-
-    </FrameLayout>
-
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+</LinearLayout>
+    </LinearLayout>
+</LinearLayout>

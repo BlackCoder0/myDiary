@@ -13,5 +13,10 @@
         android:textStyle="bold"
         android:paddingTop="4dp"
         android:paddingBottom="2dp"
-        android:background="@android:color/transparent"/>
+        android:background="@android:color/transparent"
+        android:shadowColor="#80000000"
+        android:shadowDx="2"
+        android:shadowDy="1"
+        android:shadowRadius="2"
+        />
 </FrameLayout>

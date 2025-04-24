@@ -9,7 +9,7 @@ import java.util.ArrayList;
 
 public class UserCRUD {
     private UserDatabase dbHelper;
-    private SQLiteDatabase db;
+    public SQLiteDatabase db;
 
     public UserCRUD(Context context) {
         dbHelper = new UserDatabase(context);

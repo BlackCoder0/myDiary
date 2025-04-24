@@ -1,5 +1,6 @@
 package com.code.mydiary;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
@@ -26,7 +27,6 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         setContentView(R.layout.login_activity);
 
         //找到
@@ -78,6 +78,9 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
             Intent intent = new Intent(Login.this, MainActivity.class);
             intent.putExtra("user_id", userId);
             startActivity(intent);
+            // 登录成功后
+            SharedPreferences sp = getSharedPreferences("login", MODE_PRIVATE);
+            sp.edit().putLong("user_id", userId).apply();
         }else{
             Toast toastCenter = Toast.makeText(getApplicationContext(),"账号密码有误，请重新输入",Toast.LENGTH_SHORT);
             toastCenter.setGravity(Gravity.CENTER,0,0);

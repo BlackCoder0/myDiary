@@ -1,7 +1,9 @@
 package com.code.mydiary;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
@@ -22,6 +24,8 @@ import com.code.mydiary.util.DiaryAdopter;
 import com.code.mydiary.util.DiaryDatabase;
 import com.code.mydiary.util.DiaryListItem;
 import com.code.mydiary.util.ToastUtil;
+import com.code.mydiary.util.UserCRUD;
+import com.code.mydiary.util.UserDatabase;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -55,14 +59,27 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private List<DiaryListItem> originalDiaryListItems = new ArrayList<>(); // 保存原始数据
 
     private long currentUserId; // 成员变量
+    private LinearLayout setChangePwd, setAway; // 已有
+    private long lastBackPressedTime = 0;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        // 自动登录检查
+        SharedPreferences sp = getSharedPreferences("login", MODE_PRIVATE);
+        long savedUserId = sp.getLong("user_id", -1);
+        if (savedUserId != -1) {
+            currentUserId = savedUserId;
+        } else {
+            currentUserId = getIntent().getLongExtra("user_id", -1);
+            if (currentUserId != -1) {
+                sp.edit().putLong("user_id", currentUserId).apply();
+            }
+        }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_activity);
 
-        currentUserId = getIntent().getLongExtra("user_id", -1);
+//        currentUserId = getIntent().getLongExtra("user_id", -1);
         if (currentUserId == -1) {
             toastUtil = new ToastUtil();
             toastUtil.showMsg(MainActivity.this, "用户ID无效，请重新登录");
@@ -77,6 +94,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         initSearchBar(); // 新增
         initTV(); // {{ edit_2: initTV 不再需要初始化 diary_moon }}
         initLV();
+        initSettingPage();
         refreshListView(); // {{ edit_3: refreshListView 不再需要更新 diary_moon }}
     }
 
@@ -553,4 +571,89 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 .setNegativeButton("取消", null)
                 .show();
     }
+
+
+
+    private void initSettingPage() {
+        // 只在设置页（container_diary）可见时初始化
+        setChangePwd = findViewById(R.id.set_changePwd);
+        setAway = findViewById(R.id.set_away);
+
+        if (setChangePwd != null) {
+            setChangePwd.setOnClickListener(v -> showChangePwdDialog());
+        }
+        if (setAway != null) {
+            setAway.setOnClickListener(v -> logout());
+        }
+    }
+
+    // 修改密码弹窗
+    private void showChangePwdDialog() {
+        // 获取当前账号
+        UserCRUD userCRUD = new UserCRUD(this);
+        userCRUD.open();
+        Cursor cursor = userCRUD.db.query(UserDatabase.USER_TABLE, new String[]{UserDatabase.EMAIL}, UserDatabase.USER_ID + "=?", new String[]{String.valueOf(currentUserId)}, null, null, null);
+        String email = "";
+        if (cursor.moveToFirst()) {
+            email = cursor.getString(cursor.getColumnIndex(UserDatabase.EMAIL));
+        }
+        cursor.close();
+        userCRUD.close();
+
+        LinearLayout layout = new LinearLayout(this);
+        layout.setOrientation(LinearLayout.VERTICAL);
+        TextView tvEmail = new TextView(this);
+        tvEmail.setText("账号：" + email);
+        layout.addView(tvEmail);
+
+        final EditText etNewPwd = new EditText(this);
+        etNewPwd.setHint("请输入新密码");
+        etNewPwd.setInputType(android.text.InputType.TYPE_CLASS_TEXT | android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD);
+        layout.addView(etNewPwd);
+
+        new androidx.appcompat.app.AlertDialog.Builder(this)
+                .setTitle("修改密码")
+                .setView(layout)
+                .setPositiveButton("确认", (dialog, which) -> {
+                    String newPwd = etNewPwd.getText().toString().trim();
+                    if (newPwd.isEmpty()) {
+                        com.code.mydiary.util.ToastUtil.showMsg(this, "新密码不能为空");
+                        return;
+                    }
+                    UserCRUD crud = new UserCRUD(this);
+                    crud.open();
+                    ContentValues values = new ContentValues();
+                    values.put(UserDatabase.PASSWORD, newPwd);
+                    crud.db.update(UserDatabase.USER_TABLE, values, UserDatabase.USER_ID + "=?", new String[]{String.valueOf(currentUserId)});
+                    crud.close();
+                    com.code.mydiary.util.ToastUtil.showMsg(this, "密码修改成功");
+                })
+                .setNegativeButton("取消", null)
+                .show();
+    }
+private void logout() {
+    // 清除自动登录信息
+    getSharedPreferences("login", MODE_PRIVATE).edit().clear().apply();
+    // 跳转到登录界面并清空输入框
+    Intent intent = new Intent(this, Login.class);
+    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+    startActivity(intent);
+    finish();
+}
+
+
+@Override
+public void onBackPressed() {
+    if (System.currentTimeMillis() - lastBackPressedTime > 2000) {
+        com.code.mydiary.util.ToastUtil.showMsg(this, "再按一次返回退出");
+        lastBackPressedTime = System.currentTimeMillis();
+    } else {
+        super.onBackPressed();
+        // 退出到桌面
+        Intent intent = new Intent(Intent.ACTION_MAIN);
+        intent.addCategory(Intent.CATEGORY_HOME);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+    }
+}
 }

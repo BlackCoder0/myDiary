@@ -40,56 +40,18 @@
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
             android:layout_marginTop="8dp"
-            android:paddingBottom="56dp"
+            android:paddingBottom="112dp"
             android:divider="@android:color/transparent"
             android:dividerHeight="13dp"
             android:clipToPadding="false"/>
-    </FrameLayout>
-
-    <!-- 搜索悬浮框（初始隐藏），放在底部栏上方 -->
-    <LinearLayout
-        android:id="@+id/search_bar"
-        android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:orientation="horizontal"
-        android:background="@drawable/diary_background"
-        android:gravity="center_vertical"
-        android:paddingLeft="16dp"
-        android:paddingRight="8dp"
-        android:visibility="gone"
-        android:elevation="8dp">
-
-        <EditText
-            android:id="@+id/et_search"
-            android:layout_width="0dp"
-            android:layout_height="40dp"
-            android:layout_weight="1"
-            android:background="@drawable/diary_background"
-            android:hint="搜索日记标题或内容"
-            android:textColor="@color/boy"
-            android:textColorHint="@color/gray"
-            android:textSize="16sp"
-            android:singleLine="true"
-            android:imeOptions="actionSearch"/>
-
-        <ImageButton
-            android:id="@+id/btn_search_close"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:background="@android:color/transparent"
-            android:src="@drawable/ic_clear_white_24dp"
-            android:tint="@color/black"
-            android:contentDescription="关闭搜索"/>
-    </LinearLayout>
-
-    <!-- 底部导航栏 (保持不变) -->
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/bottom_navigation_bar"
-        android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:layout_gravity="bottom"
-        android:background="@color/boy"
-        android:padding="8dp">
+        <!-- 底部导航栏 -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/bottom_navigation_bar"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_gravity="bottom"
+            android:background="@color/boy"
+            android:padding="8dp">
 
             <!-- 左侧按钮组 -->
             <ImageButton
@@ -156,6 +118,48 @@
                 android:layout_marginEnd="8dp"/>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
+        <!-- 搜索悬浮框 -->
+    <LinearLayout
+        android:id="@+id/search_bar"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:layout_gravity="bottom"
+        android:layout_marginBottom="56dp"
+        android:orientation="horizontal"
+        android:background="@drawable/diary_background"
+        android:gravity="center_vertical"
+        android:paddingLeft="16dp"
+        android:paddingRight="8dp"
+        android:visibility="gone"
+        android:elevation="8dp">
+
+            <EditText
+                android:id="@+id/et_search"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_weight="1"
+                android:background="@drawable/diary_background"
+                android:hint="搜索日记标题或内容"
+                android:textColor="@color/boy"
+                android:textColorHint="@color/gray"
+                android:textSize="16sp"
+                android:singleLine="true"
+                android:imeOptions="actionSearch"/>
+
+            <ImageButton
+                android:id="@+id/btn_search_close"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@android:color/transparent"
+                android:src="@drawable/ic_clear_white_24dp"
+                android:tint="@color/black"
+                android:contentDescription="关闭搜索"/>
+
+        </LinearLayout>
+
+    </FrameLayout>
+
+        <!-- 底部导航栏 (保持不变) -->
 
 
     <FrameLayout
