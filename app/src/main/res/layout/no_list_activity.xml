@@ -25,7 +25,7 @@
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_gravity="start|top"
-            android:layout_marginTop="5dp"
+            android:layout_marginTop="30dp"
             android:scaleType="fitCenter"
             android:background="@android:color/transparent"
             android:src="@drawable/ic_keyboard_arrow_right_black_24dp"
@@ -37,5 +37,8 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_no"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:paddingBottom="250dp"
+    />
 </LinearLayout>

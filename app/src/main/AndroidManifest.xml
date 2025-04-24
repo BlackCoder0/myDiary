@@ -44,7 +44,9 @@
         <activity android:name=".MainActivity"/>
         <activity android:name=".Register"/>
         <activity android:name=".SOSActivity"/>
-        <activity android:name=".NoListActivity"/>
+        <activity
+            android:name=".NoListActivity"
+            android:windowSoftInputMode="adjustResize"/>
     </application>
 
 </manifest>

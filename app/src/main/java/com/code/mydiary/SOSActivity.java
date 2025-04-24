@@ -91,6 +91,22 @@ public class SOSActivity extends AppCompatActivity {
                 String name = etName.getText().toString().trim();
                 String phone = etPhone.getText().toString().trim();
                 if (!name.isEmpty() && !phone.isEmpty()) {
+                    // 检查重复
+                    boolean duplicate = false;
+                    for (String[] arr : contactRawList) {
+                        if (arr[0].equals(name)) {
+                            Toast.makeText(this, "该姓名已存在", Toast.LENGTH_SHORT).show();
+                            duplicate = true;
+                            break;
+                        }
+                        if (arr[1].equals(phone)) {
+                            Toast.makeText(this, "该号码已存在", Toast.LENGTH_SHORT).show();
+                            duplicate = true;
+                            break;
+                        }
+                    }
+                    if (duplicate) return;
+
                     userCRUD.addContact(userId, name, phone);
                     loadContacts();
                     adapter.notifyDataSetChanged();

@@ -95,5 +95,15 @@ public class NoListAdapter extends RecyclerView.Adapter<NoListAdapter.ViewHolder
         holder.customTextWatcher.setHolder(holder); // 新增：传递holder引用
         holder.etNoItem.setText(dataList.get(position));
         holder.dot.setVisibility(dataList.get(position).trim().isEmpty() ? View.INVISIBLE : View.VISIBLE);
+
+        // 新增：EditText获取焦点时滚动到该项
+        holder.etNoItem.setOnFocusChangeListener((v, hasFocus) -> {
+            if (hasFocus) {
+                RecyclerView recyclerView = (RecyclerView) holder.itemView.getParent();
+                if (recyclerView != null) {
+                    recyclerView.post(() -> recyclerView.smoothScrollToPosition(holder.getAdapterPosition()));
+                }
+            }
+        });
     }
 }
