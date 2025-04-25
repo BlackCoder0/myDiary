@@ -75,13 +75,18 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
 
         if(userId > 0){
             ToastUtil.showMsg(Login.this,"登录成功");
+            // 查询性别
+            com.code.mydiary.util.UserCRUD userCRUD2 = new com.code.mydiary.util.UserCRUD(Login.this);
+            userCRUD2.open();
+            int sex = userCRUD2.getUserSex(userId); // 需要新增getUserSex方法
+            userCRUD2.close();
+            // 保存user_id和sex
+            SharedPreferences sp = getSharedPreferences("login", MODE_PRIVATE);
+            sp.edit().putLong("user_id", userId).putInt("sex", sex).apply();
             Intent intent = new Intent(Login.this, MainActivity.class);
             intent.putExtra("user_id", userId);
             startActivity(intent);
-            // 登录成功后
-            SharedPreferences sp = getSharedPreferences("login", MODE_PRIVATE);
-            sp.edit().putLong("user_id", userId).apply();
-        }else{
+        } else {
             Toast toastCenter = Toast.makeText(getApplicationContext(),"账号密码有误，请重新输入",Toast.LENGTH_SHORT);
             toastCenter.setGravity(Gravity.CENTER,0,0);
             toastCenter.show();

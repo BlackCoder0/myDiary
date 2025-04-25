@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.graphics.drawable.StateListDrawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -84,6 +85,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_activity);
 
+
+
 //        currentUserId = getIntent().getLongExtra("user_id", -1);
         if (currentUserId == -1) {
             toastUtil = new ToastUtil();
@@ -104,11 +107,12 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         initToolbar();
         initTabs();
         initBottomButtons();
-        initSearchBar(); // 新增
-        initTV(); // {{ edit_2: initTV 不再需要初始化 diary_moon }}
+        initSearchBar();
+        initTV();
         initLV();
         initSettingPage();
-        refreshListView(); // {{ edit_3: refreshListView 不再需要更新 diary_moon }}
+        initSexChange();
+        refreshListView();
     }
 
     /**
@@ -604,6 +608,103 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         if (setTime != null) {
             setTime.setOnClickListener(v -> startTimeReverse());
         }
+    }
+
+    //根据性别更新
+    private void initSexChange(){
+        // 动态设置背景
+        FrameLayout containerEntries = findViewById(R.id.container_entries);
+        FrameLayout containerCalendar = findViewById(R.id.container_calendar);
+        if (containerEntries != null) {
+            containerEntries.setBackgroundResource(
+                    com.code.mydiary.util.GenderResourceUtil.getMainBackgroundRes(this)
+            );
+        }
+        if (containerCalendar != null) {
+            containerCalendar.setBackgroundResource(
+                    com.code.mydiary.util.GenderResourceUtil.getMainBackgroundRes(this)
+            );
+        }
+
+        // 动态设置底部导航栏颜色
+        View bottomBar = findViewById(R.id.bottom_navigation_bar);
+        if (bottomBar != null) {
+            bottomBar.setBackgroundResource(
+                    com.code.mydiary.util.GenderResourceUtil.getBottomBarColorRes(this)
+            );
+        }
+
+        // 获取性别相关颜色
+        int mainColor = getResources().getColor(
+                com.code.mydiary.util.GenderResourceUtil.getTabMainColorRes(this)
+        );
+        int whiteColor = getResources().getColor(android.R.color.white);
+
+        // 1. 动态设置Tab文字颜色（selected: white, unselected: mainColor/girlColor）
+        int[][] states = new int[][]{
+                new int[]{android.R.attr.state_selected},    // selected
+                new int[]{-android.R.attr.state_selected}     // unselected
+        };
+        int[] colors = new int[]{
+                whiteColor,      // selected
+                mainColor        // unselected
+        };
+        android.content.res.ColorStateList colorStateList = new android.content.res.ColorStateList(states, colors);
+
+        if (tabEntries != null) tabEntries.setTextColor(colorStateList);
+        if (tabCalendar != null) tabCalendar.setTextColor(colorStateList);
+        if (tabDiary != null) tabDiary.setTextColor(colorStateList);
+
+        // 2. 动态设置Tab背景（底色和边框+圆角）
+        setTabBackground(tabEntries, mainColor, whiteColor, "left");
+        setTabBackground(tabCalendar, mainColor, whiteColor, "center");
+        setTabBackground(tabDiary, mainColor, whiteColor, "right");
+    }
+
+    // 辅助方法：为Tab设置selector背景，选中为主色，未选中为白色，边框始终为主色
+    private void setTabBackground(TextView tab, int mainColor, int whiteColor, String position) {
+        if (tab == null) return;
+        float radius = dp2px(tab.getContext(), 8); // 8dp圆角
+        float[] leftCorners = new float[]{radius, radius, 0, 0, 0, 0, radius, radius};
+        float[] rightCorners = new float[]{0, 0, radius, radius, radius, radius, 0, 0};
+        float[] centerCorners = new float[]{0, 0, 0, 0, 0, 0, 0, 0};
+
+        float[] corners;
+        switch (position) {
+            case "left":
+                corners = leftCorners;
+                break;
+            case "right":
+                corners = rightCorners;
+                break;
+            case "center":
+            default:
+                corners = centerCorners;
+                break;
+        }
+
+        // 选中状态
+        android.graphics.drawable.GradientDrawable selectedDrawable = new android.graphics.drawable.GradientDrawable();
+        selectedDrawable.setColor(mainColor); // 填充主色
+        selectedDrawable.setStroke(2, mainColor); // 边框主色
+        selectedDrawable.setCornerRadii(corners);
+
+        // 未选中状态
+        android.graphics.drawable.GradientDrawable unselectedDrawable = new android.graphics.drawable.GradientDrawable();
+        unselectedDrawable.setColor(whiteColor); // 填充白色
+        unselectedDrawable.setStroke(2, mainColor); // 边框主色
+        unselectedDrawable.setCornerRadii(corners);
+
+        android.graphics.drawable.StateListDrawable stateListDrawable = new android.graphics.drawable.StateListDrawable();
+        stateListDrawable.addState(new int[]{android.R.attr.state_selected}, selectedDrawable);
+        stateListDrawable.addState(new int[]{-android.R.attr.state_selected}, unselectedDrawable);
+
+        tab.setBackground(stateListDrawable);
+    }
+
+    // dp转px工具
+    private float dp2px(Context context, float dp) {
+        return dp * context.getResources().getDisplayMetrics().density;
     }
 
     // 修改密码弹窗
