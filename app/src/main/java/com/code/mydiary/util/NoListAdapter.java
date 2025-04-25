@@ -100,7 +100,7 @@ public class NoListAdapter extends RecyclerView.Adapter<NoListAdapter.ViewHolder
 
         // 动态设置 nolist_line 颜色
         int color = holder.itemView.getContext().getResources().getColor(
-                com.code.mydiary.util.GenderResourceUtil.getTabMainColorRes(holder.itemView.getContext())
+                GenderResourceUtil.getTabMainColorRes(holder.itemView.getContext())
         );
         holder.nolistLine.setBackgroundColor(color);
 

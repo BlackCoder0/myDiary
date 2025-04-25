@@ -15,6 +15,8 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.code.mydiary.util.ToastUtil;
+import com.code.mydiary.util.UserCRUD;
+
 
 
 public class Login extends AppCompatActivity implements View.OnClickListener {
@@ -68,7 +70,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
         String password = myEdPassword.getText().toString();
 
         // 新增：用户表校验
-        com.code.mydiary.util.UserCRUD userCRUD = new com.code.mydiary.util.UserCRUD(Login.this);
+        UserCRUD userCRUD = new UserCRUD(Login.this);
         userCRUD.open();
         long userId = userCRUD.login(username, password);
         userCRUD.close();
@@ -76,7 +78,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
         if(userId > 0){
             ToastUtil.showMsg(Login.this,"登录成功");
             // 查询性别
-            com.code.mydiary.util.UserCRUD userCRUD2 = new com.code.mydiary.util.UserCRUD(Login.this);
+            UserCRUD userCRUD2 = new UserCRUD(Login.this);
             userCRUD2.open();
             int sex = userCRUD2.getUserSex(userId); // 需要新增getUserSex方法
             userCRUD2.close();

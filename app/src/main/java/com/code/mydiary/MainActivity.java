@@ -23,18 +23,21 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import com.code.mydiary.util.CRUD;
+
 import com.code.mydiary.util.DiaryAdopter;
 import com.code.mydiary.util.DiaryDatabase;
 import com.code.mydiary.util.DiaryListItem;
+import com.code.mydiary.util.GenderResourceUtil;
 import com.code.mydiary.util.ToastUtil;
-import com.code.mydiary.util.UserCRUD;
-import com.code.mydiary.util.UserDatabase;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
+
+import com.code.mydiary.util.UserCRUD;
+import com.code.mydiary.util.UserDatabase;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -45,7 +48,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private DiaryDatabase dbHelper;
     private Diary diary;
 
-    private ToastUtil toastUtil;
     private Toolbar toolbar;
     private TextView tabEntries, tabCalendar, tabDiary, mydiary_count; // {{ edit_1: 移除 diary_moon }}
     private FrameLayout containerEntries, containerCalendar, containerDiary;
@@ -90,8 +92,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
 //        currentUserId = getIntent().getLongExtra("user_id", -1);
         if (currentUserId == -1) {
-            toastUtil = new ToastUtil();
-            toastUtil.showMsg(MainActivity.this, "用户ID无效，请重新登录");
+            ToastUtil.showMsg(MainActivity.this, "用户ID无效，请重新登录");
             // finish();
             // return;
         }
@@ -180,12 +181,12 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 op.close();
 
                 // 只查找属于当前用户的日记
-                com.code.mydiary.util.UserCRUD userCRUD = new com.code.mydiary.util.UserCRUD(context);
+                UserCRUD userCRUD = new UserCRUD(context);
                 userCRUD.open();
                 java.util.List<Long> userDiaryIds = new java.util.ArrayList<>();
                 android.database.Cursor cursor = userCRUD.getUserDiaryIds(currentUserId);
                 while (cursor.moveToNext()) {
-                    int columnIndex = cursor.getColumnIndex(com.code.mydiary.util.UserDatabase.DIARY_ID);
+                    int columnIndex = cursor.getColumnIndex(UserDatabase.DIARY_ID);
                     if (columnIndex != -1) {
                         userDiaryIds.add(cursor.getLong(columnIndex));
                     }
@@ -334,7 +335,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
                     // 关键：建立用户-日记关联
                     long userId = getIntent().getLongExtra("user_id", -1);
-                    com.code.mydiary.util.UserCRUD userCRUD = new com.code.mydiary.util.UserCRUD(context);
+                    UserCRUD userCRUD = new UserCRUD(context);
                     userCRUD.open();
                     userCRUD.linkUserDiary(userId, newDiary.getId());
                     userCRUD.close();
@@ -364,12 +365,12 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         // 新增：只查找属于当前用户的日记
         List<Long> userDiaryIds = new ArrayList<>();
-        com.code.mydiary.util.UserCRUD userCRUD = new com.code.mydiary.util.UserCRUD(context);
+        UserCRUD userCRUD = new UserCRUD(context);
         userCRUD.open();
         Cursor cursor = userCRUD.getUserDiaryIds(userId);
         while (cursor.moveToNext()) {
             // 注意：需要确保 UserDatabase.DIARY_ID 是正确的列名
-            int columnIndex = cursor.getColumnIndex(com.code.mydiary.util.UserDatabase.DIARY_ID);
+            int columnIndex = cursor.getColumnIndex(UserDatabase.DIARY_ID);
             if (columnIndex != -1) { // 检查列是否存在
                 userDiaryIds.add(cursor.getLong(columnIndex));
             } else {
@@ -418,10 +419,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 month = diary.getTime().substring(5, 7); // 兜底
             }
             if (!month.equals(lastMonth)) {
-                diaryListItems.add(new com.code.mydiary.util.DiaryListItem(com.code.mydiary.util.DiaryListItem.TYPE_MONTH_HEADER, month, null));
+                diaryListItems.add(new DiaryListItem(DiaryListItem.TYPE_MONTH_HEADER, month, null));
                 lastMonth = month;
             }
-            diaryListItems.add(new com.code.mydiary.util.DiaryListItem(com.code.mydiary.util.DiaryListItem.TYPE_DIARY, null, diary));
+            diaryListItems.add(new DiaryListItem(DiaryListItem.TYPE_DIARY, null, diary));
         }
         // === 补充结束 ===
 
@@ -620,12 +621,12 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         FrameLayout containerCalendar = findViewById(R.id.container_calendar);
         if (containerEntries != null) {
             containerEntries.setBackgroundResource(
-                    com.code.mydiary.util.GenderResourceUtil.getMainBackgroundRes(this)
+                    GenderResourceUtil.getMainBackgroundRes(this)
             );
         }
         if (containerCalendar != null) {
             containerCalendar.setBackgroundResource(
-                    com.code.mydiary.util.GenderResourceUtil.getMainBackgroundRes(this)
+                    GenderResourceUtil.getMainBackgroundRes(this)
             );
         }
 
@@ -633,13 +634,13 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         View bottomBar = findViewById(R.id.bottom_navigation_bar);
         if (bottomBar != null) {
             bottomBar.setBackgroundResource(
-                    com.code.mydiary.util.GenderResourceUtil.getBottomBarColorRes(this)
+                    GenderResourceUtil.getBottomBarColorRes(this)
             );
         }
 
         // 获取性别相关颜色
         int mainColor = getResources().getColor(
-                com.code.mydiary.util.GenderResourceUtil.getTabMainColorRes(this)
+                GenderResourceUtil.getTabMainColorRes(this)
         );
         int whiteColor = getResources().getColor(android.R.color.white);
 
@@ -767,7 +768,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 .setPositiveButton("确认", (dialog, which) -> {
                     String newPwd = etNewPwd.getText().toString().trim();
                     if (newPwd.isEmpty()) {
-                        com.code.mydiary.util.ToastUtil.showMsg(this, "新密码不能为空");
+                        ToastUtil.showMsg(this, "新密码不能为空");
                         return;
                     }
                     UserCRUD crud = new UserCRUD(this);
@@ -776,7 +777,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     values.put(UserDatabase.PASSWORD, newPwd);
                     crud.db.update(UserDatabase.USER_TABLE, values, UserDatabase.USER_ID + "=?", new String[]{String.valueOf(currentUserId)});
                     crud.close();
-                    com.code.mydiary.util.ToastUtil.showMsg(this, "密码修改成功");
+                    ToastUtil.showMsg(this, "密码修改成功");
                 })
                 .setNegativeButton("取消", null)
                 .show();
@@ -797,11 +798,11 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     public void onBackPressed() {
         if (isTimeReversing) {
             // 彻底禁止返回
-            com.code.mydiary.util.ToastUtil.showMsg(this, "时光倒流中，请稍候...");
+            ToastUtil.showMsg(this, "时光倒流中，请稍候...");
             return;
         }
         if (System.currentTimeMillis() - lastBackPressedTime > 2000) {
-            com.code.mydiary.util.ToastUtil.showMsg(this, "再按一次返回退出");
+            ToastUtil.showMsg(this, "再按一次返回退出");
             lastBackPressedTime = System.currentTimeMillis();
         } else {
             super.onBackPressed();
@@ -920,11 +921,11 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         CRUD op = new CRUD(this);
         op.open();
         List<Long> userDiaryIds = new ArrayList<>();
-        com.code.mydiary.util.UserCRUD userCRUD = new com.code.mydiary.util.UserCRUD(this);
+        UserCRUD userCRUD = new UserCRUD(this);
         userCRUD.open();
         Cursor cursor = userCRUD.getUserDiaryIds(currentUserId);
         while (cursor.moveToNext()) {
-            int columnIndex = cursor.getColumnIndex(com.code.mydiary.util.UserDatabase.DIARY_ID);
+            int columnIndex = cursor.getColumnIndex(UserDatabase.DIARY_ID);
             if (columnIndex != -1) {
                 userDiaryIds.add(cursor.getLong(columnIndex));
             }
@@ -938,14 +939,14 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         for (Diary d : backupDiaries) {
             Diary newDiary = op.addDiary(d);
             // 重新建立用户-日记关联
-            com.code.mydiary.util.UserCRUD crud = new com.code.mydiary.util.UserCRUD(this);
+            UserCRUD crud = new UserCRUD(this);
             crud.open();
             crud.linkUserDiary(currentUserId, newDiary.getId());
             crud.close();
         }
         op.close();
         refreshListView();
-        com.code.mydiary.util.ToastUtil.showMsg(this, "已恢复全部日记");
+        ToastUtil.showMsg(this, "已恢复全部日记");
         // 恢复后删除本地备份文件
         deleteBackupFile();
     }

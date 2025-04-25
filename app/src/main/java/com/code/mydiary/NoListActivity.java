@@ -11,7 +11,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 
+import com.code.mydiary.util.GenderResourceUtil;
 import com.code.mydiary.util.NoListAdapter;
+import com.code.mydiary.util.ToastUtil;
 import com.code.mydiary.util.UserCRUD;
 
 public class NoListActivity extends AppCompatActivity {
@@ -34,7 +36,7 @@ public class NoListActivity extends AppCompatActivity {
 
         userId = getIntent().getLongExtra("user_id", -1);
         if (userId == -1) {
-            Toast.makeText(this, "用户ID无效，请重新登录", Toast.LENGTH_SHORT).show();
+            ToastUtil.showMsg(NoListActivity.this, "用户ID无效，请重新登录");
             finish();
             return;
         }
@@ -111,7 +113,7 @@ public class NoListActivity extends AppCompatActivity {
         EditText titleNo = findViewById(R.id.title_no);
         if (titleNo != null) {
             int color = getResources().getColor(
-                    com.code.mydiary.util.GenderResourceUtil.getTabMainColorRes(this)
+                    GenderResourceUtil.getTabMainColorRes(this)
             );
             titleNo.setBackgroundColor(color);
         }

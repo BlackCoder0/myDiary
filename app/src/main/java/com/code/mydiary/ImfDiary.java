@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,13 +15,15 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.os.Handler;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.code.mydiary.R;
+import com.code.mydiary.util.GenderResourceUtil;
+import com.code.mydiary.util.ToastUtil;
+
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -40,7 +43,7 @@ public class ImfDiary {
     public void showDiaryDialog(Context context, final Diary diary, final DialogActionListener listener, boolean isTimeReverse, Runnable onDeleteAnimFinish) {
         if (diary == null) {
             Log.e("ImfDiary", "Diary object is null, cannot show dialog.");
-            Toast.makeText(context, "无法加载日记信息", Toast.LENGTH_SHORT).show();
+            ToastUtil.showMsg(context, "无法加载日记信息");
             return;
         }
 
@@ -70,7 +73,7 @@ public class ImfDiary {
         ConstraintLayout bottomLayout = view.findViewById(R.id.bottomLayout);
 
 // 根据性别设置背景颜色
-        int tabMainColor = com.code.mydiary.util.GenderResourceUtil.getTabMainColorRes(context);
+        int tabMainColor = GenderResourceUtil.getTabMainColorRes(context);
         topLayout.setBackgroundColor(context.getResources().getColor(tabMainColor));
         bottomLayout.setBackgroundColor(context.getResources().getColor(tabMainColor));
 
@@ -147,7 +150,13 @@ public class ImfDiary {
         overlay.setFocusable(true);
         ((ViewGroup) view.getParent()).addView(overlay);
 
-        dialog.setOnKeyListener((d, keyCode, event) -> isTimeReverse); // 动画期间拦截返回键
+        dialog.setOnKeyListener((d, keyCode, event) -> {
+            if (isTimeReverse && keyCode == KeyEvent.KEYCODE_BACK) {
+                ToastUtil.showMsg(context, "时光倒流中，请稍候...");
+                return true; // 拦截返回键
+            }
+            return false; // 其他按键不处理
+        });
 
         // 设置按钮监听器
         btnClose.setOnClickListener(v -> dialog.dismiss());
@@ -299,12 +308,12 @@ public class ImfDiary {
         if (TextUtils.isEmpty(s)) return s;
         char[] arr = s.toCharArray();
         int n = arr.length;
-        float ratio = 1.0f / 3.0f; // 固定为1/3
+        float ratio = 1.0f / 5.0f; // 固定为1/5
         int garbleCount = Math.max(1, (int)(n * ratio));
         java.util.Random r = new java.util.Random();
         String garbleChars = "ூ◊૭〒ミæœˆè|铿斤拷铿斤拷"
-                + "▦▧▩"
-                + "abcdefghijklmnopqrstuvwxyz";
+                + "▦▧▩";
+//                + "abcdefghijklmnopqrstuvwxyz"
         for (int i = 0; i < garbleCount; i++) {
             int idx = r.nextInt(n);
             if (r.nextBoolean()) {

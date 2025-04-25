@@ -7,10 +7,13 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.content.Intent;
 import android.widget.LinearLayout;
 import android.graphics.Color;
+
+import com.code.mydiary.util.GenderResourceUtil;
+import com.code.mydiary.util.ToastUtil;
+
 
 public class Menu extends AppCompatActivity {
 
@@ -29,7 +32,7 @@ public class Menu extends AppCompatActivity {
         userId = getIntent().getLongExtra("user_id", -1);
         if (userId == -1) {
             // 处理 userId 无效的情况，例如返回登录页或显示错误
-            Toast.makeText(this, "用户ID无效，请重新登录", Toast.LENGTH_SHORT).show();
+            ToastUtil.showMsg(Menu.this, "用户ID无效，请重新登录");
             // finish(); // 可以选择关闭当前页面
             // return;
         }
@@ -82,13 +85,13 @@ public class Menu extends AppCompatActivity {
         ImageView imageView = findViewById(R.id.imageView);
         if (imageView != null) {
             imageView.setImageResource(
-                    com.code.mydiary.util.GenderResourceUtil.getMenuBackgroundRes(this)
+                    GenderResourceUtil.getMenuBackgroundRes(this)
             );
         }
 
         // 获取主色
         int mainColor = getResources().getColor(
-                com.code.mydiary.util.GenderResourceUtil.getTabMainColorRes(this)
+                GenderResourceUtil.getTabMainColorRes(this)
         );
 
         // 设置layout_phone、layout_diary、layout_no的图标和文字颜色

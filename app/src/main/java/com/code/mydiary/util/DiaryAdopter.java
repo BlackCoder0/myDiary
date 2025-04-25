@@ -101,7 +101,7 @@ public class DiaryAdopter extends BaseAdapter {
             // 标签图标
             if (diary.getTag() == 2) {
                 holder.ivTag.setColorFilter(myContext.getResources().getColor(
-                        com.code.mydiary.util.GenderResourceUtil.getTabMainColorRes(myContext)
+                        GenderResourceUtil.getTabMainColorRes(myContext)
                 ));
                 holder.ivTag.setAlpha(1.0f);
             } else {
@@ -117,7 +117,7 @@ public class DiaryAdopter extends BaseAdapter {
                 } else {
                     // 根据性别设置颜色
                     holder.ivTag.setColorFilter(myContext.getResources().getColor(
-                            com.code.mydiary.util.GenderResourceUtil.getTabMainColorRes(myContext)
+                            GenderResourceUtil.getTabMainColorRes(myContext)
                     ));
                     holder.ivTag.setAlpha(0.5f);
                     diary.setTag(2);
@@ -141,7 +141,7 @@ public class DiaryAdopter extends BaseAdapter {
                 if (weatherResId != 0) {
                     holder.ivWeather.setImageResource(weatherResId);
                     holder.ivWeather.setColorFilter(myContext.getResources().getColor(
-                            com.code.mydiary.util.GenderResourceUtil.getTabMainColorRes(myContext)
+                            GenderResourceUtil.getTabMainColorRes(myContext)
                     ));
                     holder.ivWeather.setAlpha(1.0f);
                 }
@@ -158,14 +158,14 @@ public class DiaryAdopter extends BaseAdapter {
                 if (moodResId != 0) {
                     holder.ivMood.setImageResource(moodResId);
                     holder.ivMood.setColorFilter(myContext.getResources().getColor(
-                            com.code.mydiary.util.GenderResourceUtil.getTabMainColorRes(myContext)
+                            GenderResourceUtil.getTabMainColorRes(myContext)
                     ));
                     holder.ivMood.setAlpha(1.0f);
                 }
             }
 
             int textColor = myContext.getResources().getColor(
-                    com.code.mydiary.util.GenderResourceUtil.getTabMainColorRes(myContext)
+                    GenderResourceUtil.getTabMainColorRes(myContext)
             );
             holder.tvDay.setTextColor(textColor);
             holder.tvWeek.setTextColor(textColor);

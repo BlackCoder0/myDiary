@@ -22,7 +22,6 @@ public class Register extends AppCompatActivity {
     private RadioGroup rgSex;
     private Button btnRegister;
     private CaptchaView captchaView;
-    public ToastUtil toastUtil;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,19 +47,19 @@ public class Register extends AppCompatActivity {
 
                 // 新增：校验所有必填项
                 if (email.isEmpty()) {
-                    toastUtil.showMsg(Register.this, "请输入邮箱");
+                    ToastUtil.showMsg(Register.this, "请输入邮箱");
                     return;
                 }
                 if (password.isEmpty()) {
-                    toastUtil.showMsg(Register.this, "请输入密码");
+                    ToastUtil.showMsg(Register.this, "请输入密码");
                     return;
                 }
                 if (inputCode.isEmpty()) {
-                    toastUtil.showMsg(Register.this, "请输入验证码");
+                    ToastUtil.showMsg(Register.this, "请输入验证码");
                     return;
                 }
                 if (checkedSexId == -1) {
-                    toastUtil.showMsg(Register.this, "请选择性别");
+                    ToastUtil.showMsg(Register.this, "请选择性别");
                     return;
                 }
 
@@ -68,7 +67,7 @@ public class Register extends AppCompatActivity {
 
                 // 图形验证码校验
                 if (!inputCode.equalsIgnoreCase(captchaView.getCaptchaCode())) {
-                    toastUtil.showMsg(Register.this, "验证码错误");
+                    ToastUtil.showMsg(Register.this, "验证码错误");
                     captchaView.generateCode();
                     return;
                 }
@@ -76,7 +75,7 @@ public class Register extends AppCompatActivity {
                 UserCRUD userCRUD = new UserCRUD(Register.this);
                 userCRUD.open();
                 if (userCRUD.isEmailExist(email)) {
-                    toastUtil.showMsg(Register.this, "该邮箱已注册");
+                    ToastUtil.showMsg(Register.this, "该邮箱已注册");
                     userCRUD.close();
                     return;
                 }
@@ -84,14 +83,14 @@ public class Register extends AppCompatActivity {
                 userCRUD.close();
 
                 if (userId > 0) {
-                    toastUtil.showMsg(Register.this, "注册成功，请登录");
+                    ToastUtil.showMsg(Register.this, "注册成功，请登录");
                     // 保存性别到SharedPreferences
                     SharedPreferences sp = getSharedPreferences("login", MODE_PRIVATE);
                     sp.edit().putInt("sex", sex).apply();
                     startActivity(new Intent(Register.this, Login.class));
                     finish();
                 } else {
-                    toastUtil.showMsg(Register.this, "注册失败");
+                    ToastUtil.showMsg(Register.this, "注册失败");
                 }
             }
         });

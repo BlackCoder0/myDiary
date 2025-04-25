@@ -33,8 +33,9 @@ import com.amap.api.services.geocoder.GeocodeSearch;
 import com.amap.api.services.geocoder.RegeocodeAddress;
 import com.amap.api.services.geocoder.RegeocodeQuery;
 import com.amap.api.services.geocoder.RegeocodeResult;
-
 import com.amap.api.location.AMapLocationClient;
+import com.code.mydiary.util.GenderResourceUtil;
+import com.code.mydiary.util.ToastUtil;
 
 public class AddDiary extends AppCompatActivity implements com.amap.api.location.AMapLocationListener {
 
@@ -143,7 +144,7 @@ public class AddDiary extends AppCompatActivity implements com.amap.api.location
             weatherBtn.setImageResource(weatherIcons[weather]);
             // 根据性别设置颜色
             weatherBtn.setColorFilter(getResources().getColor(
-                    com.code.mydiary.util.GenderResourceUtil.getTabMainColorRes(this)
+                    GenderResourceUtil.getTabMainColorRes(this)
             ));
         } else {
             // 如果是新建或者旧数据无效，则显示默认灰色
@@ -154,7 +155,7 @@ public class AddDiary extends AppCompatActivity implements com.amap.api.location
             moodBtn.setImageResource(moodIcons[mood]);
             // 根据性别设置颜色
             moodBtn.setColorFilter(getResources().getColor(
-                    com.code.mydiary.util.GenderResourceUtil.getTabMainColorRes(this)
+                    GenderResourceUtil.getTabMainColorRes(this)
             ));
         } else {
             // 如果是新建或者旧数据无效，则显示默认灰色
@@ -351,7 +352,7 @@ public class AddDiary extends AppCompatActivity implements com.amap.api.location
             targetBtn.setImageResource(icons[position]);
             // 根据性别设置颜色
             targetBtn.setColorFilter(getResources().getColor(
-                    com.code.mydiary.util.GenderResourceUtil.getTabMainColorRes(AddDiary.this)
+                    GenderResourceUtil.getTabMainColorRes(AddDiary.this)
             ));
             if (isWeather) {
                 weather = position;
@@ -389,7 +390,7 @@ public class AddDiary extends AppCompatActivity implements com.amap.api.location
             mlocationClient.startLocation(); // 启动定位
         } catch (Exception e) {
             Log.e("AddDiary", "Exception in insertLocation", e);
-            android.widget.Toast.makeText(this, "获取位置失败: " + e.getMessage(), android.widget.Toast.LENGTH_SHORT).show();
+            ToastUtil.showMsg(AddDiary.this, "获取位置失败: " + e.getMessage());
         }
     }
 
@@ -466,7 +467,7 @@ public class AddDiary extends AppCompatActivity implements com.amap.api.location
                 });
             } else {
                 Log.e("AmapError", "location Error, ErrCode:" + amapLocation.getErrorCode() + ", errInfo:" + amapLocation.getErrorInfo());
-                android.widget.Toast.makeText(this, "定位失败: " + amapLocation.getErrorInfo(), android.widget.Toast.LENGTH_SHORT).show();
+                ToastUtil.showMsg(AddDiary.this,  "定位失败: " + amapLocation.getErrorInfo());
             }
         }
     }

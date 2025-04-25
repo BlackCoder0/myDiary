@@ -7,6 +7,9 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.widget.*;
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.code.mydiary.util.GenderResourceUtil;
+import com.code.mydiary.util.ToastUtil;
 import com.code.mydiary.util.UserCRUD;
 import java.util.ArrayList;
 
@@ -92,12 +95,12 @@ public class SOSActivity extends AppCompatActivity {
                     boolean duplicate = false;
                     for (String[] arr : contactRawList) {
                         if (arr[0].equals(name)) {
-                            Toast.makeText(this, "该姓名已存在", Toast.LENGTH_SHORT).show();
+                            ToastUtil.showMsg(SOSActivity.this, "该姓名已存在");
                             duplicate = true;
                             break;
                         }
                         if (arr[1].equals(phone)) {
-                            Toast.makeText(this, "该号码已存在", Toast.LENGTH_SHORT).show();
+                            ToastUtil.showMsg(SOSActivity.this, "该号码已存在");
                             duplicate = true;
                             break;
                         }
@@ -108,7 +111,7 @@ public class SOSActivity extends AppCompatActivity {
                     loadContacts();
                     adapter.notifyDataSetChanged();
                 } else {
-                    Toast.makeText(this, "姓名和号码不能为空", Toast.LENGTH_SHORT).show();
+                    ToastUtil.showMsg(SOSActivity.this, "姓名和号码不能为空");
                 }
             })
             .setNegativeButton("取消", null)
@@ -130,7 +133,7 @@ public class SOSActivity extends AppCompatActivity {
         ImageView imageView = findViewById(R.id.imageView);
         if (imageView != null) {
             imageView.setImageResource(
-                    com.code.mydiary.util.GenderResourceUtil.getMenuBackgroundRes(this)
+                    GenderResourceUtil.getMenuBackgroundRes(this)
             );
         }
 
