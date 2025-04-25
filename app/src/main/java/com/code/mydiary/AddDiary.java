@@ -26,6 +26,8 @@ import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
 
+import com.amap.api.location.AMapLocationClientOption;
+import com.amap.api.services.core.AMapException;
 import com.amap.api.services.core.LatLonPoint;
 import com.amap.api.services.geocoder.GeocodeSearch;
 import com.amap.api.services.geocoder.RegeocodeAddress;
@@ -34,7 +36,7 @@ import com.amap.api.services.geocoder.RegeocodeResult;
 
 import com.amap.api.location.AMapLocationClient;
 
-public class AddDiary extends AppCompatActivity {
+public class AddDiary extends AppCompatActivity implements com.amap.api.location.AMapLocationListener {
 
     EditText DiaryTitle;
     EditText DiaryBody;
@@ -45,7 +47,10 @@ public class AddDiary extends AppCompatActivity {
     int mood = -1;
     int tag = 1; // 默认 tag 为 1
     String temperature ="25";
-    String location="江门";
+    String location="";
+
+    private AMapLocationClient mlocationClient;
+    private AMapLocationClientOption mLocationOption;
 
 
     //String time, int weather, String temperature, String location, String title, String body, int mood, int tag,int mode
@@ -221,7 +226,9 @@ public class AddDiary extends AppCompatActivity {
             resultIntent.putExtra("temperature", temperature);
             // 使用 lastLocation 如果它有效，否则回退到 old_location (主要用于编辑模式下未重新获取位置的情况)
             String finalLocation = (lastLocation != null && !lastLocation.isEmpty()) ? lastLocation : old_location;
-            resultIntent.putExtra("location", finalLocation);
+            // 新增：去除换行和中括号
+            String cleanLocation = finalLocation.replace("\n", "").replace("[", "").replace("]", "");
+            resultIntent.putExtra("location", cleanLocation);
 
             if (currentMode == 1) { // 编辑模式
                 resultIntent.putExtra("id", id);
@@ -356,62 +363,25 @@ public class AddDiary extends AppCompatActivity {
     //获取位置和高德SDK逆编码
     private void insertLocation() {
         Log.d("AddDiary", "insertLocation called");
-        android.location.LocationManager locationManager = (android.location.LocationManager) getSystemService(LOCATION_SERVICE);
         try {
             if (androidx.core.content.ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != android.content.pm.PackageManager.PERMISSION_GRANTED) {
                 Log.d("AddDiary", "No location permission");
                 androidx.core.app.ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, 1001);
                 return;
             }
-            android.location.Location location = locationManager.getLastKnownLocation(android.location.LocationManager.GPS_PROVIDER);
-            Log.d("AddDiary", "GPS_PROVIDER location: " + location);
-            if (location == null) {
-                location = locationManager.getLastKnownLocation(android.location.LocationManager.NETWORK_PROVIDER);
-                Log.d("AddDiary", "NETWORK_PROVIDER location: " + location);
+            // 初始化定位
+            if (mlocationClient == null) {
+                mlocationClient = new AMapLocationClient(getApplicationContext());
+                mLocationOption = new AMapLocationClientOption();
+                mlocationClient.setLocationListener(this);
+                mLocationOption.setLocationMode(AMapLocationClientOption.AMapLocationMode.Hight_Accuracy);
+                mLocationOption.setInterval(2000); // 可根据需要调整
+                mlocationClient.setLocationOption(mLocationOption);
             }
-            if (location != null) {
-                double latitude = location.getLatitude();
-                double longitude = location.getLongitude();
-    
-                // 使用高德逆地理编码
-                GeocodeSearch geocodeSearch = new GeocodeSearch(this);
-                LatLonPoint latLonPoint = new LatLonPoint(latitude, longitude);
-                RegeocodeQuery query = new RegeocodeQuery(latLonPoint, 200, GeocodeSearch.AMAP);
-    
-                geocodeSearch.getFromLocationAsyn(query);
-                geocodeSearch.setOnGeocodeSearchListener(new GeocodeSearch.OnGeocodeSearchListener() {
-                    @Override
-                    public void onRegeocodeSearched(RegeocodeResult regeocodeResult, int rCode) {
-                        String addressStr;
-                        if (rCode == 1000 && regeocodeResult != null && regeocodeResult.getRegeocodeAddress() != null) {
-                            RegeocodeAddress address = regeocodeResult.getRegeocodeAddress();
-                            addressStr = address.getFormatAddress();
-                        } else {
-                            addressStr = "高德地址解析失败";
-                        }
-                        String locationStr = "位置: " + addressStr + " (" + latitude + ", " + longitude + ")";
-                        Log.d("LocationTest", "location=" + locationStr);
-                        lastLocation = locationStr;
-                        // 插入到正文
-                        int cursorPos = DiaryBody.getSelectionStart();
-                        String oldText = DiaryBody.getText().toString();
-                        String newText = oldText.substring(0, cursorPos) + locationStr + oldText.substring(cursorPos);
-                        DiaryBody.setText(newText);
-                        DiaryBody.setSelection(cursorPos + locationStr.length());
-                    }
-    
-                    @Override
-                    public void onGeocodeSearched(com.amap.api.services.geocoder.GeocodeResult geocodeResult, int i) {
-                        // 不需要实现
-                    }
-                });
-            } else {
-                Log.d("AddDiary", "location is null, cannot get location");
-                android.widget.Toast.makeText(this, "无法获取当前位置", android.widget.Toast.LENGTH_SHORT).show();
-            }
+            mlocationClient.startLocation(); // 启动定位
         } catch (Exception e) {
             Log.e("AddDiary", "Exception in insertLocation", e);
-            android.widget.Toast.makeText(this, "获取位置失败", android.widget.Toast.LENGTH_SHORT).show();
+            android.widget.Toast.makeText(this, "获取位置失败: " + e.getMessage(), android.widget.Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -429,5 +399,67 @@ public class AddDiary extends AppCompatActivity {
                 })
                 .setNegativeButton("取消", null) // 用户点击取消，对话框消失，不做任何操作
                 .show(); // 显示对话框
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (mlocationClient != null) {
+            mlocationClient.onDestroy();
+        }
+    }
+
+    @Override
+    public void onLocationChanged(com.amap.api.location.AMapLocation amapLocation) {
+        if (amapLocation != null) {
+            if (amapLocation.getErrorCode() == 0) {
+                double latitude = amapLocation.getLatitude();
+                double longitude = amapLocation.getLongitude();
+                // 定位成功后停止定位
+                if (mlocationClient != null) {
+                    mlocationClient.stopLocation();
+                }
+                // 使用高德逆地理编码
+                GeocodeSearch geocodeSearch = null;
+                try {
+                    geocodeSearch = new GeocodeSearch(this);
+                } catch (AMapException e) {
+                    throw new RuntimeException(e);
+                }
+                LatLonPoint latLonPoint = new LatLonPoint(latitude, longitude);
+                RegeocodeQuery query = new RegeocodeQuery(latLonPoint, 200, GeocodeSearch.AMAP);
+
+                geocodeSearch.getFromLocationAsyn(query);
+                geocodeSearch.setOnGeocodeSearchListener(new GeocodeSearch.OnGeocodeSearchListener() {
+                    @Override
+                    public void onRegeocodeSearched(RegeocodeResult regeocodeResult, int rCode) {
+                        String addressStr;
+                        if (rCode == 1000 && regeocodeResult != null && regeocodeResult.getRegeocodeAddress() != null) {
+                            RegeocodeAddress address = regeocodeResult.getRegeocodeAddress();
+                            addressStr = address.getFormatAddress();
+                        } else {
+                            addressStr = "高德地址解析失败";
+                        }
+                        String locationStr = "\n[" + addressStr + "]\n";
+                        Log.d("LocationTest", "location=" + locationStr);
+                        lastLocation = locationStr;
+                        // 插入到正文
+                        int cursorPos = DiaryBody.getSelectionStart();
+                        String oldText = DiaryBody.getText().toString();
+                        String newText = oldText.substring(0, cursorPos) + locationStr + oldText.substring(cursorPos);
+                        DiaryBody.setText(newText);
+                        DiaryBody.setSelection(cursorPos + locationStr.length());
+                    }
+
+                    @Override
+                    public void onGeocodeSearched(com.amap.api.services.geocoder.GeocodeResult geocodeResult, int i) {
+                        // 不需要实现
+                    }
+                });
+            } else {
+                Log.e("AmapError", "location Error, ErrCode:" + amapLocation.getErrorCode() + ", errInfo:" + amapLocation.getErrorInfo());
+                android.widget.Toast.makeText(this, "定位失败: " + amapLocation.getErrorInfo(), android.widget.Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 }

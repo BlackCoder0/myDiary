@@ -8,13 +8,8 @@
     <!-- 声明精确位置权限 -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
     <!-- 高德Key -->
-    <meta-data
-        android:name="com.amap.api.v2.apikey"
-        android:value="a6b51c19f672df49f2cc18662641ac87" />
 
-    <!-- 定位和网络权限 -->
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <!-- 网络权限 -->
     <uses-permission android:name="android.permission.INTERNET"/>
 
     <application
@@ -27,6 +22,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.myDiary"
         tools:targetApi="31">
+
+        <service android:name="com.amap.api.location.APSService" />
+        <meta-data
+            android:name="com.amap.api.v2.apikey"
+            android:value="a6b51c19f672df49f2cc18662641ac87" />
+
         <activity
             android:name=".Login"
             android:exported="true">

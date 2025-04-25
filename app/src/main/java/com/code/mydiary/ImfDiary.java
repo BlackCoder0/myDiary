@@ -114,7 +114,11 @@ public class ImfDiary {
         // 3. 处理位置
         String location = diary.getLocation();
         if (!TextUtils.isEmpty(location)) {
-            tvLocationText.setText(location);
+            // 新增：去除换行和中括号
+            String cleanLocation = location.replace("\n", "").replace("[", "").replace("]", "");
+            // 只显示到县/区/市级
+            String countyLevelLocation = extractCountyLevel(cleanLocation);
+            tvLocationText.setText(countyLevelLocation);
             tvLocationText.setVisibility(View.VISIBLE);
             ivLocation.setVisibility(View.VISIBLE);
         } else {
@@ -174,6 +178,24 @@ public class ImfDiary {
         dialog.show();
     }
 
+
+    private String extractCountyLevel(String address) {
+        if (TextUtils.isEmpty(address)) return address;
+        String[] suffixes = {"区", "县", "市"};
+        int minIdx = -1;
+        for (String suffix : suffixes) {
+            int idx = address.indexOf(suffix);
+            if (idx != -1) {
+                if (minIdx == -1 || idx < minIdx) {
+                    minIdx = idx;
+                }
+            }
+        }
+        if (minIdx != -1) {
+            return address.substring(0, minIdx + 1);
+        }
+        return address;
+    }
     // 逐步乱码+删除动画
     private void startDeleteAnim(TextView tvContent, TextView[] others, Runnable onFinish, Dialog dialog, View overlay) {
         Handler handler = new Handler();
@@ -185,7 +207,7 @@ public class ImfDiary {
             @Override
             public void run() {
                 if (garbleRounds < 6) { // 6轮逐步乱码
-                    current = garbleString(current, 0.33f);
+                    current = garbleString(current); // 只传一个参数
                     tvContent.setText(current);
                     garbleRounds++;
                     handler.postDelayed(this, 80); // 逐步乱码过程
@@ -196,7 +218,7 @@ public class ImfDiary {
                         public void run() {
                             if (tvContent.getText().length() > 0) {
                                 tvContent.setText(tvContent.getText().subSequence(0, tvContent.getText().length() - 1));
-                                handler.postDelayed(this, 18); // 更快删除
+                                handler.postDelayed(this, 15); // 正文删除的速度
                             } else {
                                 // 3. 其它字段一起乱码+删除
                                 garbleAndDeleteOthers(others, onFinish, dialog, overlay);
@@ -226,7 +248,7 @@ public class ImfDiary {
             public void run() {
                 if (garbleRounds < 4) {
                     for (int i = 0; i < fields.length; i++) {
-                        currents[i] = garbleString(currents[i], 0.33f);
+                        currents[i] = garbleString(currents[i]);
                         fields[i].setText(currents[i]);
                     }
                     garbleRounds++;
@@ -244,7 +266,7 @@ public class ImfDiary {
                                 }
                             }
                             if (hasText) {
-                                handler.postDelayed(this, 30);
+                                handler.postDelayed(this, 30);// 其它字段删除的速度
                             } else {
                                 dialog.dismiss();
                                 overlay.setVisibility(View.GONE);
@@ -261,24 +283,22 @@ public class ImfDiary {
     /**
      * 将字符串部分或全部变为乱码（包含汉字、符号、特殊字符等）
      * @param s 原字符串
-     * @param ratio 变乱码比例（0~1），1为全部变乱码
      * @return 变乱码后的字符串
      */
-    private String garbleString(String s, float ratio) {
+    private String garbleString(String s) {
         if (TextUtils.isEmpty(s)) return s;
         char[] arr = s.toCharArray();
         int n = arr.length;
+        float ratio = 1.0f / 3.0f; // 固定为1/3
         int garbleCount = Math.max(1, (int)(n * ratio));
         java.util.Random r = new java.util.Random();
-        // 组合汉字区间和符号区间
-        String garbleChars = "�ூ♦◊૭〒ミæœˆè|铿斤拷铿斤拷"
-                + "▦▧▨▩"
+        String garbleChars = "ூ◊૭〒ミæœˆè|铿斤拷铿斤拷"
+                + "▦▧▩"
                 + "abcdefghijklmnopqrstuvwxyz";
         for (int i = 0; i < garbleCount; i++) {
             int idx = r.nextInt(n);
-            // 随机决定用汉字还是符号
             if (r.nextBoolean()) {
-                arr[idx] = (char) (0x4e00 + r.nextInt(0x9fa5 - 0x4e00)); // 随机汉字
+                arr[idx] = (char) (0x4e00 + r.nextInt(0x9fa5 - 0x4e00));
             } else {
                 arr[idx] = garbleChars.charAt(r.nextInt(garbleChars.length()));
             }
