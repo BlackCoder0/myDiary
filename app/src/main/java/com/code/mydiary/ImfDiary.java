@@ -78,7 +78,7 @@ public class ImfDiary {
         bottomLayout.setBackgroundColor(context.getResources().getColor(tabMainColor));
 
         // 自动滚动到底部
-        if (scrollView != null) {
+        if (scrollView != null && isTimeReverse) {
             scrollView.post(() -> scrollView.fullScroll(View.FOCUS_DOWN));
         }
 
