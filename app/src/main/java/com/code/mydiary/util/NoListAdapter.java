@@ -39,6 +39,7 @@ public class NoListAdapter extends RecyclerView.Adapter<NoListAdapter.ViewHolder
         EditText etNoItem;
         ImageView dot;
         CustomTextWatcher customTextWatcher;
+        View nolistLine;
 
         public ViewHolder(@NonNull View itemView, CustomTextWatcher watcher) {
             super(itemView);
@@ -46,6 +47,7 @@ public class NoListAdapter extends RecyclerView.Adapter<NoListAdapter.ViewHolder
             dot = itemView.findViewById(R.id.iv_dot);
             customTextWatcher = watcher;
             etNoItem.addTextChangedListener(customTextWatcher);
+            nolistLine = itemView.findViewById(R.id.nolist_line);
         }
     }
 
@@ -95,6 +97,12 @@ public class NoListAdapter extends RecyclerView.Adapter<NoListAdapter.ViewHolder
         holder.customTextWatcher.setHolder(holder); // 新增：传递holder引用
         holder.etNoItem.setText(dataList.get(position));
         holder.dot.setVisibility(dataList.get(position).trim().isEmpty() ? View.INVISIBLE : View.VISIBLE);
+
+        // 动态设置 nolist_line 颜色
+        int color = holder.itemView.getContext().getResources().getColor(
+                com.code.mydiary.util.GenderResourceUtil.getTabMainColorRes(holder.itemView.getContext())
+        );
+        holder.nolistLine.setBackgroundColor(color);
 
         // 新增：EditText获取焦点时滚动到该项
         holder.etNoItem.setOnFocusChangeListener((v, hasFocus) -> {

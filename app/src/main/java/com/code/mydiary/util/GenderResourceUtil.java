@@ -17,6 +17,12 @@ public class GenderResourceUtil {
         return sex == 2 ? R.drawable.theme_bg_mitsuha : R.drawable.theme_bg_taki;
     }
 
+    // 获取menu及其子项目背景
+    public static int getMenuBackgroundRes(Context context) {
+        int sex = getCurrentUserSex(context);
+        return sex == 2 ? R.drawable.profile_theme_bg_mitsuha : R.drawable.profile_theme_bg_taki;
+    }
+
     // 获取底部导航栏颜色
     public static int getBottomBarColorRes(Context context) {
         int sex = getCurrentUserSex(context);
@@ -28,4 +34,6 @@ public class GenderResourceUtil {
         int sex = getCurrentUserSex(context);
         return sex == 2 ? R.color.girl : R.color.boy;
     }
+
+
 }

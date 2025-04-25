@@ -36,6 +36,7 @@
     </LinearLayout>
 
     <View
+        android:id="@+id/nolist_line"
         android:layout_width="350dp"
         android:layout_height="1dp"
         android:layout_marginTop="4dp"

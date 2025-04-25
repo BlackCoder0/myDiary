@@ -2,6 +2,7 @@ package com.code.mydiary;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.*;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -53,6 +54,9 @@ public class NoListActivity extends AppCompatActivity {
         // 加载标题
         String title = userCRUD.getNoListTitle(userId);
         titleEditText.setText(title);
+
+
+        initSexChange();
     }
 
     private void onItemContentChanged(int position, String content) {
@@ -100,6 +104,19 @@ public class NoListActivity extends AppCompatActivity {
         }
         userCRUD.saveNoList(userId, saveList);
     }
+
+    //根据性别更新
+    private void initSexChange() {
+        // 动态设置顶部背景
+        EditText titleNo = findViewById(R.id.title_no);
+        if (titleNo != null) {
+            int color = getResources().getColor(
+                    com.code.mydiary.util.GenderResourceUtil.getTabMainColorRes(this)
+            );
+            titleNo.setBackgroundColor(color);
+        }
+    }
+
 
     @Override
     protected void onDestroy() {

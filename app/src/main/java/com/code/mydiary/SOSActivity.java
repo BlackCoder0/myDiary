@@ -64,6 +64,8 @@ public class SOSActivity extends AppCompatActivity {
                 .show();
             return true;
         });
+
+        initSexChange();
     }
 
     private void showAddDialog() {
@@ -122,6 +124,18 @@ public class SOSActivity extends AppCompatActivity {
             contactRawList.add(arr);
         }
     }
+
+    private void initSexChange() {
+        // 动态设置顶部背景
+        ImageView imageView = findViewById(R.id.imageView);
+        if (imageView != null) {
+            imageView.setImageResource(
+                    com.code.mydiary.util.GenderResourceUtil.getMenuBackgroundRes(this)
+            );
+        }
+
+    }
+
 
     @Override
     protected void onDestroy() {

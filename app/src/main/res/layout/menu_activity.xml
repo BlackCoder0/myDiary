@@ -50,6 +50,7 @@
                 android:gravity="center_vertical"
                 android:textSize="24dp"/>
             <TextView
+                android:id="@+id/menu_JT1"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:text=">"
@@ -61,6 +62,7 @@
                 android:textSize="20dp"/>
         </LinearLayout>
         <ImageView
+            android:id="@+id/menu_line1"
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_marginLeft="35dp"
@@ -99,6 +101,7 @@
                 android:gravity="center_vertical"
                 android:textSize="24dp"/>
             <TextView
+                android:id="@+id/menu_JT2"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:text=">"
@@ -110,6 +113,7 @@
                 android:textSize="20dp"/>
         </LinearLayout>
         <ImageView
+            android:id="@+id/menu_line2"
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_marginLeft="35dp"
@@ -146,6 +150,7 @@
                 android:gravity="center_vertical"
                 android:textSize="24dp"/>
             <TextView
+                android:id="@+id/menu_JT3"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:text=">"
@@ -157,6 +162,7 @@
                 android:textSize="20dp"/>
         </LinearLayout>
         <ImageView
+            android:id="@+id/menu_line3"
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_marginLeft="35dp"

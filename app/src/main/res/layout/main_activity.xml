@@ -140,7 +140,7 @@
                 android:layout_weight="1"
                 android:background="@drawable/diary_background"
                 android:hint="搜索日记标题或内容"
-                android:textColor="@color/boy"
+                android:textColor="@color/black"
                 android:textColorHint="@color/gray"
                 android:textSize="16sp"
                 android:singleLine="true"

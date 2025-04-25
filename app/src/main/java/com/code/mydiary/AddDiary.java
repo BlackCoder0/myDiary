@@ -141,7 +141,10 @@ public class AddDiary extends AppCompatActivity implements com.amap.api.location
         // 根据当前 weather 和 mood 设置按钮状态 (包括编辑模式加载旧值)
         if (weather != -1 && weather < weatherIcons.length) {
             weatherBtn.setImageResource(weatherIcons[weather]);
-            weatherBtn.setColorFilter(getResources().getColor(R.color.boy));
+            // 根据性别设置颜色
+            weatherBtn.setColorFilter(getResources().getColor(
+                    com.code.mydiary.util.GenderResourceUtil.getTabMainColorRes(this)
+            ));
         } else {
             // 如果是新建或者旧数据无效，则显示默认灰色
             weatherBtn.setImageResource(R.drawable.ic_weather_sunny); // 可以设置一个默认图标
@@ -149,7 +152,10 @@ public class AddDiary extends AppCompatActivity implements com.amap.api.location
         }
         if (mood != -1 && mood < moodIcons.length) {
             moodBtn.setImageResource(moodIcons[mood]);
-            moodBtn.setColorFilter(getResources().getColor(R.color.boy));
+            // 根据性别设置颜色
+            moodBtn.setColorFilter(getResources().getColor(
+                    com.code.mydiary.util.GenderResourceUtil.getTabMainColorRes(this)
+            ));
         } else {
             // 如果是新建或者旧数据无效，则显示默认灰色
             moodBtn.setImageResource(R.drawable.ic_mood_happy); // 可以设置一个默认图标
@@ -158,7 +164,6 @@ public class AddDiary extends AppCompatActivity implements com.amap.api.location
 
         weatherBtn.setOnClickListener(v -> showWeatherDialog());
         moodBtn.setOnClickListener(v -> showMoodDialog());
-
         // 新增：插入时间按钮
         ImageButton btnInsertTime = findViewById(R.id.btn_insert_time);
         btnInsertTime.setOnClickListener(v -> {
@@ -344,7 +349,10 @@ public class AddDiary extends AppCompatActivity implements com.amap.api.location
         });
         gridView.setOnItemClickListener((AdapterView<?> parent, View view, int position, long id) -> {
             targetBtn.setImageResource(icons[position]);
-            targetBtn.setColorFilter(getResources().getColor(R.color.boy));
+            // 根据性别设置颜色
+            targetBtn.setColorFilter(getResources().getColor(
+                    com.code.mydiary.util.GenderResourceUtil.getTabMainColorRes(AddDiary.this)
+            ));
             if (isWeather) {
                 weather = position;
             } else {

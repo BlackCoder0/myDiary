@@ -14,6 +14,7 @@ import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -265,6 +266,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         tabEntries.setSelected(index == 0);
         tabCalendar.setSelected(index == 1);
         tabDiary.setSelected(index == 2);
+        // 每次切换页面时重新设置背景
+        initSexChange();
     }
 
 
@@ -639,6 +642,33 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 com.code.mydiary.util.GenderResourceUtil.getTabMainColorRes(this)
         );
         int whiteColor = getResources().getColor(android.R.color.white);
+
+        // 动态设置设置页面的颜色
+        TextView setChangePwdText = findViewById(R.id.set_changePwd_text);
+        ImageView setLine1 = findViewById(R.id.set_line1);
+        TextView setTimeText = findViewById(R.id.set_time_text);
+        ImageView setLine2 = findViewById(R.id.set_line2);
+        TextView setAwayText = findViewById(R.id.set_away_text);
+        ImageView setLine3 = findViewById(R.id.set_line3);
+
+        if (setChangePwdText != null) {
+            setChangePwdText.setTextColor(mainColor);
+        }
+        if (setLine1 != null) {
+            setLine1.setBackgroundColor(mainColor);
+        }
+        if (setTimeText != null) {
+            setTimeText.setTextColor(mainColor);
+        }
+        if (setLine2 != null) {
+            setLine2.setBackgroundColor(mainColor);
+        }
+        if (setAwayText != null) {
+            setAwayText.setTextColor(mainColor);
+        }
+        if (setLine3 != null) {
+            setLine3.setBackgroundColor(mainColor);
+        }
 
         // 1. 动态设置Tab文字颜色（selected: white, unselected: mainColor/girlColor）
         int[][] states = new int[][]{

@@ -18,6 +18,7 @@ import android.widget.Toast;
 import android.os.Handler;
 
 import androidx.appcompat.app.AlertDialog;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.code.mydiary.R;
 
@@ -63,6 +64,15 @@ public class ImfDiary {
         TextView tvContent = view.findViewById(R.id.imf_tv_content);
         ImageButton btnMore = view.findViewById(R.id.imf_imgBtn_more);
         ImageButton btnDelete = view.findViewById(R.id.imf_imgBtn_delte);
+
+        // 获取顶部和底部布局
+        ConstraintLayout topLayout = view.findViewById(R.id.topLayout);
+        ConstraintLayout bottomLayout = view.findViewById(R.id.bottomLayout);
+
+// 根据性别设置背景颜色
+        int tabMainColor = com.code.mydiary.util.GenderResourceUtil.getTabMainColorRes(context);
+        topLayout.setBackgroundColor(context.getResources().getColor(tabMainColor));
+        bottomLayout.setBackgroundColor(context.getResources().getColor(tabMainColor));
 
         // 自动滚动到底部
         if (scrollView != null) {

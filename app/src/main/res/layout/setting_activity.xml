@@ -30,6 +30,7 @@
             android:orientation="horizontal"
             android:background="?attr/selectableItemBackground">
             <TextView
+                android:id="@+id/set_changePwd_text"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:text="修改密码"
@@ -41,6 +42,7 @@
                 android:textSize="20dp"/>
         </LinearLayout>
         <ImageView
+            android:id="@+id/set_line1"
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:background="@color/boy" />
@@ -53,6 +55,7 @@
             android:orientation="horizontal"
             android:background="?attr/selectableItemBackground">
             <TextView
+                android:id="@+id/set_time_text"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:text="时光倒流"
@@ -64,6 +67,7 @@
                 android:textSize="20dp"/>
         </LinearLayout>
         <ImageView
+            android:id="@+id/set_line2"
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:background="@color/boy" />
@@ -76,6 +80,7 @@
             android:orientation="horizontal"
             android:background="?attr/selectableItemBackground">
             <TextView
+                android:id="@+id/set_away_text"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:text="退出登录"
@@ -87,6 +92,7 @@
                 android:textSize="20dp"/>
         </LinearLayout>
         <ImageView
+            android:id="@+id/set_line3"
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:background="@color/boy" />

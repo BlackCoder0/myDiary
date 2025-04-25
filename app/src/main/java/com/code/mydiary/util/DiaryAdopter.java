@@ -100,20 +100,25 @@ public class DiaryAdopter extends BaseAdapter {
 
             // 标签图标
             if (diary.getTag() == 2) {
-                holder.ivTag.setColorFilter(myContext.getResources().getColor(R.color.boy));
+                holder.ivTag.setColorFilter(myContext.getResources().getColor(
+                        com.code.mydiary.util.GenderResourceUtil.getTabMainColorRes(myContext)
+                ));
                 holder.ivTag.setAlpha(1.0f);
             } else {
                 holder.ivTag.setColorFilter(myContext.getResources().getColor(R.color.gray));
                 holder.ivTag.setAlpha(0.5f); // 灰色且半透明
             }
             holder.ivTag.setOnClickListener(v -> {
-                Log.d("DiaryAdopter", "Tag clicked, old tag=" +diary.getTag());
+                Log.d("DiaryAdopter", "Tag clicked, old tag=" + diary.getTag());
                 if (diary.getTag() == 2) {
                     holder.ivTag.setColorFilter(myContext.getResources().getColor(R.color.gray));
                     holder.ivTag.setAlpha(1.0f);
                     diary.setTag(1);
                 } else {
-                    holder.ivTag.setColorFilter(myContext.getResources().getColor(R.color.boy));
+                    // 根据性别设置颜色
+                    holder.ivTag.setColorFilter(myContext.getResources().getColor(
+                            com.code.mydiary.util.GenderResourceUtil.getTabMainColorRes(myContext)
+                    ));
                     holder.ivTag.setAlpha(0.5f);
                     diary.setTag(2);
                 }
@@ -135,9 +140,11 @@ public class DiaryAdopter extends BaseAdapter {
                 int weatherResId = getWeatherIconResId(weather);
                 if (weatherResId != 0) {
                     holder.ivWeather.setImageResource(weatherResId);
-                    holder.ivWeather.setColorFilter(myContext.getResources().getColor(R.color.boy));
+                    holder.ivWeather.setColorFilter(myContext.getResources().getColor(
+                            com.code.mydiary.util.GenderResourceUtil.getTabMainColorRes(myContext)
+                    ));
                     holder.ivWeather.setAlpha(1.0f);
-                } 
+                }
             }
 
             // 心情图标
@@ -150,10 +157,21 @@ public class DiaryAdopter extends BaseAdapter {
                 int moodResId = getMoodIconResId(mood);
                 if (moodResId != 0) {
                     holder.ivMood.setImageResource(moodResId);
-                    holder.ivMood.setColorFilter(myContext.getResources().getColor(R.color.boy));
+                    holder.ivMood.setColorFilter(myContext.getResources().getColor(
+                            com.code.mydiary.util.GenderResourceUtil.getTabMainColorRes(myContext)
+                    ));
                     holder.ivMood.setAlpha(1.0f);
                 }
             }
+
+            int textColor = myContext.getResources().getColor(
+                    com.code.mydiary.util.GenderResourceUtil.getTabMainColorRes(myContext)
+            );
+            holder.tvDay.setTextColor(textColor);
+            holder.tvWeek.setTextColor(textColor);
+            holder.tvTime.setTextColor(textColor);
+            holder.tvTitle.setTextColor(textColor);
+            holder.tvBody.setTextColor(textColor);
 
             // 时间相关
             String timeStr = diary.getTime();
