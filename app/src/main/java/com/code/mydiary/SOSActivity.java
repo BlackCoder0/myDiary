@@ -25,14 +25,9 @@ public class SOSActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.sos_activity);
 
-        // 新增：返回按钮逻辑
+        // 修改：返回按钮逻辑
         ImageButton btnBack = findViewById(R.id.btn_back);
-        btnBack.setOnClickListener(v -> {
-            Intent intent = new Intent(SOSActivity.this, Menu.class);
-            intent.putExtra("user_id", userId);
-            startActivity(intent);
-            finish();
-        });
+        btnBack.setOnClickListener(v -> onBackPressed()); // 让btn_back等效于系统返回键
 
         userId = getIntent().getLongExtra("user_id", -1);
 
@@ -132,5 +127,14 @@ public class SOSActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         userCRUD.close();
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent(SOSActivity.this, Menu.class);
+        intent.putExtra("user_id", userId);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        startActivity(intent);
+        finish();
     }
 }

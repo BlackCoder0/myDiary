@@ -9,11 +9,7 @@ public class TimeReverseEndActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        TextView tv = new TextView(this);
-        tv.setText("时光倒流结束！这里是新页面。");
-        tv.setTextSize(24);
-        setContentView(tv);
-
+        setContentView(R.layout.timereverse_end_activity);
         // 显示 Toast 提示
         com.code.mydiary.util.ToastUtil.showMsg(this, "点击返回键可恢复正常");
     }

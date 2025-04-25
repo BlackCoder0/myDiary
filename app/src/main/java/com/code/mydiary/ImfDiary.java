@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.os.Handler;
@@ -34,15 +35,6 @@ public class ImfDiary {
         void onEditClicked(Diary diaryToEdit);
         void onDeleteClicked(Diary diaryToDelete);
     }
-    // --- 新增接口结束 ---
-
-
-    // 修改方法签名，接收 Diary 对象和监听器
-// ... 其他 import ...
- // 新增 import
-
-// ... 其他代码 ...
-
     // 新增重载方法
     public void showDiaryDialog(Context context, final Diary diary, final DialogActionListener listener, boolean isTimeReverse, Runnable onDeleteAnimFinish) {
         if (diary == null) {
@@ -57,7 +49,8 @@ public class ImfDiary {
         View view = LayoutInflater.from(context).inflate(R.layout.imf_diary, null);
         dialog.setContentView(view);
 
-        // 获取视图控件
+        // 获取控件
+        ScrollView scrollView = view.findViewById(R.id.imf_scrollView); // 你需要给ScrollView加id: scrollView
         ImageButton btnClose = view.findViewById(R.id.imf_imgBtn_close);
         TextView tvMoon = view.findViewById(R.id.imf_tv_moon);
         TextView tvDay = view.findViewById(R.id.imf_tv_day);
@@ -70,6 +63,11 @@ public class ImfDiary {
         TextView tvContent = view.findViewById(R.id.imf_tv_content);
         ImageButton btnMore = view.findViewById(R.id.imf_imgBtn_more);
         ImageButton btnDelete = view.findViewById(R.id.imf_imgBtn_delte);
+
+        // 自动滚动到底部
+        if (scrollView != null) {
+            scrollView.post(() -> scrollView.fullScroll(View.FOCUS_DOWN));
+        }
 
         // 填充数据
         // 1. 处理时间
@@ -127,6 +125,16 @@ public class ImfDiary {
         // 4. 处理正文内容
         tvContent.setText(!TextUtils.isEmpty(diary.getBody()) ? diary.getBody() : "无内容");
 
+        // 动画期间禁止操作和返回
+        View overlay = new View(context);
+        overlay.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        overlay.setBackgroundColor(0x00000000); // 透明
+        overlay.setClickable(true);
+        overlay.setFocusable(true);
+        ((ViewGroup) view.getParent()).addView(overlay);
+
+        dialog.setOnKeyListener((d, keyCode, event) -> isTimeReverse); // 动画期间拦截返回键
+
         // 设置按钮监听器
         btnClose.setOnClickListener(v -> dialog.dismiss());
         btnMore.setOnClickListener(v -> {
@@ -147,7 +155,10 @@ public class ImfDiary {
             btnClose.setEnabled(false);
             btnMore.setEnabled(false);
             btnDelete.setEnabled(false);
-            startDeleteAnim(tvMoon, tvDay, tvWeek, tvTime, tvWeatherText, tvLocationText, tvContent, onDeleteAnimFinish, dialog);
+            overlay.setVisibility(View.VISIBLE);
+            startDeleteAnim(tvContent, new TextView[]{tvMoon, tvDay, tvWeek, tvTime, tvWeatherText, tvLocationText}, onDeleteAnimFinish, dialog, overlay);
+        } else {
+            overlay.setVisibility(View.GONE);
         }
 
         // 显示对话框
@@ -163,52 +174,119 @@ public class ImfDiary {
         dialog.show();
     }
 
-    // 新增：动画逐步乱码并删除
-    private void startDeleteAnim(TextView tvMoon, TextView tvDay, TextView tvWeek, TextView tvTime, TextView tvWeatherText, TextView tvLocationText, TextView tvContent, Runnable onFinish, Dialog dialog) {
+    // 逐步乱码+删除动画
+    private void startDeleteAnim(TextView tvContent, TextView[] others, Runnable onFinish, Dialog dialog, View overlay) {
         Handler handler = new Handler();
-        Runnable[] steps = new Runnable[2];
-        steps[0] = () -> {
-            tvMoon.setText(randomGarble(tvMoon.getText().toString()));
-            tvDay.setText(randomGarble(tvDay.getText().toString()));
-            tvWeek.setText(randomGarble(tvWeek.getText().toString()));
-            tvTime.setText(randomGarble(tvTime.getText().toString()));
-            tvWeatherText.setText(randomGarble(tvWeatherText.getText().toString()));
-            tvLocationText.setText(randomGarble(tvLocationText.getText().toString()));
-            tvContent.setText(randomGarble(tvContent.getText().toString()));
-            handler.postDelayed(steps[1], 400);
+        // 1. 正文逐步乱码
+        Runnable garbleStep = new Runnable() {
+            int garbleRounds = 0;
+            String original = tvContent.getText().toString();
+            String current = original;
+            @Override
+            public void run() {
+                if (garbleRounds < 6) { // 6轮逐步乱码
+                    current = garbleString(current, 0.33f);
+                    tvContent.setText(current);
+                    garbleRounds++;
+                    handler.postDelayed(this, 80); // 逐步乱码过程
+                } else {
+                    // 2. 正文逐字删除
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (tvContent.getText().length() > 0) {
+                                tvContent.setText(tvContent.getText().subSequence(0, tvContent.getText().length() - 1));
+                                handler.postDelayed(this, 18); // 更快删除
+                            } else {
+                                // 3. 其它字段一起乱码+删除
+                                garbleAndDeleteOthers(others, onFinish, dialog, overlay);
+                            }
+                        }
+                    }, 100);
+                }
+            }
         };
-        steps[1] = () -> {
-            deleteTextAnim(tvMoon, tvDay, tvWeek, tvTime, tvWeatherText, tvLocationText, tvContent, onFinish, dialog);
-        };
-        handler.post(steps[0]);
+        handler.post(garbleStep);
     }
 
-    // 新增：逐字删除动画
-    private void deleteTextAnim(TextView tvMoon, TextView tvDay, TextView tvWeek, TextView tvTime, TextView tvWeatherText, TextView tvLocationText, TextView tvContent, Runnable onFinish, Dialog dialog) {
-        if (tvMoon.getText().length() > 0 || tvDay.getText().length() > 0 || tvWeek.getText().length() > 0 || tvTime.getText().length() > 0 || tvWeatherText.getText().length() > 0 || tvLocationText.getText().length() > 0 || tvContent.getText().length() > 0) {
-            if (tvMoon.getText().length() > 0) tvMoon.setText(tvMoon.getText().subSequence(0, tvMoon.getText().length() - 1));
-            if (tvDay.getText().length() > 0) tvDay.setText(tvDay.getText().subSequence(0, tvDay.getText().length() - 1));
-            if (tvWeek.getText().length() > 0) tvWeek.setText(tvWeek.getText().subSequence(0, tvWeek.getText().length() - 1));
-            if (tvTime.getText().length() > 0) tvTime.setText(tvTime.getText().subSequence(0, tvTime.getText().length() - 1));
-            if (tvWeatherText.getText().length() > 0) tvWeatherText.setText(tvWeatherText.getText().subSequence(0, tvWeatherText.getText().length() - 1));
-            if (tvLocationText.getText().length()> 0) tvLocationText.setText(tvLocationText.getText().subSequence(0, tvLocationText.getText().length() - 1));
-            if (tvContent.getText().length() > 0) tvContent.setText(tvContent.getText().subSequence(0, tvContent.getText().length() - 1));
-            tvContent.postDelayed(() -> deleteTextAnim(tvMoon, tvDay, tvWeek, tvTime, tvWeatherText, tvLocationText, tvContent, onFinish, dialog), 30);
-        } else {
-            dialog.dismiss();
-            if (onFinish != null) onFinish.run();
-        }
+    // 其它字段乱码+删除
+    private void garbleAndDeleteOthers(TextView[] fields, Runnable onFinish, Dialog dialog, View overlay) {
+        Handler handler = new Handler();
+        Runnable garbleStep = new Runnable() {
+            int garbleRounds = 0;
+            String[] originals = new String[fields.length];
+            String[] currents = new String[fields.length];
+            {
+                for (int i = 0; i < fields.length; i++) {
+                    originals[i] = fields[i].getText().toString();
+                    currents[i] = originals[i];
+                }
+            }
+            @Override
+            public void run() {
+                if (garbleRounds < 4) {
+                    for (int i = 0; i < fields.length; i++) {
+                        currents[i] = garbleString(currents[i], 0.33f);
+                        fields[i].setText(currents[i]);
+                    }
+                    garbleRounds++;
+                    handler.postDelayed(this, 80);
+                } else {
+                    // 逐字删除
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            boolean hasText = false;
+                            for (TextView field : fields) {
+                                if (field.getText().length() > 0) {
+                                    field.setText(field.getText().subSequence(0, field.getText().length() - 1));
+                                    hasText = true;
+                                }
+                            }
+                            if (hasText) {
+                                handler.postDelayed(this, 30);
+                            } else {
+                                dialog.dismiss();
+                                overlay.setVisibility(View.GONE);
+                                if (onFinish != null) onFinish.run();
+                            }
+                        }
+                    }, 100);
+                }
+            }
+        };
+        handler.post(garbleStep);
     }
-    // 新增：生成随机乱码
-    private String randomGarble(String s) {
-        StringBuilder sb = new StringBuilder();
+
+    /**
+     * 将字符串部分或全部变为乱码（包含汉字、符号、特殊字符等）
+     * @param s 原字符串
+     * @param ratio 变乱码比例（0~1），1为全部变乱码
+     * @return 变乱码后的字符串
+     */
+    private String garbleString(String s, float ratio) {
+        if (TextUtils.isEmpty(s)) return s;
+        char[] arr = s.toCharArray();
+        int n = arr.length;
+        int garbleCount = Math.max(1, (int)(n * ratio));
         java.util.Random r = new java.util.Random();
-        for (int i = 0; i < s.length(); i++) {
-            sb.append((char) (0x4e00 + r.nextInt(0x9fa5 - 0x4e00)));
+        // 组合汉字区间和符号区间
+        String garbleChars = "�ூ♦◊૭〒ミæœˆè|铿斤拷铿斤拷"
+                + "▦▧▨▩"
+                + "abcdefghijklmnopqrstuvwxyz";
+        for (int i = 0; i < garbleCount; i++) {
+            int idx = r.nextInt(n);
+            // 随机决定用汉字还是符号
+            if (r.nextBoolean()) {
+                arr[idx] = (char) (0x4e00 + r.nextInt(0x9fa5 - 0x4e00)); // 随机汉字
+            } else {
+                arr[idx] = garbleChars.charAt(r.nextInt(garbleChars.length()));
+            }
         }
-        return sb.toString();
+        return new String(arr);
     }
-    // --- Helper 方法 ---
+
+
 
     // (从 DiaryAdopter 移动或复制过来)
     private int getWeatherIconResId(int weather) {

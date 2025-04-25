@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F5F5F5">
+
+    <!-- 顶部蓝色背景栏 -->
+    <RelativeLayout
+        android:id="@+id/top_background"
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        android:background="#676d74">
+
+        <!-- 左上角人物头像 -->
+        <ImageView
+            android:id="@+id/avatar"
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="46dp"
+            android:src="@drawable/ic_person_picture_default"
+            android:scaleType="centerCrop"
+            android:contentDescription="人物头像" />
+    </RelativeLayout>
+
+    <!-- 顶部栏内容：[no title] 和 数字 -->
+    <LinearLayout
+        android:id="@+id/top_bar"
+        android:layout_below="@id/top_background"
+        android:layout_width="match_parent"
+        android:layout_height="66dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:background="@android:color/white">
+
+        <!-- 左边小图标 -->
+        <ImageView
+            android:id="@+id/icon_folder"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_topic_diary"
+            android:tint="#6c7075"
+            android:contentDescription="写日记图标" />
+
+        <!-- 中间文字 -->
+        <TextView
+            android:id="@+id/title_text"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="left"
+            android:layout_marginLeft="10dp"
+            android:text="[ no title ]"
+            android:textSize="16sp"
+            android:textColor="#6c7075" />
+
+        <!-- 右边数字 -->
+        <TextView
+            android:id="@+id/number_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0 >"
+            android:textSize="14sp"
+            android:textColor="#6c7075" />
+    </LinearLayout>
+
+    <!-- 灰色分隔线 -->
+    <View
+        android:id="@+id/top_divider"
+        android:layout_below="@id/top_bar"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#DDDDDD" />
+
+    <!-- 中间白色卡片 -->
+    <LinearLayout
+        android:id="@+id/center_card"
+        android:layout_below="@id/top_divider"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="100dp"
+        android:paddingTop="20dp"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:background="@drawable/diary_background"
+        android:layout_margin="24dp">
+
+        <!-- 大字 NO Entries -->
+        <TextView
+            android:id="@+id/no_entries_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="NO Entries"
+            android:textSize="50sp"
+            android:textColor="#333333"
+            />
+
+        <!-- 小字 日記がありません -->
+        <TextView
+            android:id="@+id/no_diary_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="日記がありません"
+            android:textSize="18sp"
+            android:textColor="#888888" />
+
+        <!-- 蓝色链接 -->
+        <TextView
+            android:id="@+id/create_account_link"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:layout_marginBottom="30dp"
+            android:text="新しいアカウントを作成"
+            android:textSize="16sp"
+            android:textColor="#2196F3"
+            />
+
+    </LinearLayout>
+
+    <!-- 底部灰色横条 -->
+    <View
+        android:id="@+id/bottom_divider"
+        android:layout_width="match_parent"
+        android:layout_height="4dp"
+        android:layout_above="@id/bottom_card"
+        android:background="#DDDDDD" />
+
+    <LinearLayout
+        android:id="@+id/bottom_card"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:elevation="4dp">
+
+        <Button
+            android:layout_width="275dp"
+            android:layout_height="40dp"
+            android:backgroundTint="#92908b"/>
+
+        <!-- 底部齿轮按钮 -->
+        <ImageButton
+            android:id="@+id/settings_button"
+            android:layout_width="48dp"
+            android:layout_height="40dp"
+            android:layout_marginLeft="20dp"
+            android:background="@android:color/transparent"
+            android:src="@drawable/ic_settings_white_36dp"
+            android:tint="#92908b"
+            android:contentDescription="底部齿轮按钮" />
+    </LinearLayout>
+</RelativeLayout>
