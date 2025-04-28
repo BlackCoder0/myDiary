@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.graphics.drawable.StateListDrawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -22,28 +21,36 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import com.code.mydiary.util.BlueDotDecorator;
 import com.code.mydiary.util.CRUD;
 
 import com.code.mydiary.util.DiaryAdopter;
 import com.code.mydiary.util.DiaryDatabase;
 import com.code.mydiary.util.DiaryListItem;
 import com.code.mydiary.util.GenderResourceUtil;
+import com.code.mydiary.util.YellowDotDecorator;
 import com.code.mydiary.util.ToastUtil;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Locale;
 
 import com.code.mydiary.util.UserCRUD;
 import com.code.mydiary.util.UserDatabase;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+
+import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
+import com.prolificinteractive.materialcalendarview.CalendarDay;
+import java.util.HashSet;
+import java.util.Set;
+
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
 
     private static final String TAG = "MainActivity";
+    private boolean isCalendarInitialized = false;//日历初始化
 
     private DiaryDatabase dbHelper;
     private Diary diary;
@@ -115,6 +122,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         initSettingPage();
         initSexChange();
         refreshListView();
+        setupCalendarDecorators();
     }
 
     /**
@@ -269,6 +277,11 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         tabDiary.setSelected(index == 2);
         // 每次切换页面时重新设置背景
         initSexChange();
+
+        // 新增：切换到 Calendar 页时刷新日历装饰
+        if (index == 1) {
+            setupCalendarDecorators();
+        }
     }
 
 
@@ -980,5 +993,79 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private boolean hasBackupFile() {
         java.io.File file = new java.io.File(getFilesDir(), BACKUP_FILE);
         return file.exists();
+    }
+
+
+    private void setupCalendarDecorators() {
+        MaterialCalendarView calendarView = findViewById(R.id.calendarView);
+        if (calendarView == null) {
+            Log.e(TAG, "setupCalendarDecorators: calendarView 未找到!");
+            return;
+        }
+
+        // --- 修改：仅在第一次初始化时设置选中当天 ---
+        if (!isCalendarInitialized) {
+            calendarView.setSelectedDate(CalendarDay.today());
+            Log.d(TAG, "setupCalendarDecorators: 首次初始化，已设置日历选中当天: " + CalendarDay.today().toString());
+            isCalendarInitialized = true; // {{ edit_2: 设置标志位为 true }}
+        }
+        Log.d(TAG, "setupCalendarDecorators: 开始设置日历装饰器");
+        calendarView.removeDecorators(); // 清除旧装饰器
+
+        Set<CalendarDay> blueDotDays = new HashSet<>();
+        Set<CalendarDay> yellowDotDays = new HashSet<>(); // 使用 yellowDotDays 变量名更清晰
+
+        // 确保 diaryList 不为 null
+        if (diaryList == null) {
+            Log.w(TAG, "setupCalendarDecorators: diaryList 为 null，无法设置装饰器");
+            diaryList = new ArrayList<>(); // 初始化以避免空指针
+        }
+
+        Log.d(TAG, "setupCalendarDecorators: 当前日记数量: " + diaryList.size());
+
+        // 遍历所有日记，收集日期
+        for (Diary diary : diaryList) {
+            String time = diary.getTime();
+            if (time != null && time.length() >= 10) {
+                try {
+                    String[] dateParts = time.split(" ")[0].split("-");
+                    int year = Integer.parseInt(dateParts[0]);
+                    int month = Integer.parseInt(dateParts[1]); // 月份是 1-12
+                    int day = Integer.parseInt(dateParts[2]);
+                    // CalendarDay 月份是从 0 开始的 (0-11)
+                    CalendarDay calendarDay = CalendarDay.from(year, month - 1, day);
+                    if (diary.getTag() == 2) { // 黄色标记
+                        yellowDotDays.add(calendarDay); // 添加到黄点集合
+                        Log.d(TAG, "setupCalendarDecorators: 添加黄点日期: " + calendarDay.toString());
+                    } else { // 蓝点标记 (假设 tag!=2 都用蓝点)
+                        blueDotDays.add(calendarDay);
+                        // Log.d(TAG, "setupCalendarDecorators: 添加蓝点日期: " + calendarDay.toString());
+                    }
+                } catch (Exception e) {
+                    Log.e(TAG, "setupCalendarDecorators: 解析日期时间出错: " + time, e);
+                }
+            }
+        }
+
+        // 只想显示一个点（黄点优先）
+        blueDotDays.removeAll(yellowDotDays);
+
+        Log.d(TAG, "setupCalendarDecorators: 最终黄点日期数量: " + yellowDotDays.size());
+        Log.d(TAG, "setupCalendarDecorators: 最终蓝点日期数量: " + blueDotDays.size());
+
+        // 添加装饰器
+        if (!yellowDotDays.isEmpty()) {
+            // YellowDotDecorator 现在画黄点
+            calendarView.addDecorator(new YellowDotDecorator(this, yellowDotDays));
+            Log.d(TAG, "setupCalendarDecorators: 已添加 YellowDotDecorator (原StarDecorator)");
+        }
+        if (!blueDotDays.isEmpty()) {
+            calendarView.addDecorator(new BlueDotDecorator(this, blueDotDays));
+            Log.d(TAG, "setupCalendarDecorators: 已添加 BlueDotDecorator");
+        }
+
+        // 强制视图重绘
+        calendarView.invalidate();
+        Log.d(TAG, "setupCalendarDecorators: 已调用 calendarView.invalidate()");
     }
 }
