@@ -65,12 +65,11 @@ public class AddDiary extends AppCompatActivity implements com.amap.api.location
     private int old_tag = 1;
     private long id = 0;
     private int openMode = 0;
-//    private int tag = 1;
 
     public Intent intent = new Intent();//发送
     private boolean tagChange = false;
 
-    
+    private String selectedDateForNew = null;
 
     private static final int[] weatherIcons = {
             R.drawable.ic_weather_cloud,
@@ -104,6 +103,10 @@ public class AddDiary extends AppCompatActivity implements com.amap.api.location
 
         Intent receivedIntent = getIntent();
         openMode = receivedIntent.getIntExtra("mode", 4);
+        //指定日期新增模式
+        if (openMode == 5) {
+            selectedDateForNew = receivedIntent.getStringExtra("selected_date");
+        }
 
         if(openMode == 3){//打开已存在的diary
             id = receivedIntent.getLongExtra("id",0);
@@ -239,8 +242,13 @@ public class AddDiary extends AppCompatActivity implements com.amap.api.location
             if (currentMode == 1) { // 编辑模式
                 resultIntent.putExtra("id", id);
                 resultIntent.putExtra("time", old_time); // 编辑模式使用旧时间
-            } else { // 新建模式 (currentMode == 0)
-                resultIntent.putExtra("time", dataToStr()); // 新建模式使用当前时间
+            } else { // 新建模式
+                // {{ edit_3: 新增模式5，保存为选中日期00:00 }}
+                if (openMode == 5 && selectedDateForNew != null) {
+                    resultIntent.putExtra("time", selectedDateForNew + " 00:00:00");
+                } else {
+                    resultIntent.putExtra("time", dataToStr());
+                }
             }
         }
         // 即使 mode 是 -1 (编辑模式无更改)，也返回 RESULT_OK，让 MainActivity 判断 mode
@@ -261,7 +269,7 @@ public class AddDiary extends AppCompatActivity implements com.amap.api.location
         String currentTitle = DiaryTitle.getText().toString();
         String currentBody = DiaryBody.getText().toString();
 
-        if(openMode == 4){//新建模式
+        if(openMode == 4 || openMode == 5){//新建模式
             // 检查是否有输入内容，或者是否选择了天气/心情
             if(currentBody.isEmpty() && currentTitle.isEmpty() && weather == -1 && mood == -1){
                 return -1; // 认为是无意义的输入

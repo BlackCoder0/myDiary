@@ -51,6 +51,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     private static final String TAG = "MainActivity";
     private boolean isCalendarInitialized = false;//日历初始化
+    private MaterialCalendarView calendarView; // 日历控件成员变量
 
     private DiaryDatabase dbHelper;
     private Diary diary;
@@ -123,6 +124,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         initSexChange();
         refreshListView();
         setupCalendarDecorators();
+        setupEditDayButton();
     }
 
     /**
@@ -651,6 +653,16 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             );
         }
 
+        // 动态设置select_by_day页面编辑按钮的背景色
+        ImageButton btnEditDay = findViewById(R.id.btn_edit_day);
+        if (btnEditDay != null) {
+            int bgColor = getResources().getColor(GenderResourceUtil.getTabMainColorRes(this));
+            android.graphics.drawable.GradientDrawable drawable = new android.graphics.drawable.GradientDrawable();
+            drawable.setShape(android.graphics.drawable.GradientDrawable.OVAL);
+            drawable.setColor(bgColor);
+            btnEditDay.setBackground(drawable);
+        }
+
         // 获取性别相关颜色
         int mainColor = getResources().getColor(
                 GenderResourceUtil.getTabMainColorRes(this)
@@ -997,7 +1009,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
 
     private void setupCalendarDecorators() {
-        MaterialCalendarView calendarView = findViewById(R.id.calendarView);
+        calendarView = findViewById(R.id.calendarView); // {{ edit_3: 赋值给成员变量 }}
         if (calendarView == null) {
             Log.e(TAG, "setupCalendarDecorators: calendarView 未找到!");
             return;
@@ -1068,4 +1080,101 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         calendarView.invalidate();
         Log.d(TAG, "setupCalendarDecorators: 已调用 calendarView.invalidate()");
     }
+
+    // 新增：设置 btn_edit_day 的点击逻辑
+    private void setupEditDayButton() {
+        ImageButton btnEditDay = findViewById(R.id.btn_edit_day);
+        if (btnEditDay == null || calendarView == null) return;
+
+        btnEditDay.setOnClickListener(v -> {
+            CalendarDay selectedDay = calendarView.getSelectedDate();
+            if (selectedDay == null) return;
+
+            // 获取选中日期字符串 yyyy-MM-dd
+            String selectedDateStr = String.format("%04d-%02d-%02d",
+                    selectedDay.getYear(), selectedDay.getMonth() + 1, selectedDay.getDay());
+
+            // 获取今天日期字符串
+            String todayStr = new java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.getDefault()).format(new java.util.Date());
+
+            // 查询所有日记
+            CRUD op = new CRUD(this);
+            op.open();
+            List<Diary> allDiaries = op.getAllDiary();
+            op.close();
+
+            // 只查找属于当前用户的日记
+            UserCRUD userCRUD = new UserCRUD(this);
+            userCRUD.open();
+            java.util.List<Long> userDiaryIds = new java.util.ArrayList<>();
+            android.database.Cursor cursor = userCRUD.getUserDiaryIds(currentUserId);
+            while (cursor.moveToNext()) {
+                int columnIndex = cursor.getColumnIndex(UserDatabase.DIARY_ID);
+                if (columnIndex != -1) {
+                    userDiaryIds.add(cursor.getLong(columnIndex));
+                }
+            }
+            cursor.close();
+            userCRUD.close();
+
+            Diary targetDiary = null;
+            for (Diary diary : allDiaries) {
+                if (userDiaryIds.contains(diary.getId())) {
+                    String diaryDate = diary.getTime();
+                    if (diaryDate != null && diaryDate.length() >= 10 && diaryDate.substring(0, 10).equals(selectedDateStr)) {
+                        targetDiary = diary;
+                        break;
+                    }
+                }
+            }
+
+            if (selectedDateStr.equals(todayStr)) {
+                // 今天：和主页面一致
+                if (targetDiary != null) {
+                    // 已有今日日记，进入编辑页面
+                    Intent editIntent = new Intent(MainActivity.this, AddDiary.class);
+                    editIntent.putExtra("id", targetDiary.getId());
+                    editIntent.putExtra("time", targetDiary.getTime());
+                    editIntent.putExtra("weather", targetDiary.getWeather());
+                    editIntent.putExtra("temperature", targetDiary.getTemperature());
+                    editIntent.putExtra("location", targetDiary.getLocation());
+                    editIntent.putExtra("title", targetDiary.getTitle());
+                    editIntent.putExtra("body", targetDiary.getBody());
+                    editIntent.putExtra("mood", targetDiary.getMood());
+                    editIntent.putExtra("tag", targetDiary.getTag());
+                    editIntent.putExtra("mode", 3); // 编辑模式
+                    startActivityForResult(editIntent, 1);
+                } else {
+                    // 没有今日日记，进入新建页面
+                    Intent addIntent = new Intent(MainActivity.this, AddDiary.class);
+                    addIntent.putExtra("mode", 4); // 新建模式
+                    startActivityForResult(addIntent, 0);
+                }
+            } else {
+                // 非今天
+                if (targetDiary != null) {
+                    // 2.1 有日记，编辑模式，时间不变
+                    Intent editIntent = new Intent(MainActivity.this, AddDiary.class);
+                    editIntent.putExtra("id", targetDiary.getId());
+                    editIntent.putExtra("time", targetDiary.getTime());
+                    editIntent.putExtra("weather", targetDiary.getWeather());
+                    editIntent.putExtra("temperature", targetDiary.getTemperature());
+                    editIntent.putExtra("location", targetDiary.getLocation());
+                    editIntent.putExtra("title", targetDiary.getTitle());
+                    editIntent.putExtra("body", targetDiary.getBody());
+                    editIntent.putExtra("mood", targetDiary.getMood());
+                    editIntent.putExtra("tag", targetDiary.getTag());
+                    editIntent.putExtra("mode", 3); // 编辑模式
+                    startActivityForResult(editIntent, 1);
+                } else {
+                    // 2.2 无日记，新增模式，保存时以选中日期00:00
+                    Intent addIntent = new Intent(MainActivity.this, AddDiary.class);
+                    addIntent.putExtra("mode", 5); // 自定义mode，表示“指定日期新增”
+                    addIntent.putExtra("selected_date", selectedDateStr); // 传递选中日期
+                    startActivityForResult(addIntent, 2);
+                }
+            }
+        });
+    }
+
 }

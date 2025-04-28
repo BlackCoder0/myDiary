@@ -15,7 +15,8 @@
         <androidx.viewpager.widget.ViewPager
             android:id="@+id/view_pager"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent" >
+        </androidx.viewpager.widget.ViewPager>
         <Toolbar
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -33,5 +34,15 @@
                     android:layout_gravity="center_horizontal" />
             </LinearLayout>
         </Toolbar>
+        <ImageButton
+            android:id="@+id/btn_edit_day"
+            android:layout_width="66dp"
+            android:layout_height="66dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="500dp"
+            android:background="@drawable/bg_circle"
+            android:src="@drawable/ic_mode_edit_white_36dp"
+            android:scaleType="center"
+            android:elevation="4dp"/>
     </FrameLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
