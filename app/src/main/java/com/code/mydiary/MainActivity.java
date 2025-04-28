@@ -53,9 +53,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private boolean isCalendarInitialized = false;//日历初始化
     private MaterialCalendarView calendarView; // 日历控件成员变量
 
-    private DiaryDatabase dbHelper;
-    private Diary diary;
-
     private Toolbar toolbar;
     private TextView tabEntries, tabCalendar, tabDiary, mydiary_count; // {{ edit_1: 移除 diary_moon }}
     private FrameLayout containerEntries, containerCalendar, containerDiary;
@@ -78,6 +75,14 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private long lastBackPressedTime = 0;
 
     private static final String BACKUP_FILE = "backup_diaries.json";//时光倒流时候的存储
+
+    /**
+     * 判断是否处于时光倒流模式
+     * @return true表示处于时光倒流模式，false表示不处于
+     */
+    private boolean isTimeReverse() {
+        return getIntent().getBooleanExtra("restoreDiaries", false);
+    }
 
 
     @Override
@@ -180,65 +185,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         }
 
         if (myBtnAdd != null) {
-            myBtnAdd.setOnClickListener(v -> {
-                Log.d("ClickDebug", "Add按钮被点击");
-                // === 新增逻辑：一天只能写一篇日记 ===
-                String today = new java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.getDefault()).format(new java.util.Date());
-
-                CRUD op = new CRUD(context);
-                op.open();
-                List<Diary> allDiaries = op.getAllDiary();
-                op.close();
-
-                // 只查找属于当前用户的日记
-                UserCRUD userCRUD = new UserCRUD(context);
-                userCRUD.open();
-                java.util.List<Long> userDiaryIds = new java.util.ArrayList<>();
-                android.database.Cursor cursor = userCRUD.getUserDiaryIds(currentUserId);
-                while (cursor.moveToNext()) {
-                    int columnIndex = cursor.getColumnIndex(UserDatabase.DIARY_ID);
-                    if (columnIndex != -1) {
-                        userDiaryIds.add(cursor.getLong(columnIndex));
-                    }
-                }
-                cursor.close();
-                userCRUD.close();
-
-                Diary todayDiary = null;
-                for (Diary diary : allDiaries) {
-                    if (userDiaryIds.contains(diary.getId())) {
-                        String diaryDate = diary.getTime();
-                        if (diaryDate != null && diaryDate.length() >= 10 && diaryDate.substring(0, 10).equals(today)) {
-                            todayDiary = diary;
-                            break;
-                        }
-                    }
-                }
-
-                if (todayDiary != null) {
-                    // 已有今日日记，进入编辑页面
-                    Intent editIntent = new Intent(MainActivity.this, AddDiary.class);
-                    editIntent.putExtra("id", todayDiary.getId());
-                    editIntent.putExtra("time", todayDiary.getTime());
-                    editIntent.putExtra("weather", todayDiary.getWeather());
-                    editIntent.putExtra("temperature", todayDiary.getTemperature());
-                    editIntent.putExtra("location", todayDiary.getLocation());
-                    editIntent.putExtra("title", todayDiary.getTitle());
-                    editIntent.putExtra("body", todayDiary.getBody());
-                    editIntent.putExtra("mood", todayDiary.getMood());
-                    editIntent.putExtra("tag", todayDiary.getTag());
-                    editIntent.putExtra("mode", 3); // 编辑模式
-                    startActivityForResult(editIntent, 1);
-                    Log.d(TAG, "Add按钮：今日已有日记，进入编辑模式");
-                } else {
-                    // 没有今日日记，进入新建页面
-                    Intent addIntent = new Intent(MainActivity.this, AddDiary.class);
-                    addIntent.putExtra("mode", 4); // 4为创建笔记
-                    startActivityForResult(addIntent, 0);
-                    Log.d(TAG, "Add按钮：今日无日记，进入新建模式");
-                }
-            });
-
+            myBtnAdd.setOnClickListener(v -> AddButtonClick()); // 调用新方法
         }
 
         if (myBtnSearch != null) {
@@ -249,6 +196,68 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             });
         }
 
+    }
+
+    /**
+     * 处理添加按钮点击事件
+     */
+    private void AddButtonClick() {
+        Log.d("ClickDebug", "Add按钮被点击");
+        // === 新增逻辑：一天只能写一篇日记 ===
+        String today = new java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.getDefault()).format(new java.util.Date());
+
+        CRUD op = new CRUD(context);
+        op.open();
+        List<Diary> allDiaries = op.getAllDiary();
+        op.close();
+
+        // 只查找属于当前用户的日记
+        UserCRUD userCRUD = new UserCRUD(context);
+        userCRUD.open();
+        java.util.List<Long> userDiaryIds = new java.util.ArrayList<>();
+        android.database.Cursor cursor = userCRUD.getUserDiaryIds(currentUserId);
+        while (cursor.moveToNext()) {
+            int columnIndex = cursor.getColumnIndex(UserDatabase.DIARY_ID);
+            if (columnIndex != -1) {
+                userDiaryIds.add(cursor.getLong(columnIndex));
+            }
+        }
+        cursor.close();
+        userCRUD.close();
+
+        Diary todayDiary = null;
+        for (Diary diary : allDiaries) {
+            if (userDiaryIds.contains(diary.getId())) {
+                String diaryDate = diary.getTime();
+                if (diaryDate != null && diaryDate.length() >= 10 && diaryDate.substring(0, 10).equals(today)) {
+                    todayDiary = diary;
+                    break;
+                }
+            }
+        }
+
+        if (todayDiary != null) {
+            // 已有今日日记，进入编辑页面
+            Intent editIntent = new Intent(MainActivity.this, AddDiary.class);
+            editIntent.putExtra("id", todayDiary.getId());
+            editIntent.putExtra("time", todayDiary.getTime());
+            editIntent.putExtra("weather", todayDiary.getWeather());
+            editIntent.putExtra("temperature", todayDiary.getTemperature());
+            editIntent.putExtra("location", todayDiary.getLocation());
+            editIntent.putExtra("title", todayDiary.getTitle());
+            editIntent.putExtra("body", todayDiary.getBody());
+            editIntent.putExtra("mood", todayDiary.getMood());
+            editIntent.putExtra("tag", todayDiary.getTag());
+            editIntent.putExtra("mode", 3); // 编辑模式
+            startActivityForResult(editIntent, 1);
+            Log.d(TAG, "Add按钮：今日已有日记，进入编辑模式");
+        } else {
+            // 没有今日日记，进入新建页面
+            Intent addIntent = new Intent(MainActivity.this, AddDiary.class);
+            addIntent.putExtra("mode", 4); // 4为创建笔记
+            startActivityForResult(addIntent, 0);
+            Log.d(TAG, "Add按钮：今日无日记，进入新建模式");
+        }
     }
 
 
@@ -294,81 +303,96 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data); // 先调用父类方法
 
-        // --- 修改开始: 检查 resultCode ---
         // 如果用户取消了操作 (点击取消按钮或返回键)，则不执行任何操作
         if (resultCode != RESULT_OK) {
             Log.d(TAG, "onActivityResult: Operation canceled or no result (resultCode=" + resultCode + ")");
             return; // 直接返回，不刷新列表或处理数据
         }
-        // --- 修改结束 ---
 
         // 只有在 resultCode 是 RESULT_OK 时才继续处理
         if (data != null && data.getExtras() != null) {
             int returnMode = data.getExtras().getInt("mode", -1);
-            long diary_Id = data.getExtras().getLong("id", 0); // 获取 ID
+            long diaryId = data.getExtras().getLong("id", 0); // 获取 ID
 
-            // --- 修改开始: 仅在 mode 为 0 或 1 时执行数据库操作和刷新 ---
+            // 仅在 mode 为 0 或 1 时执行数据库操作和刷新
             if (returnMode == 0 || returnMode == 1) {
-                CRUD op = new CRUD(context);
-                op.open();
+                Diary diaryData = GetDiaryData(data);
+                if (diaryData == null) {
+                    Log.e(TAG, "onActivityResult: Failed to extract diary data from intent.");
+                    return;
+                }
 
                 if (returnMode == 1) {  // update current note
-                    Log.d(TAG, "onActivityResult: Updating diary ID: " + diary_Id);
-                    // 从返回的 Intent 中获取所有更新后的数据
-                    String title = data.getStringExtra("title");
-                    String body = data.getStringExtra("body");
-                    String time = data.getStringExtra("time");
-                    String temperature = data.getStringExtra("temperature");
-                    String location = data.getStringExtra("location");
-                    int weather = data.getIntExtra("weather", -1);
-                    int mood = data.getIntExtra("mood", -1);
-                    int tag = data.getIntExtra("tag", 1);
-                    // 注意：mode 本身不需要存入 Diary 对象，它是操作类型
-
-                    // 创建包含所有更新信息的 Diary 对象
-                    Diary updatedDiary = new Diary(time, weather, temperature, location, title, body, mood, tag, 1); // mode 存 1 或其他默认值
-                    updatedDiary.setId(diary_Id); // 设置要更新的日记的 ID
-
-                    op.updataDiary(updatedDiary); // 更新数据库
-
+                    UpdateDiary(diaryData, diaryId);
                 } else if (returnMode == 0) {  // create new note
-                    Log.d(TAG, "onActivityResult: Creating new diary");
-                    String title = data.getStringExtra("title");
-                    String body = data.getStringExtra("body");
-                    String time = data.getStringExtra("time");
-                    String temperature = data.getStringExtra("temperature");
-                    String location = data.getStringExtra("location");
-                    int weather = data.getIntExtra("weather", -1);
-                    int mood = data.getIntExtra("mood", -1);
-                    int tag = data.getIntExtra("tag", 1);
-                    // 注意：mode 本身不需要存入 Diary 对象
-
-                    // 创建新的 Diary 对象
-                    Diary newDiary = new Diary(time, weather, temperature, location, title, body, mood, tag, 1); // mode 存 1 或其他默认值
-
-                    newDiary = op.addDiary(newDiary); // 获取带ID的Diary对象
-
-                    // 关键：建立用户-日记关联
-                    long userId = getIntent().getLongExtra("user_id", -1);
-                    UserCRUD userCRUD = new UserCRUD(context);
-                    userCRUD.open();
-                    userCRUD.linkUserDiary(userId, newDiary.getId());
-                    userCRUD.close();
+                    CreateDiary(diaryData);
                 }
-                // else { // returnMode 为 -1 的情况不再需要在这里处理数据库 }
-
-                op.close();
-                refreshListView(); // 只有在实际创建或更新后才刷新列表
+                refreshListView(); // 刷新列表
             } else {
                 Log.d(TAG, "onActivityResult: No changes detected or required (mode=" + returnMode + ")");
-                // returnMode 为 -1，表示没有更改或用户未做任何有效输入，不需要刷新列表
             }
-            // --- 修改结束 ---
-
         } else {
-            // 虽然我们已经检查了 resultCode，但以防万一 data 为 null
             Log.d(TAG, "onActivityResult: RESULT_OK but data is null or has no extras.");
         }
+    }
+
+    /**
+     * 从 Intent 中提取日记数据
+     * @param data Intent 数据
+     * @return 包含日记数据的 Diary 对象，如果数据无效则返回 null
+     */
+    private Diary GetDiaryData(Intent data) {
+        if (data == null || data.getExtras() == null) {
+            return null;
+        }
+        String title = data.getStringExtra("title");
+        String body = data.getStringExtra("body");
+        String time = data.getStringExtra("time");
+        String temperature = data.getStringExtra("temperature");
+        String location = data.getStringExtra("location");
+        int weather = data.getIntExtra("weather", -1);
+        int mood = data.getIntExtra("mood", -1);
+        int tag = data.getIntExtra("tag", 1);
+        // 注意：mode 本身不需要存入 Diary 对象
+        return new Diary(time, weather, temperature, location, title, body, mood, tag, 1); // mode 存 1 或其他默认值
+    }
+
+    /**
+     * 处理创建新日记的结果
+     * @param newDiary 从 Intent 中提取的新日记数据
+     */
+    private void CreateDiary(Diary newDiary) {
+        Log.d(TAG, "onActivityResult: Creating new diary");
+        CRUD op = new CRUD(context);
+        op.open();
+        Diary createdDiary = op.addDiary(newDiary); // 获取带ID的Diary对象
+        op.close();
+
+        // 关键：建立用户-日记关联
+        // long userId = getIntent().getLongExtra("user_id", -1); // 避免重复获取
+        if (currentUserId != -1 && createdDiary != null) {
+            UserCRUD userCRUD = new UserCRUD(context);
+            userCRUD.open();
+            userCRUD.linkUserDiary(currentUserId, createdDiary.getId());
+            userCRUD.close();
+        } else {
+            Log.e(TAG, "CreateDiary: Invalid user ID or created diary is null.");
+        }
+    }
+
+    /**
+     * 处理更新现有日记的结果
+     * @param updatedDiary 从 Intent 中提取的更新后的日记数据
+     * @param diaryId 要更新的日记 ID
+     */
+    private void UpdateDiary(Diary updatedDiary, long diaryId) {
+        Log.d(TAG, "onActivityResult: Updating diary ID: " + diaryId);
+        updatedDiary.setId(diaryId); // 设置要更新的日记的 ID
+
+        CRUD op = new CRUD(context);
+        op.open();
+        op.updataDiary(updatedDiary); // 更新数据库
+        op.close();
     }
 
 
@@ -384,13 +408,11 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         userCRUD.open();
         Cursor cursor = userCRUD.getUserDiaryIds(userId);
         while (cursor.moveToNext()) {
-            // 注意：需要确保 UserDatabase.DIARY_ID 是正确的列名
             int columnIndex = cursor.getColumnIndex(UserDatabase.DIARY_ID);
             if (columnIndex != -1) { // 检查列是否存在
                 userDiaryIds.add(cursor.getLong(columnIndex));
             } else {
                 Log.e(TAG, "Column UserDatabase.DIARY_ID not found in cursor.");
-                // 可以选择抛出异常或进行其他错误处理
             }
         }
         cursor.close();
@@ -440,6 +462,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             diaryListItems.add(new DiaryListItem(DiaryListItem.TYPE_DIARY, null, diary));
         }
         // === 补充结束 ===
+        groupDiariesByMonth(); // 调用新方法组装列表项
 
         op.close();
         if (adopter != null) {
@@ -452,6 +475,46 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         Log.d(TAG, "refreshListView: 组装后的数据源大小=" + diaryListItems.size());
     }
 
+      /**
+       * 将排序后的日记按月份分组，并填充 diaryListItems
+       */
+      private void groupDiariesByMonth() {
+          diaryListItems.clear();
+          String lastMonth = "";
+          java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM", java.util.Locale.getDefault());
+          java.text.SimpleDateFormat displayFormat = new java.text.SimpleDateFormat("M", java.util.Locale.getDefault());
+          for (Diary diary : diaryList) {
+              String month = "";
+              try {
+                  // 确保 diary.getTime() 不为 null 且长度足够
+                  if (diary.getTime() != null && diary.getTime().length() >= 7) {
+                      java.util.Date date = sdf.parse(diary.getTime().substring(0, 7));
+                      if (date != null) {
+                          month = displayFormat.format(date);
+                      } else {
+                          month = diary.getTime().substring(5, 7); // 解析失败兜底
+                      }
+                  } else {
+                      Log.w(TAG, "groupDiariesByMonth: Invalid time format for diary ID: " + diary.getId());
+                      month = "未知"; // 或其他默认值
+                  }
+              } catch (Exception e) {
+                  Log.e(TAG, "groupDiariesByMonth: Error parsing date for diary ID: " + diary.getId(), e);
+                  // 兜底逻辑，尝试提取月份，如果失败则使用默认值
+                  if (diary.getTime() != null && diary.getTime().length() >= 7) {
+                      month = diary.getTime().substring(5, 7);
+                  } else {
+                      month = "未知";
+                  }
+              }   
+              if (!month.equals(lastMonth)) {
+                  diaryListItems.add(new DiaryListItem(DiaryListItem.TYPE_MONTH_HEADER, month, null));
+                  lastMonth = month;
+              }
+              diaryListItems.add(new DiaryListItem(DiaryListItem.TYPE_DIARY, null, diary));
+          }
+          Log.d(TAG, "groupDiariesByMonth: 完成分组，列表项数量=" + diaryListItems.size());
+      }   
     //搜索相关
     private void initSearchBar() {
         searchBar = findViewById(R.id.search_bar);
@@ -468,14 +531,15 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                // 只有输入不为空时才搜索，否则恢复原始数据
+                // 只有输入不为空时才搜索
                 String keyword = s.toString().trim();
-                if (keyword.isEmpty()) {
-                    diaryListItems.clear();
-                    diaryListItems.addAll(originalDiaryListItems);
-                    if (adopter != null) adopter.notifyDataSetChanged();
-                } else {
+                if (!keyword.isEmpty()) {
                     performSearch(keyword);
+                } else {
+                    // 当用户手动清空搜索框时，也恢复原始列表
+                    if (isSearching) { // 确保在搜索模式下清空才恢复
+                        restoreOriginalList();
+                    }
                 }
             }
 
@@ -516,18 +580,28 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private void exitSearchMode() {
         isSearching = false;
         searchBar.setVisibility(View.GONE);
-        // 恢复原始数据
-        diaryListItems.clear();
-        diaryListItems.addAll(originalDiaryListItems);
-        if (adopter != null) adopter.notifyDataSetChanged();
-        // 清空搜索框内容
-        etSearch.setText("");
-        // 清空原始数据缓存，避免下次进入搜索模式时数据不对
-        originalDiaryListItems.clear();
-        // 收起软键盘
+        etSearch.setText(""); // 清空文本框
+        etSearch.clearFocus();
+        // 隐藏软键盘
         android.view.inputmethod.InputMethodManager imm = (android.view.inputmethod.InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         if (imm != null) {
             imm.hideSoftInputFromWindow(etSearch.getWindowToken(), 0);
+        }
+        // 显式恢复原始列表数据
+        restoreOriginalList();
+    }
+
+    /**
+     * 恢复原始的日记列表项并更新 Adapter
+     */
+    private void restoreOriginalList() {
+        if (!originalDiaryListItems.isEmpty()) {
+            diaryListItems.clear();
+            diaryListItems.addAll(originalDiaryListItems);
+            if (adopter != null) {
+                adopter.notifyDataSetChanged();
+            }
+            Log.d(TAG, "Restored original list items.");
         }
     }
 
@@ -556,6 +630,36 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     }
 
 
+      /**
+       * 处理编辑日记的操作，启动 AddDiary Activity
+       * @param diaryToEdit 要编辑的日记对象
+       */
+      private void EditDiary(Diary diaryToEdit) {
+          Intent intent = new Intent(MainActivity.this, AddDiary.class);
+          intent.putExtra("id", diaryToEdit.getId());
+          intent.putExtra("time", diaryToEdit.getTime());
+          intent.putExtra("weather", diaryToEdit.getWeather());
+          intent.putExtra("temperature", diaryToEdit.getTemperature());
+          intent.putExtra("location", diaryToEdit.getLocation());
+          intent.putExtra("title", diaryToEdit.getTitle());
+          intent.putExtra("body", diaryToEdit.getBody());
+          intent.putExtra("mood", diaryToEdit.getMood());
+          intent.putExtra("tag", diaryToEdit.getTag());
+          intent.putExtra("mode", 3); // 编辑模式
+          startActivityForResult(intent, 1);
+          Log.d(TAG, "EditDiary: Starting AddDiary for editing diary ID: " + diaryToEdit.getId());
+      }   
+
+    /**
+     * 处理删除日记的操作，显示确认对话框
+     * @param diaryToDelete 要删除的日记对象
+     */
+    private void handleDeleteDiaryAction(Diary diaryToDelete) {
+        showDeleteConfirmationDialog(diaryToDelete);
+        Log.d(TAG, "handleDeleteDiaryAction: Showing delete confirmation for diary ID: " + diaryToDelete.getId());
+    }
+
+
     private static final int ID_DIARY_LV = R.id.diary_lv;  // 提取为常量
 
     @Override
@@ -570,26 +674,17 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 imfDiary.showDiaryDialog(this, curDiary, new ImfDiary.DialogActionListener() {
                     @Override
                     public void onEditClicked(Diary diaryToEdit) {
-                        Intent intent = new Intent(MainActivity.this, AddDiary.class);
-                        intent.putExtra("id", diaryToEdit.getId());
-                        intent.putExtra("time", diaryToEdit.getTime());
-                        intent.putExtra("weather", diaryToEdit.getWeather());
-                        intent.putExtra("temperature", diaryToEdit.getTemperature());
-                        intent.putExtra("location", diaryToEdit.getLocation());
-                        intent.putExtra("title", diaryToEdit.getTitle());
-                        intent.putExtra("body", diaryToEdit.getBody());
-                        intent.putExtra("mood", diaryToEdit.getMood());
-                        intent.putExtra("tag", diaryToEdit.getTag());
-                        intent.putExtra("mode", 3); // 3 为修改模式
-                        startActivityForResult(intent, 1); // 使用请求码 1
-                        Log.d(TAG, "onItemClick: Starting AddDiary from ImfDiary for editing diary ID: " + diaryToEdit.getId());
+                        EditDiary(diaryToEdit); // 调用提取的方法
                     }
 
                     @Override
                     public void onDeleteClicked(Diary diaryToDelete) {
-                        showDeleteConfirmationDialog(diaryToDelete);
+                        handleDeleteDiaryAction(diaryToDelete); // 调用新方法
                     }
-                }, false, null);
+                }, isTimeReverse(), () -> {
+                    // 删除动画结束后的回调
+                    refreshListView();
+                });
             }
             // 如果是月份头部，什么都不做
         }
