@@ -71,26 +71,25 @@
 ## 截图展示
 
 ### 登录注册界面
-![登录界面](screenshots/login.jpg)
-![注册界面](screenshots/register.jpg)
+<img src="screenshots/login.jpg" alt="登录界面" width="400"/>
+<img src="screenshots/register.jpg" alt="注册界面" width="400"/>
 
 ### 主界面
-![主界面-日历视图](screenshots/main_calendar.jpg)
-![主界面-列表视图](screenshots/main_list.jpg)
-
-### 日记视图
-![点开日记](screenshots/imf_diary.jpg)
-![编辑日记](screenshots/edit_diary.jpg)
-
-
-### 设置界面
-![设置界面](screenshots/settings.jpg)
-
-### 性别切换主题
-![女性主题](screenshots/theme_girl.jpg)
+<img src="screenshots/main_calendar.jpg" alt="主界面-日历视图" width="400"/>
+<img src="screenshots/main_list.jpg" alt="主界面-列表视图" width="400"/>
 
 ### 时光倒流
 ![动画效果](screenshots/time.gif)
+
+### 日记视图
+<img src="screenshots/imf_diary.jpg" alt="点开日记" width="400"/>
+<img src="screenshots/edit_diary.jpg" alt="编辑日记" width="400"/>
+
+### 设置界面
+<img src="screenshots/settings.jpg" alt="设置界面" width="400"/>
+
+### 性别切换主题
+<img src="screenshots/theme_girl.jpg" alt="女性主题" width="400"/>
 
 ---
 
