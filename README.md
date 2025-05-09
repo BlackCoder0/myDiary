@@ -22,12 +22,10 @@
 | 用户登录/注册    | 支持用户注册、登录，自动记忆登录状态                                                   |
 | 日记管理         | 新建、编辑、删除日记，每天仅可创建一篇，支持按月分组展示。日记可以加入定位、心情、天气、时间，设置标签                                |
 | 日历视图         | 日历模式下以点标记有日记的日期，黄色/蓝色区分不同类型，支持点击某天快速编辑/新建日记    |
-| 搜索功能         | 支持日记内容、标题的实时搜索，快速定位回忆                                              |
-| 时光倒流         | 一键删除所有日记并可恢复，模拟电影中的“时光倒流”情节                                    |
-| 数据备份/恢复    | 日记数据本地备份为 JSON 文件，支持一键恢复                                              |
+| 搜索功能         | 支持日记内容、标题的搜索，快速定位回忆                                              |
+| 时光倒流         | 一键删除所有日记，日记数据临时本地备份为 JSON 文件，模拟电影中的“时光倒流”情节                                    |
 | 个性化主题       | 根据用户性别自动切换主题色，界面元素动态适配                                            |
 | 密码修改         | 支持用户修改登录密码，保障账户安全                                                      |
-| 退出登录         | 一键安全退出，清除自动登录信息                                                          |
 
 ### 详细功能说明
 
@@ -50,8 +48,7 @@
 - 搜索结果高亮显示，支持一键清空
 
 #### 5. 时光倒流
-- 一键删除所有日记，并生成本地备份
-- 可随时恢复所有日记，体验“时光倒流”情节
+- 一键删除所有日记，并生成临时本地备份，利用动画效果模拟“时光倒流”情节
 
 #### 6. 个性化主题
 - 根据用户性别自动切换主色调
@@ -70,26 +67,28 @@
 
 ## 截图展示
 
-### 登录注册界面
-<img src="screenshots/login.jpg" alt="登录界面" width="400"/>
-<img src="screenshots/register.jpg" alt="注册界面" width="400"/>
+### 登录界面
+<img src="screenshots/login.jpg" alt="登录界面" width="300"/>
+
+### 注册界面
+<img src="screenshots/register.jpg" alt="注册界面" width="300"/>
 
 ### 主界面
-<img src="screenshots/main_calendar.jpg" alt="主界面-日历视图" width="400"/>
-<img src="screenshots/main_list.jpg" alt="主界面-列表视图" width="400"/>
+<img src="screenshots/main_list.jpg" alt="主界面-列表视图" width="300"/>
+<img src="screenshots/main_calendar.jpg" alt="主界面-日历视图" width="300"/>
 
-### 时光倒流
+### 时光倒流（gif加载需要时间）
 ![动画效果](screenshots/time.gif)
 
 ### 日记视图
-<img src="screenshots/imf_diary.jpg" alt="点开日记" width="400"/>
-<img src="screenshots/edit_diary.jpg" alt="编辑日记" width="400"/>
+<img src="screenshots/imf_diary.jpg" alt="点开日记" width="300"/>
+<img src="screenshots/edit_diary.jpg" alt="编辑日记" width="300"/>
 
 ### 设置界面
-<img src="screenshots/settings.jpg" alt="设置界面" width="400"/>
+<img src="screenshots/settings.jpg" alt="设置界面" width="300"/>
 
 ### 性别切换主题
-<img src="screenshots/theme_girl.jpg" alt="女性主题" width="400"/>
+<img src="screenshots/theme_girl.jpg" alt="女性主题" width="300"/>
 
 ---
 
