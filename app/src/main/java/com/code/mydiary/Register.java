@@ -45,7 +45,7 @@ public class Register extends AppCompatActivity {
                 String inputCode = edQcode.getText().toString().trim();
                 int checkedSexId = rgSex.getCheckedRadioButtonId();
 
-                // 新增：校验所有必填项
+                // 校验所有必填项
                 if (email.isEmpty()) {
                     ToastUtil.showMsg(Register.this, "请输入邮箱");
                     return;

@@ -28,7 +28,7 @@ public class SOSActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.sos_activity);
 
-        // 修改：返回按钮逻辑
+        // 返回按钮逻辑
         ImageButton btnBack = findViewById(R.id.btn_back);
         btnBack.setOnClickListener(v -> onBackPressed()); // 让btn_back等效于系统返回键
 
@@ -49,6 +49,8 @@ public class SOSActivity extends AppCompatActivity {
 
         listView.setOnItemClickListener((parent, view, position, id) -> {
             String phone = contactRawList.get(position)[1];
+            //   ACTION_DIAL 打开系统的拨号盘界面，并将指定的号码预先填入
+            //    Uri.parse("tel:" + phone) 创建一个表示电话号码的 URI
             Intent intent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + phone));
             startActivity(intent);
         });

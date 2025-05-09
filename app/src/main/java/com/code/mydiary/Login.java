@@ -69,7 +69,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
         String username = myEdUsername.getText().toString();
         String password = myEdPassword.getText().toString();
 
-        // 新增：用户表校验
+        // 用户表校验
         UserCRUD userCRUD = new UserCRUD(Login.this);
         userCRUD.open();
         long userId = userCRUD.login(username, password);
@@ -80,7 +80,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
             // 查询性别
             UserCRUD userCRUD2 = new UserCRUD(Login.this);
             userCRUD2.open();
-            int sex = userCRUD2.getUserSex(userId); // 需要新增getUserSex方法
+            int sex = userCRUD2.getUserSex(userId); 
             userCRUD2.close();
             // 保存user_id和sex
             SharedPreferences sp = getSharedPreferences("login", MODE_PRIVATE);

@@ -180,7 +180,7 @@ public class UserCRUD {
             db.insert(UserDatabase.NO_LIST_TABLE, null, values);
         }
     }
-    // 新增：根据userId获取性别
+    // 根据userId获取性别
     public int getUserSex(long userId) {
         int sex = 1; // 默认男
         Cursor cursor = db.query(UserDatabase.USER_TABLE, new String[]{UserDatabase.SEX},

@@ -97,7 +97,7 @@ public class AddDiary extends AppCompatActivity implements com.amap.api.location
         setContentView(R.layout.add_diary_activity);
         DiaryTitle = findViewById(R.id.edit_adddiary_title);
         DiaryBody = findViewById(R.id.edit_adddiary_body);
-        // 新增：获取按钮实例
+        // 获取按钮实例
         btnCancel = findViewById(R.id.btn_cancel);
         btnSave = findViewById(R.id.btn_save);
 
@@ -168,7 +168,7 @@ public class AddDiary extends AppCompatActivity implements com.amap.api.location
 
         weatherBtn.setOnClickListener(v -> showWeatherDialog());
         moodBtn.setOnClickListener(v -> showMoodDialog());
-        // 新增：插入时间按钮
+        // 插入时间按钮
         ImageButton btnInsertTime = findViewById(R.id.btn_insert_time);
         btnInsertTime.setOnClickListener(v -> {
             String currentTime = new SimpleDateFormat("\n[HH:mm:ss]\n", Locale.getDefault()).format(new Date());
@@ -184,7 +184,7 @@ public class AddDiary extends AppCompatActivity implements com.amap.api.location
             Log.d("AddDiary", "btnInsertLocation clicked");
             insertLocation();
         });
-        // 新增：为取消和保存按钮设置监听器
+        // 为取消和保存按钮设置监听器
         btnCancel.setOnClickListener(v -> performCancel());
         btnSave.setOnClickListener(v -> performSave());
 
@@ -218,7 +218,7 @@ public class AddDiary extends AppCompatActivity implements com.amap.api.location
         return super.onKeyDown(keyCode, event);
     }
 
-    // 新增：执行保存操作的方法
+    // 执行保存操作的方法
     private void performSave() {
         Intent resultIntent = new Intent();
         int currentMode = autoSetMessageMode();
@@ -235,7 +235,7 @@ public class AddDiary extends AppCompatActivity implements com.amap.api.location
             resultIntent.putExtra("temperature", temperature);
             // 使用 lastLocation 如果它有效，否则回退到 old_location (主要用于编辑模式下未重新获取位置的情况)
             String finalLocation = (lastLocation != null && !lastLocation.isEmpty()) ? lastLocation : old_location;
-            // 新增：去除换行和中括号
+            // 去除换行和中括号
             String cleanLocation = finalLocation.replace("\n", "").replace("[", "").replace("]", "");
             resultIntent.putExtra("location", cleanLocation);
 
@@ -243,7 +243,7 @@ public class AddDiary extends AppCompatActivity implements com.amap.api.location
                 resultIntent.putExtra("id", id);
                 resultIntent.putExtra("time", old_time); // 编辑模式使用旧时间
             } else { // 新建模式
-                // {{ edit_3: 新增模式5，保存为选中日期00:00 }}
+                // 模式5，保存为选中日期00:00
                 if (openMode == 5 && selectedDateForNew != null) {
                     resultIntent.putExtra("time", selectedDateForNew + " 00:00:00");
                 } else {
@@ -256,7 +256,7 @@ public class AddDiary extends AppCompatActivity implements com.amap.api.location
         finish(); // 关闭当前 Activity
     }
 
-    // 新增：执行取消操作的方法
+    // 执行取消操作的方法
     private void performCancel() {
         // 设置结果为 CANCELED，表示用户取消了操作
         setResult(RESULT_CANCELED);
@@ -402,7 +402,7 @@ public class AddDiary extends AppCompatActivity implements com.amap.api.location
         }
     }
 
-    // 新增：显示退出确认对话框的方法
+    // 显示退出确认对话框的方法
     private void showExitConfirmationDialog() {
         new AlertDialog.Builder(this)
                 .setTitle("确认退出") // 设置对话框标题

@@ -4,11 +4,20 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.ColorStateList;
 import android.database.Cursor;
+import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.StateListDrawable;
 import android.os.Bundle;
+import android.os.Handler;
+import android.text.Editable;
+import android.text.InputType;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -54,7 +63,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private MaterialCalendarView calendarView; // 日历控件成员变量
 
     private Toolbar toolbar;
-    private TextView tabEntries, tabCalendar, tabDiary, mydiary_count; // {{ edit_1: 移除 diary_moon }}
+    private TextView tabEntries, tabCalendar, tabDiary, mydiary_count;
     private FrameLayout containerEntries, containerCalendar, containerDiary;
     private ImageButton myBtnMenu, myBtnAdd;
 
@@ -171,7 +180,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private void initBottomButtons() {
         myBtnMenu = findViewById(R.id.imgBt_menu);
         myBtnAdd = findViewById(R.id.imgBt_add);
-        ImageButton myBtnSearch = findViewById(R.id.imgBt_search); // 新增
+        ImageButton myBtnSearch = findViewById(R.id.imgBt_search); 
 
         if (myBtnMenu != null) {
             myBtnMenu.setOnClickListener(v -> {
@@ -179,13 +188,13 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 Intent menuIntent = new Intent(this, Menu.class);
                 menuIntent.putExtra("user_id", currentUserId);
                 startActivity(menuIntent);
-                // 新增：添加向右平移动画
+                // 添加向右平移动画
                 overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
             });
         }
 
         if (myBtnAdd != null) {
-            myBtnAdd.setOnClickListener(v -> AddButtonClick()); // 调用新方法
+            myBtnAdd.setOnClickListener(v -> AddButtonClick()); 
         }
 
         if (myBtnSearch != null) {
@@ -203,7 +212,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
      */
     private void AddButtonClick() {
         Log.d("ClickDebug", "Add按钮被点击");
-        // === 新增逻辑：一天只能写一篇日记 ===
+        // 一天只能写一篇日记 
         String today = new java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.getDefault()).format(new java.util.Date());
 
         CRUD op = new CRUD(context);
@@ -215,7 +224,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         UserCRUD userCRUD = new UserCRUD(context);
         userCRUD.open();
         java.util.List<Long> userDiaryIds = new java.util.ArrayList<>();
-        android.database.Cursor cursor = userCRUD.getUserDiaryIds(currentUserId);
+        Cursor cursor = userCRUD.getUserDiaryIds(currentUserId);
         while (cursor.moveToNext()) {
             int columnIndex = cursor.getColumnIndex(UserDatabase.DIARY_ID);
             if (columnIndex != -1) {
@@ -263,7 +272,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     private void initTV() {
         mydiary_count = findViewById(R.id.tv_diary_count);
-        // {{ edit_4: 移除 diary_moon 的初始化 }}
     }
 
     private void initLV() {
@@ -289,7 +297,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         // 每次切换页面时重新设置背景
         initSexChange();
 
-        // 新增：切换到 Calendar 页时刷新日历装饰
+        // 切换到 Calendar 页时刷新日历装饰
         if (index == 1) {
             setupCalendarDecorators();
         }
@@ -402,7 +410,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         CRUD op = new CRUD(context);
         op.open();
 
-        // 新增：只查找属于当前用户的日记
+        // 只查找属于当前用户的日记
         List<Long> userDiaryIds = new ArrayList<>();
         UserCRUD userCRUD = new UserCRUD(context);
         userCRUD.open();
@@ -442,7 +450,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             mydiary_count.setText(String.valueOf(diaryList.size()));
         }
 
-        // === 关键补充：组装 diaryListItems ===
+        // 组装 diaryListItems
         diaryListItems.clear();
         String lastMonth = "";
         java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM", java.util.Locale.getDefault());
@@ -524,7 +532,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         btnSearchClose.setOnClickListener(v -> exitSearchMode());
 
         // 实时搜索：监听文本变化
-        etSearch.addTextChangedListener(new android.text.TextWatcher() {
+        etSearch.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
             }
@@ -544,12 +552,12 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             }
 
             @Override
-            public void afterTextChanged(android.text.Editable s) {
+            public void afterTextChanged(Editable s) {
             }
         });
 
         etSearch.setOnEditorActionListener((v, actionId, event) -> {
-            if (actionId == android.view.inputmethod.EditorInfo.IME_ACTION_SEARCH) {
+            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                 performSearch(etSearch.getText().toString().trim());
                 return true;
             }
@@ -568,11 +576,11 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             originalDiaryListItems.addAll(diaryListItems);
         }
         // 弹出软键盘
-        android.os.Handler handler = new android.os.Handler();
+        Handler handler = new Handler();
         handler.postDelayed(() -> {
-            android.view.inputmethod.InputMethodManager imm = (android.view.inputmethod.InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
             if (imm != null) {
-                imm.showSoftInput(etSearch, android.view.inputmethod.InputMethodManager.SHOW_IMPLICIT);
+                imm.showSoftInput(etSearch, InputMethodManager.SHOW_IMPLICIT);
             }
         }, 100);
     }
@@ -583,7 +591,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         etSearch.setText(""); // 清空文本框
         etSearch.clearFocus();
         // 隐藏软键盘
-        android.view.inputmethod.InputMethodManager imm = (android.view.inputmethod.InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         if (imm != null) {
             imm.hideSoftInputFromWindow(etSearch.getWindowToken(), 0);
         }
@@ -660,7 +668,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     }
 
 
-    private static final int ID_DIARY_LV = R.id.diary_lv;  // 提取为常量
+//    private static final int ID_DIARY_LV = R.id.diary_lv;  // 提取为常量
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -690,7 +698,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         }
     }
 
-    // 新增：显示删除确认对话框的方法
+    // 显示删除确认对话框的方法
     private void showDeleteConfirmationDialog(final Diary diaryToDelete) {
         new androidx.appcompat.app.AlertDialog.Builder(this)
                 .setTitle("确认删除")
@@ -752,8 +760,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         ImageButton btnEditDay = findViewById(R.id.btn_edit_day);
         if (btnEditDay != null) {
             int bgColor = getResources().getColor(GenderResourceUtil.getTabMainColorRes(this));
-            android.graphics.drawable.GradientDrawable drawable = new android.graphics.drawable.GradientDrawable();
-            drawable.setShape(android.graphics.drawable.GradientDrawable.OVAL);
+            GradientDrawable drawable = new GradientDrawable();
+            drawable.setShape(GradientDrawable.OVAL);
             drawable.setColor(bgColor);
             btnEditDay.setBackground(drawable);
         }
@@ -762,7 +770,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         int mainColor = getResources().getColor(
                 GenderResourceUtil.getTabMainColorRes(this)
         );
-        int whiteColor = getResources().getColor(android.R.color.white);
+        int whiteColor = getResources().getColor(R.color.white);
 
         // 动态设置设置页面的颜色
         TextView setChangePwdText = findViewById(R.id.set_changePwd_text);
@@ -791,7 +799,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             setLine3.setBackgroundColor(mainColor);
         }
 
-        // 1. 动态设置Tab文字颜色（selected: white, unselected: mainColor/girlColor）
+        // 1. 动态设置Tab文字颜色
         int[][] states = new int[][]{
                 new int[]{android.R.attr.state_selected},    // selected
                 new int[]{-android.R.attr.state_selected}     // unselected
@@ -800,7 +808,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 whiteColor,      // selected
                 mainColor        // unselected
         };
-        android.content.res.ColorStateList colorStateList = new android.content.res.ColorStateList(states, colors);
+        ColorStateList colorStateList = new ColorStateList(states, colors);
 
         if (tabEntries != null) tabEntries.setTextColor(colorStateList);
         if (tabCalendar != null) tabCalendar.setTextColor(colorStateList);
@@ -835,18 +843,18 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         }
 
         // 选中状态
-        android.graphics.drawable.GradientDrawable selectedDrawable = new android.graphics.drawable.GradientDrawable();
+        GradientDrawable selectedDrawable = new GradientDrawable();
         selectedDrawable.setColor(mainColor); // 填充主色
         selectedDrawable.setStroke(2, mainColor); // 边框主色
         selectedDrawable.setCornerRadii(corners);
 
         // 未选中状态
-        android.graphics.drawable.GradientDrawable unselectedDrawable = new android.graphics.drawable.GradientDrawable();
+        GradientDrawable unselectedDrawable = new GradientDrawable();
         unselectedDrawable.setColor(whiteColor); // 填充白色
         unselectedDrawable.setStroke(2, mainColor); // 边框主色
         unselectedDrawable.setCornerRadii(corners);
 
-        android.graphics.drawable.StateListDrawable stateListDrawable = new android.graphics.drawable.StateListDrawable();
+        StateListDrawable stateListDrawable = new StateListDrawable();
         stateListDrawable.addState(new int[]{android.R.attr.state_selected}, selectedDrawable);
         stateListDrawable.addState(new int[]{-android.R.attr.state_selected}, unselectedDrawable);
 
@@ -879,7 +887,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         final EditText etNewPwd = new EditText(this);
         etNewPwd.setHint("请输入新密码");
-        etNewPwd.setInputType(android.text.InputType.TYPE_CLASS_TEXT | android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD);
+        etNewPwd.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
         layout.addView(etNewPwd);
 
         new androidx.appcompat.app.AlertDialog.Builder(this)
@@ -949,7 +957,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         backupDiaryListItems.clear();
         backupDiaryListItems.addAll(diaryListItems);
 
-        // 新增：保存备份到本地文件
+        // 保存备份到本地文件
         saveBackupDiariesToFile();
 
         if (diaryList.size() == 0) {
@@ -992,7 +1000,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             overlayView.setFocusable(true);
             overlayView.setFocusableInTouchMode(true);
             overlayView.setOnTouchListener((v, event) -> true); // 拦截所有触摸事件
-            ((ViewGroup) findViewById(android.R.id.content)).addView(overlayView);
+            ((ViewGroup) findViewById(android.R.id.content)).addView(overlayView);//添加到窗口内容的最顶层容器
         }
         overlayView.setVisibility(View.VISIBLE);
     }
@@ -1004,13 +1012,13 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     private void deleteDiaryWithAnimation(Diary diary, Runnable onFinish) {
         // 删除前先刷新列表
-        new android.os.Handler().postDelayed(() -> {
+        new Handler().postDelayed(() -> {
             CRUD op = new CRUD(this);
             op.open();
             op.deleteDiary(diary);
             op.close();
             refreshListView();
-            new android.os.Handler().postDelayed(onFinish, 100);//控制删除日记后的等待时间。
+            new Handler().postDelayed(onFinish, 100);//控制删除日记后的等待时间。
         }, 100); //控制删除日记前的等待时间。
     }
 
@@ -1020,11 +1028,11 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             return;
         }
         Diary diary = diaryList.get(0);
-        deleteDiaryWithAnimation(diary, this::deleteAllDiariesWithAnimation);
+        deleteDiaryWithAnimation(diary, this::deleteAllDiariesWithAnimation);//循环调用
     }
 
     private void finishTimeReverse() {
-        hideOverlay(); // <<--- 新增：时光倒流结束，移除遮罩
+        hideOverlay(); // <<--- 时光倒流结束，移除遮罩
         Intent intent = new Intent(this, TimeReverseEndActivity.class);
         startActivity(intent);
     }
@@ -1104,25 +1112,26 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
 
     private void setupCalendarDecorators() {
-        calendarView = findViewById(R.id.calendarView); // {{ edit_3: 赋值给成员变量 }}
+        calendarView = findViewById(R.id.calendarView);
         if (calendarView == null) {
             Log.e(TAG, "setupCalendarDecorators: calendarView 未找到!");
             return;
         }
 
-        // --- 修改：仅在第一次初始化时设置选中当天 ---
-        if (!isCalendarInitialized) {
+        // 仅在第一次初始化时设置选中当天
+        if (!isCalendarInitialized) {//还未初始化
             calendarView.setSelectedDate(CalendarDay.today());
             Log.d(TAG, "setupCalendarDecorators: 首次初始化，已设置日历选中当天: " + CalendarDay.today().toString());
-            isCalendarInitialized = true; // {{ edit_2: 设置标志位为 true }}
+            isCalendarInitialized = true; // 设置标志位为 true 
         }
         Log.d(TAG, "setupCalendarDecorators: 开始设置日历装饰器");
         calendarView.removeDecorators(); // 清除旧装饰器
 
+        // HashSet 自动处理重复日期，一个日期只会被添加一次
         Set<CalendarDay> blueDotDays = new HashSet<>();
-        Set<CalendarDay> yellowDotDays = new HashSet<>(); // 使用 yellowDotDays 变量名更清晰
+        Set<CalendarDay> yellowDotDays = new HashSet<>(); 
 
-        // 确保 diaryList 不为 null
+        // diaryList ：包含所有日记数据的列表
         if (diaryList == null) {
             Log.w(TAG, "setupCalendarDecorators: diaryList 为 null，无法设置装饰器");
             diaryList = new ArrayList<>(); // 初始化以避免空指针
@@ -1137,7 +1146,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 try {
                     String[] dateParts = time.split(" ")[0].split("-");
                     int year = Integer.parseInt(dateParts[0]);
-                    int month = Integer.parseInt(dateParts[1]); // 月份是 1-12
+                    int month = Integer.parseInt(dateParts[1]); 
                     int day = Integer.parseInt(dateParts[2]);
                     // CalendarDay 月份是从 0 开始的 (0-11)
                     CalendarDay calendarDay = CalendarDay.from(year, month - 1, day);
@@ -1164,7 +1173,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         if (!yellowDotDays.isEmpty()) {
             // YellowDotDecorator 现在画黄点
             calendarView.addDecorator(new YellowDotDecorator(this, yellowDotDays));
-            Log.d(TAG, "setupCalendarDecorators: 已添加 YellowDotDecorator (原StarDecorator)");
+            Log.d(TAG, "setupCalendarDecorators: 已添加 YellowDotDecorator");
         }
         if (!blueDotDays.isEmpty()) {
             calendarView.addDecorator(new BlueDotDecorator(this, blueDotDays));
@@ -1176,7 +1185,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         Log.d(TAG, "setupCalendarDecorators: 已调用 calendarView.invalidate()");
     }
 
-    // 新增：设置 btn_edit_day 的点击逻辑
+    // 设置 btn_edit_day 的点击逻辑
     private void setupEditDayButton() {
         ImageButton btnEditDay = findViewById(R.id.btn_edit_day);
         if (btnEditDay == null || calendarView == null) return;
@@ -1202,7 +1211,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             UserCRUD userCRUD = new UserCRUD(this);
             userCRUD.open();
             java.util.List<Long> userDiaryIds = new java.util.ArrayList<>();
-            android.database.Cursor cursor = userCRUD.getUserDiaryIds(currentUserId);
+            Cursor cursor = userCRUD.getUserDiaryIds(currentUserId);
             while (cursor.moveToNext()) {
                 int columnIndex = cursor.getColumnIndex(UserDatabase.DIARY_ID);
                 if (columnIndex != -1) {

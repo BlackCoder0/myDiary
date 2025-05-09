@@ -127,7 +127,7 @@ public class ImfDiary {
         // 3. 处理位置
         String location = diary.getLocation();
         if (!TextUtils.isEmpty(location)) {
-            // 新增：去除换行和中括号
+            // 去除换行和中括号
             String cleanLocation = location.replace("\n", "").replace("[", "").replace("]", "");
             // 只显示到县/区/市级
             String countyLevelLocation = extractCountyLevel(cleanLocation);
@@ -339,7 +339,7 @@ public class ImfDiary {
             default: return 0; // 返回0表示没有对应图标
         }
     }
-    // 新增：根据天气索引获取天气文字描述
+    // 根据天气索引获取天气文字描述
     private String getWeatherText(int weather) {
         switch (weather) {
             case 0: return "Cloudy";

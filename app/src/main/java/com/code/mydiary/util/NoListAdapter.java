@@ -63,7 +63,7 @@ public class NoListAdapter extends RecyclerView.Adapter<NoListAdapter.ViewHolder
 
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
-            dataList.set(position, s.toString());
+            dataList.set(position, s.toString());//更新
             if (contentChangeListener != null) {
                 contentChangeListener.onContentChanged(position, s.toString());
             }
@@ -77,7 +77,7 @@ public class NoListAdapter extends RecyclerView.Adapter<NoListAdapter.ViewHolder
 
         @Override
         public void afterTextChanged(Editable s) {}
-        // 新增：持有ViewHolder弱引用
+        // 持有ViewHolder弱引用
         private java.lang.ref.WeakReference<ViewHolder> holderRef;
         public void setHolder(ViewHolder holder) {
             holderRef = new java.lang.ref.WeakReference<>(holder);
@@ -94,7 +94,7 @@ public class NoListAdapter extends RecyclerView.Adapter<NoListAdapter.ViewHolder
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         holder.customTextWatcher.setPosition(position);
-        holder.customTextWatcher.setHolder(holder); // 新增：传递holder引用
+        holder.customTextWatcher.setHolder(holder); // 传递holder引用
         holder.etNoItem.setText(dataList.get(position));
         holder.dot.setVisibility(dataList.get(position).trim().isEmpty() ? View.INVISIBLE : View.VISIBLE);
 
@@ -104,7 +104,7 @@ public class NoListAdapter extends RecyclerView.Adapter<NoListAdapter.ViewHolder
         );
         holder.nolistLine.setBackgroundColor(color);
 
-        // 新增：EditText获取焦点时滚动到该项
+        // EditText获取焦点时滚动到该项
         holder.etNoItem.setOnFocusChangeListener((v, hasFocus) -> {
             if (hasFocus) {
                 RecyclerView recyclerView = (RecyclerView) holder.itemView.getParent();

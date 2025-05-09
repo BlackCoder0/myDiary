@@ -53,7 +53,6 @@
                 android:paddingEnd="12dp"/>
     </LinearLayout>
 
-    <!-- 其他原有布局保持不变 -->
     <EditText
         android:id="@+id/edit_adddiary_body"
         android:layout_width="match_parent"

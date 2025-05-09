@@ -135,7 +135,7 @@ public class DiaryAdopter extends BaseAdapter {
             if (weather == -1) {
                 holder.ivWeather.setColorFilter(myContext.getResources().getColor(R.color.gray));
                 holder.ivWeather.setAlpha(0.5f);
-                holder.ivWeather.setImageResource(R.drawable.ic_weather_sunny); // 可选：默认图标
+                holder.ivWeather.setImageResource(R.drawable.ic_weather_sunny); //默认图标
             } else {
                 int weatherResId = getWeatherIconResId(weather);
                 if (weatherResId != 0) {
@@ -152,7 +152,7 @@ public class DiaryAdopter extends BaseAdapter {
             if (mood == -1) {
                 holder.ivMood.setColorFilter(myContext.getResources().getColor(R.color.gray));
                 holder.ivMood.setAlpha(0.5f);
-                holder.ivMood.setImageResource(R.drawable.ic_mood_happy); // 可选：默认图标
+                holder.ivMood.setImageResource(R.drawable.ic_mood_happy); //默认图标
             } else {
                 int moodResId = getMoodIconResId(mood);
                 if (moodResId != 0) {
@@ -212,7 +212,6 @@ public class DiaryAdopter extends BaseAdapter {
         ImageView ivTag;
     }
 
-    // 你原有的 getWeatherIconResId/getMoodIconResId 方法保留
     private int getWeatherIconResId(int weather) {
         switch (weather) {
             case 0: return R.drawable.ic_weather_cloud;

@@ -18,7 +18,7 @@ public class UserDatabase extends SQLiteOpenHelper {
     public static final String NO_LIST_TABLE = "no_list";
     public static final String NO_ID = "no_id";
     public static final String NO_CONTENT = "no_content";
-    public static final String NO_TITLE = "no_title"; // 新增：标题字段
+    public static final String NO_TITLE = "no_title"; // 标题字段
     public static final String SOS_TABLE = "sos_table";
     public static final String SOS_ID = "sos_id";
     public static final String SOS_NAME = "sos_name";
@@ -48,7 +48,7 @@ public class UserDatabase extends SQLiteOpenHelper {
                 NO_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 USER_ID + " INTEGER NOT NULL, " +
                 NO_CONTENT + " TEXT, " +
-                NO_TITLE + " TEXT)"); // 新增：标题字段
+                NO_TITLE + " TEXT)"); // 标题字段
 
         db.execSQL("CREATE TABLE " + SOS_TABLE + " (" +
                 SOS_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +

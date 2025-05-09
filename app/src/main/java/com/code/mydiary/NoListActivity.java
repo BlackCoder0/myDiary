@@ -30,7 +30,7 @@ public class NoListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.no_list_activity);
 
-        // 修改：返回按钮逻辑
+        // 返回按钮逻辑
         ImageButton btnBack = findViewById(R.id.btn_back);
         btnBack.setOnClickListener(v -> onBackPressed()); // 让btn_back等效于系统返回键
 
@@ -61,7 +61,7 @@ public class NoListActivity extends AppCompatActivity {
         initSexChange();
     }
 
-    private void onItemContentChanged(int position, String content) {
+    private void onItemContentChanged(int position, String content) {//添加新行
         if (position < noList.size()) {
             noList.set(position, content);
         } else {

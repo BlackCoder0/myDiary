@@ -20,7 +20,7 @@ public class Menu extends AppCompatActivity {
     private LinearLayout layoutPhone, layoutDiary, layoutNo;
     private int selectedColor = Color.parseColor("#E0E0E0"); // 选中颜色
     private int normalColor = Color.TRANSPARENT; // 未选中颜色
-    private long userId; // 新增：存储用户ID
+    private long userId; // 存储用户ID
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,7 +28,7 @@ public class Menu extends AppCompatActivity {
         setContentView(R.layout.menu_activity);
         Log.d("ClickDebug", "Menu Activity 启动");
 
-        // 新增：获取从上一个 Activity 传来的 userId
+        // 获取从上一个 Activity 传来的 userId
         userId = getIntent().getLongExtra("user_id", -1);
         if (userId == -1) {
             // 处理 userId 无效的情况，例如返回登录页或显示错误
@@ -44,7 +44,7 @@ public class Menu extends AppCompatActivity {
 
         layoutPhone.setOnClickListener(v -> {
             setSelected(layoutPhone);
-            // 修改：传递 userId
+            // 传递 userId
             Intent intent = new Intent(this, SOSActivity.class);
             intent.putExtra("user_id", userId);
             startActivity(intent);
@@ -63,7 +63,7 @@ public class Menu extends AppCompatActivity {
 
         layoutNo.setOnClickListener(v -> {
             setSelected(layoutNo);
-            // 修改：传递 userId
+            // 传递 userId
             Intent intent = new Intent(this, NoListActivity.class);
             intent.putExtra("user_id", userId);
             startActivity(intent);
