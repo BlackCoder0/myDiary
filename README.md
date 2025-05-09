@@ -12,6 +12,7 @@
   - MaterialCalendarView（日历控件）
   - Gson（数据序列化与备份）
   - AppCompat、AndroidX 等
+- **注意**：若要使用定位功能，需要前往[高德开放平台](https://lbs.amap.com/)创建应用获取Key，并在app/src/main/AndroidManifest.xml处取消掉com.amap.api.v2.apikey的注释并将你的key替换进value
 
 
 
